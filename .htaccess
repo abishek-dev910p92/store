@@ -1,0 +1,51 @@
+# Enable URL rewriting
+RewriteEngine On
+
+# Security headers
+Header always set X-Content-Type-Options nosniff
+Header always set X-Frame-Options DENY
+Header always set X-XSS-Protection "1; mode=block"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# Hide sensitive files
+<Files ".htaccess">
+    Order allow,deny
+    Deny from all
+</Files>
+
+<Files "*.log">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Prevent access to PHP configuration files
+<Files "*.ini">
+    Order allow,deny
+    Deny from all
+</Files>
+
+# Enable CORS for API requests (if needed)
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, X-API-KEY"
+</IfModule>
+
+# Custom error pages (optional)
+ErrorDocument 404 /404.html
+ErrorDocument 500 /500.html
+
+# Allow direct access to API proxy
+RewriteRule ^api_proxy\.php$ - [L]
+
+# Redirect to login if accessing root
+DirectoryIndex login.php
+
+# Prevent directory browsing
+Options -Indexes
+
+# PHP settings
+php_value session.cookie_httponly 1
+php_value session.cookie_secure 0
+php_value session.use_only_cookies 1
+php_value session.cookie_samesite "Strict"
