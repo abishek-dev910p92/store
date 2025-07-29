@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3f37c9;
+            --success-color: #4CAF50;
+            --danger-color: #f72585;
+            --warning-color: #ff9e00;
+            --info-color: #4cc9f0;
+            --light-color: #f8f9fa;
+            --dark-color: #212529;
+            --gray-color: #6c757d;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: #f5f7fb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            width: 100%;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .dashboard-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #45a049;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: translateY(-20px);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 768px) {
+            .modal {
+                width: 95%;
+                height: 95vh;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+            
+            .modal-body {
+                flex-direction: column;
+                overflow-y: visible;
+                max-height: none;
+            }
+            
+            .steps-container {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+                position: sticky;
+                top: 0;
+                background-color: white;
+                z-index: 10;
+            }
+            
+            .step-item {
+                flex-direction: column;
+                padding: 10px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                min-width: 80px;
+                text-align: center;
+            }
+            
+            .step-item.active {
+                border-left: none;
+                border-bottom: 3px solid var(--primary-color);
+            }
+            
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .step-title {
+                font-size: 12px;
+            }
+            
+            .form-content {
+                padding: 15px;
+                overflow-y: visible;
+                max-height: none;
+            }
+            
+            .step-navigation {
+                position: sticky;
+                bottom: 0;
+                background-color: white;
+                z-index: 10;
+                box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .modal {
+                width: 100%;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .color-group {
+                flex-direction: column;
+            }
+            
+            .color-input {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            .image-upload {
+                margin-bottom: 20px;
+            }
+            
+            .product-card {
+                flex-direction: column;
+                padding: 15px;
+            }
+            
+            .product-images-gallery {
+                width: 100%;
+            }
+            
+            .product-main-image {
+                height: 200px;
+            }
+            
+            .product-thumbnail {
+                width: calc(33.33% - 7px);
+                height: 60px;
+            }
+        }
+        
+        /* Product Images Gallery Styles */
+        .product-images-gallery {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 20px;
+        }
+        
+        .product-main-image {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .product-main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .product-thumbnails {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .product-thumbnail {
+            width: calc(20% - 8px);
+            height: 80px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+        
+        .product-thumbnail.active {
+            border-color: var(--primary-color);
+        }
+        
+        .product-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* Fix for the product preview card on mobile */
+        @media (max-width: 768px) {
+            .product-card {
+                flex-direction: column;
+            }
+            
+            .product-image {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray-color);
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger-color);
+        }
+
+        .modal-body {
+            padding: 0;
+            overflow-y: auto;
+            display: flex;
+            flex: 1;
+        }
+
+        /* Steps Navigation */
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            width: 250px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #eee;
+            padding: 20px 0;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
+        }
+
+        .step-item.active {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-left: 3px solid var(--primary-color);
+        }
+
+        .step-item:hover:not(.active) {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            color: var(--gray-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .step-item.active .step-number,
+        .step-item.completed .step-number {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .step-item.completed .step-number {
+            background-color: var(--success-color);
+        }
+
+        .step-title {
+            font-weight: 500;
+        }
+
+        /* Form Content */
+        .form-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* Enhanced Product Preview */
+        .product-preview {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .product-preview-header {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .product-images-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .product-main-image {
+            width: 100%;
+            height: 300px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .product-main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .product-thumbnail {
+            width: calc(20% - 8px);
+            height: 80px;
+            border-radius: 4px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: var(--transition);
+        }
+
+        .product-thumbnail.active {
+            border-color: var(--primary-color);
+        }
+
+        .product-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            color: var(--gray-color);
+            font-size: 48px;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .product-price {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .product-description {
+            color: var(--gray-color);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .product-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--gray-color);
+        }
+
+        .product-colors {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .color-dot {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .color-dot:hover, .color-dot.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.3);
+        }
+
+        /* Mobile Responsive Styles */
+        @media (max-width: 992px) {
+            .modal {
+                width: 95%;
+                max-height: 95vh;
+            }
+            
+            .product-thumbnail {
+                width: calc(25% - 8px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .modal-body {
+                flex-direction: column;
+                overflow-y: visible;
+            }
+            
+            .steps-container {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 10px;
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+            
+            .step-item {
+                flex-direction: column;
+                padding: 10px;
+                border-left: none;
+                border-bottom: 3px solid transparent;
+                min-width: 80px;
+                text-align: center;
+            }
+            
+            .step-item.active {
+                border-left: none;
+                border-bottom: 3px solid var(--primary-color);
+            }
+            
+            .step-number {
+                margin-right: 0;
+                margin-bottom: 5px;
+            }
+            
+            .step-title {
+                font-size: 12px;
+            }
+            
+            .form-content {
+                padding: 15px;
+            }
+            
+            .product-card {
+                padding: 15px;
+            }
+            
+            .product-main-image {
+                height: 250px;
+            }
+            
+            .product-thumbnail {
+                width: calc(33.33% - 7px);
+                height: 70px;
+            }
+            
+            .product-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .modal {
+                width: 100%;
+                height: 100%;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+            
+            .modal-header {
+                padding: 10px 15px;
+            }
+            
+            .modal-title {
+                font-size: 18px;
+            }
+            
+            .form-group {
+                margin-bottom: 15px;
+            }
+            
+            .product-main-image {
+                height: 200px;
+            }
+            
+            .product-thumbnail {
+                width: calc(50% - 5px);
+                height: 60px;
+            }
+            
+            .product-title {
+                font-size: 20px;
+            }
+            
+            .product-price {
+                font-size: 18px;
+            }
+            
+            .step-navigation {
+                padding: 15px;
+            }
+            
+            .btn {
+                padding: 8px 15px;
+                font-size: 14px;
+            }
+        }
+        .step-content {
+            display: none;
+        }
+
+        .step-content.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .required:after {
+            content: " *";
+            color: var(--danger-color);
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .color-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .color-input {
+            flex: 1;
+        }
+
+        .image-upload {
+            margin-bottom: 20px;
+            border: 1px dashed #ddd;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .image-upload:hover {
+            border-color: var(--primary-color);
+        }
+
+        .image-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .image-preview img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        input[type="file"] {
+            margin-top: 8px;
+        }
+
+        /* Navigation Buttons */
+        .step-navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Product Preview Card */
+        .product-preview {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .product-preview-header {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+        }
+
+        .product-card {
+            display: flex;
+            padding: 20px;
+        }
+
+        .product-image {
+            width: 200px;
+            height: 200px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            margin-right: 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-image-placeholder {
+            color: var(--gray-color);
+            font-size: 48px;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .product-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .product-description {
+            color: var(--gray-color);
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .product-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            color: var(--gray-color);
+        }
+
+        .product-colors {
+            display: flex;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .color-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+        }
+
+        /* Status Message */
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            display: none;
+        }
+
+        .success {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: var(--success-color);
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            display: block;
+        }
+
+        .error {
+            background-color: rgba(247, 37, 133, 0.1);
+            color: var(--danger-color);
+            border: 1px solid rgba(247, 37, 133, 0.2);
+            display: block;
+        }
+
+        .loading {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--info-color);
+            border: 1px solid rgba(76, 201, 240, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(76, 201, 240, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--info-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">Product Management</h1>
+            <button id="addProductBtn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Product
+            </button>
+        </div>
+
+        <div id="statusMessage" class="status"></div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="productModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Product</h2>
+                <button class="modal-close" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Steps Navigation -->
+                <div class="steps-container">
+                    <div class="step-item active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-title">Basic Info</div>
+                    </div>
+                    <div class="step-item" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-title">Details</div>
+                    </div>
+                    <div class="step-item" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-title">Colors</div>
+                    </div>
+                    <div class="step-item" data-step="4">
+                        <div class="step-number">4</div>
+                        <div class="step-title">Images</div>
+                    </div>
+                    <div class="step-item" data-step="5">
+                        <div class="step-number">5</div>
+                        <div class="step-title">Preview</div>
+                    </div>
+                </div>
+
+                <!-- Form Content -->
+                <div class="form-content">
+                    <form id="productForm">
+                        <!-- Step 1: Basic Info -->
+                        <div class="step-content active" data-step="1">
+                            <h3>Basic Information</h3>
+                            <p>Enter the essential information about the product.</p>
+                            
+                            <div class="form-group">
+                                <label for="category" class="required">Category</label>
+                                <input type="text" id="category" name="category" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cid" class="required">CID</label>
+                                <input type="text" id="cid" name="cid" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="client_name" class="required">Client Name</label>
+                                <input type="text" id="client_name" name="client_name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product_title" class="required">Product Title</label>
+                                <input type="text" id="product_title" name="product_title" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product_name" class="required">Product Name</label>
+                                <input type="text" id="product_name" name="product_name" required>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Details -->
+                        <div class="step-content" data-step="2">
+                            <h3>Product Details</h3>
+                            <p>Provide more specific information about the product.</p>
+                            
+                            <div class="form-group">
+                                <label for="product_discription" class="required">Product Description</label>
+                                <textarea id="product_discription" name="product_discription" required></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product_brand">Product Brand</label>
+                                <input type="text" id="product_brand" name="product_brand">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product_price" class="required">Product Price</label>
+                                <input type="number" id="product_price" name="product_price" step="0.01" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product_stock" class="required">Product Stock</label>
+                                <input type="number" id="product_stock" name="product_stock" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="offers">Offers</label>
+                                <input type="text" id="offers" name="offers">
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Colors and Attributes -->
+                        <div class="step-content" data-step="3">
+                            <h3>Product Attributes</h3>
+                            <p>Specify the colors and other attributes of the product.</p>
+                            
+                            <div class="form-group">
+                                <label for="product_size">Product Size</label>
+                                <input type="text" id="product_size" name="product_size">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="material">Material</label>
+                                <input type="text" id="material" name="material">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="cordinates">Coordinates</label>
+                                <input type="text" id="cordinates" name="cordinates">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="product_ratings">Product Ratings</label>
+                                <input type="text" id="product_ratings" name="product_ratings">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="required">Product Colors</label>
+                                <div class="color-group">
+                                    <div class="color-input">
+                                        <label for="product_color1">Color 1 (Required)</label>
+                                        <input type="text" id="product_color1" name="product_color1" required>
+                                    </div>
+                                    <div class="color-input">
+                                        <label for="product_color2">Color 2 (Optional)</label>
+                                        <input type="text" id="product_color2" name="product_color2">
+                                    </div>
+                                </div>
+                                <div class="color-group">
+                                    <div class="color-input">
+                                        <label for="product_color3">Color 3 (Optional)</label>
+                                        <input type="text" id="product_color3" name="product_color3">
+                                    </div>
+                                    <div class="color-input">
+                                        <label for="product_color4">Color 4 (Optional)</label>
+                                        <input type="text" id="product_color4" name="product_color4">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Images -->
+                        <div class="step-content" data-step="4">
+                            <h3>Product Images</h3>
+                            <p>Upload high-quality images of your product (at least 1 required).</p>
+                            
+                            <div class="image-upload">
+                                <label for="product_image1">Image 1 (Required)</label>
+                                <input type="file" id="product_image1" name="product_image1" accept="image/*" required>
+                                <div class="image-preview" id="preview1"></div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="product_image2">Image 2</label>
+                                <input type="file" id="product_image2" name="product_image2" accept="image/*">
+                                <div class="image-preview" id="preview2"></div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="product_image3">Image 3</label>
+                                <input type="file" id="product_image3" name="product_image3" accept="image/*">
+                                <div class="image-preview" id="preview3"></div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="product_image4">Image 4</label>
+                                <input type="file" id="product_image4" name="product_image4" accept="image/*">
+                                <div class="image-preview" id="preview4"></div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="product_image5">Image 5</label>
+                                <input type="file" id="product_image5" name="product_image5" accept="image/*">
+                                <div class="image-preview" id="preview5"></div>
+                            </div>
+                            <div class="image-upload">
+                                <label for="product_image6">Image 6</label>
+                                <input type="file" id="product_image6" name="product_image6" accept="image/*">
+                                <div class="image-preview" id="preview6"></div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Preview -->
+                                                 
+                                                <div class="step-content" data-step="5">
+                                                    <h3>Product Preview</h3>
+                                                    <p>Review your product information before submitting.</p>
+                                                    
+                                                    <div class="product-preview">
+                                                        <div class="product-preview-header">
+                                                            Product Card Preview
+                                                        </div>
+                                                        <div class="product-card">
+                                                            <div class="product-images-gallery">
+                                                                <div class="product-main-image" id="previewMainImage">
+                                                                    <div class="product-image-placeholder">
+                                                                        <i class="fas fa-image"></i>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="product-thumbnails" id="previewThumbnails">
+                                                                    <!-- Thumbnails will be added dynamically -->
+                                                                </div>
+                                                            </div>
+                                                            <div class="product-details">
+                                                                <div class="product-title" id="previewTitle">Product Title</div>
+                                                                <div class="product-price" id="previewPrice">$0.00</div>
+                                                                <div class="product-description" id="previewDescription">
+                                                                    Product description will appear here.
+                                                                </div>
+                                                                <div class="product-colors" id="previewColors">
+                                                                    <!-- Colors will be added dynamically -->
+                                                                </div>
+                                                                <div class="product-meta">
+                                                                    <div class="meta-item">
+                                                                        <i class="fas fa-box"></i>
+                                                                        <span id="previewStock">0 in stock</span>
+                                                                    </div>
+                                                                    <div class="meta-item">
+                                                                        <i class="fas fa-tag"></i>
+                                                                        <span id="previewCategory">Category</span>
+                                                                    </div>
+                                                                    <div class="meta-item">
+                                                                        <i class="fas fa-building"></i>
+                                                                        <span id="previewBrand">Brand</span>
+                                                                    </div>
+                                                                    <div class="meta-item" id="previewSizeContainer" style="display: none;">
+                                                                        <i class="fas fa-ruler"></i>
+                                                                        <span id="previewSize">Size</span>
+                                                                    </div>
+                                                                    <div class="meta-item" id="previewMaterialContainer" style="display: none;">
+                                                                        <i class="fas fa-tshirt"></i>
+                                                                        <span id="previewMaterial">Material</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                    </form>
+                </div>
+            </div>
+            <div class="step-navigation">
+                <button id="prevStep" class="btn btn-primary" style="visibility: hidden;">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button id="nextStep" class="btn btn-primary">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+                <button id="submitProduct" class="btn btn-success" style="display: none;">
+                    <i class="fas fa-check"></i> Submit Product
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Modal functionality
+            const modal = document.getElementById('productModal');
+            const addProductBtn = document.getElementById('addProductBtn');
+            const closeModal = document.getElementById('closeModal');
+            
+            // Open modal on page load
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Get client data from localStorage
+            let clientData = {};
+            try {
+                const dbUserString = localStorage.getItem('dbUser');
+                if (dbUserString) {
+                    clientData = JSON.parse(dbUserString);
+                    console.log('Client data loaded from localStorage:', clientData);
+                    
+                    // Autofill form fields with client data
+                    autofillFormFields(clientData);
+                } else {
+                    console.log('No client data found in localStorage');
+                }
+            } catch (error) {
+                console.error('Error parsing client data from localStorage:', error);
+            }
+            
+            // Function to autofill form fields
+            function autofillFormFields(data) {
+                // Client ID
+                if (data.cid) {
+                    const cidField = document.getElementById('cid');
+                    if (cidField) {
+                        cidField.value = data.cid;
+                        // Hide the parent form-group of the CID field
+                        const cidParent = cidField.closest('.form-group');
+                        if (cidParent) cidParent.style.display = 'none';
+                    }
+                }
+                
+                // Client Name (combining first and last name)
+                if (data.first_name || data.last_name) {
+                    const clientNameField = document.getElementById('client_name');
+                    if (clientNameField) {
+                        const fullName = `${data.first_name || ''} ${data.last_name || ''}`.trim();
+                        clientNameField.value = fullName;
+                        // Hide the parent form-group of the client name field
+                        const nameParent = clientNameField.closest('.form-group');
+                        if (nameParent) nameParent.style.display = 'none';
+                    }
+                }
+                
+                // Coordinates
+                if (data.coordinates) {
+                    const coordinatesField = document.getElementById('cordinates');
+                    if (coordinatesField) {
+                        coordinatesField.value = data.coordinates;
+                        // Hide the parent form-group of the coordinates field
+                        const coordParent = coordinatesField.closest('.form-group');
+                        if (coordParent) coordParent.style.display = 'none';
+                    }
+                }
+                
+                // Leave brand field empty (removed the auto-fill with shop_name)
+                
+                // Update preview if we're on the preview step
+                if (currentStep === 5) {
+                    updateProductPreview();
+                }
+            }
+
+            addProductBtn.addEventListener('click', function() {
+              modal.classList.add('active'); 
+              document.body.style.overflow = 'hidden';
+            });
+            
+            closeModal.addEventListener('click', function() {
+              modal.classList.remove('active');
+              document.body.style.overflow = '';
+              window.location.href = 'https://minitzgo.com/store/pages/products.html';
+            });
+            
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+              if (e.target === modal) {
+                modal.classList.remove('active');
+                document.body.style.overflow = '';
+                window.location.href = 'https://minitzgo.com/store/pages/products.html';
+              }
+            });
+            
+                        // Steps navigation
+                        const stepItems = document.querySelectorAll('.step-item');
+            const stepContents = document.querySelectorAll('.step-content');
+            const prevStepBtn = document.getElementById('prevStep');
+            const nextStepBtn = document.getElementById('nextStep');
+            const submitProductBtn = document.getElementById('submitProduct');
+            
+            let currentStep = 1;
+            const totalSteps = stepItems.length;
+            
+            function updateStepVisibility() {
+                // Update step items
+                stepItems.forEach(item => {
+                    const step = parseInt(item.dataset.step);
+                    item.classList.remove('active');
+                    if (step < currentStep) {
+                        item.classList.add('completed');
+                    } else if (step === currentStep) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('completed');
+                    }
+                });
+                
+                // Update step content
+                stepContents.forEach(content => {
+                    const step = parseInt(content.dataset.step);
+                    content.classList.remove('active');
+                    if (step === currentStep) {
+                        content.classList.add('active');
+                    }
+                });
+                
+                // Update navigation buttons
+                prevStepBtn.style.visibility = currentStep === 1 ? 'hidden' : 'visible';
+                
+                if (currentStep === totalSteps) {
+                    nextStepBtn.style.display = 'none';
+                    submitProductBtn.style.display = 'block';
+                    updateProductPreview();
+                } else {
+                    nextStepBtn.style.display = 'block';
+                    submitProductBtn.style.display = 'none';
+                }
+                
+                // Scroll to top of form content on mobile when changing steps
+                if (window.innerWidth <= 768) {
+                    const formContent = document.querySelector('.form-content');
+                    if (formContent) {
+                        formContent.scrollTop = 0;
+                        
+                        // Also scroll the modal to top if needed
+                        const modal = document.querySelector('.modal');
+                        if (modal) {
+                            modal.scrollTop = 0;
+                        }
+                    }
+                }
+            }
+            
+            // Function to generate random SEO-friendly product descriptions
+            function generateProductDescription() {
+                // Get basic product information
+                const productTitle = document.getElementById('product_title').value || 'this product';
+                const productName = document.getElementById('product_name').value || 'this item';
+                const category = document.getElementById('category').value || 'product';
+                const brand = document.getElementById('product_brand').value || 'our brand';
+                
+                // Random adjectives for product descriptions
+                const adjectives = [
+                    'premium', 'high-quality', 'exceptional', 'outstanding', 'superior',
+                    'excellent', 'top-tier', 'first-class', 'remarkable', 'impressive'
+                ];
+                
+                // Random benefits
+                const benefits = [
+                    'designed to last', 'built for performance', 'created with you in mind',
+                    'perfect for everyday use', 'made with attention to detail',
+                    'crafted for excellence', 'engineered for reliability',
+                    'developed by experts', 'trusted by professionals', 'loved by customers'
+                ];
+                
+                // Random features
+                const features = [
+                    'easy to use', 'versatile functionality', 'modern design',
+                    'innovative technology', 'eco-friendly materials', 'sleek appearance',
+                    'compact size', 'lightweight construction', 'durable build',
+                    'elegant finish', 'advanced features', 'intuitive controls'
+                ];
+                
+                // Random closing statements
+                const closings = [
+                    'Order now and experience the difference!',
+                    'Add to cart today and see why our customers love it!',
+                    'Don\'t miss out on this amazing product!',
+                    'Upgrade your lifestyle with this must-have item!',
+                    'Join thousands of satisfied customers!',
+                    'Transform your experience with this exceptional product!',
+                    'Elevate your standards with our premium quality!',
+                    'Discover why this is our best-selling product!'
+                ];
+                
+                // Get random elements
+                const getRandomElement = (array) => array[Math.floor(Math.random() * array.length)];
+                const adj1 = getRandomElement(adjectives);
+                const adj2 = getRandomElement(adjectives.filter(a => a !== adj1));
+                const benefit = getRandomElement(benefits);
+                const feature = getRandomElement(features);
+                const closing = getRandomElement(closings);
+                
+                // Construct description
+                let description = `Discover our ${adj1} ${productTitle} from ${brand}. `;
+                description += `This ${adj2} ${category} is ${benefit} and ${feature}. `;
+                
+                // Add material if available
+                const material = document.getElementById('material').value;
+                if (material) {
+                    description += `Made with high-quality ${material} for superior durability and style. `;
+                }
+                
+                // Add size if available
+                const size = document.getElementById('product_size').value;
+                if (size) {
+                    description += `Available in ${size} size to perfectly suit your needs. `;
+                }
+                
+                // Add colors if available
+                const colors = [];
+                for (let i = 1; i <= 4; i++) {
+                    const colorField = document.getElementById(`product_color${i}`);
+                    if (colorField && colorField.value) {
+                        colors.push(colorField.value);
+                    }
+                }
+                
+                if (colors.length > 0) {
+                    const colorText = colors.length === 1 ? 
+                        colors[0] : 
+                        colors.slice(0, -1).join(', ') + ' and ' + colors[colors.length - 1];
+                    description += `Choose from ${colorText} to match your style. `;
+                }
+                
+                // Add price information if available
+                const price = document.getElementById('product_price').value;
+                if (price) {
+                    description += `Exceptional value at just $${price}. `;
+                }
+                
+                // Add stock information if available
+                const stock = document.getElementById('product_stock').value;
+                if (stock && parseInt(stock) > 0) {
+                    if (parseInt(stock) < 10) {
+                        description += `Limited stock available - only ${stock} remaining! `;
+                    } else {
+                        description += `In stock and ready to ship to you today. `;
+                    }
+                }
+                
+                // Add closing
+                description += `Perfect for anyone looking for a ${adj1} ${category}. ${closing}`;
+                
+                // Set the description in the form
+                const descriptionField = document.getElementById('product_discription');
+                if (descriptionField) {
+                    descriptionField.value = description;
+                }
+            }
+            
+            // Step item click
+            stepItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const step = parseInt(this.dataset.step);
+                    if (validateCurrentStep() || step < currentStep) {
+                        currentStep = step;
+                        updateStepVisibility();
+                    }
+                });
+            });
+            
+            // Next step button
+            nextStepBtn.addEventListener('click', function() {
+                if (validateCurrentStep()) {
+                    // If moving from step 1 to step 2, generate the description
+                    if (currentStep === 1) {
+                        // Generate description when moving to step 2
+                        setTimeout(function() {
+                            generateProductDescription();
+                        }, 100); // Small delay to ensure fields are validated and step is changed
+                    }
+                    
+                    if (currentStep < totalSteps) {
+                        currentStep++;
+                        updateStepVisibility();
+                    }
+                }
+            });
+            
+            // Previous step button
+            prevStepBtn.addEventListener('click', function() {
+                if (currentStep > 1) {
+                    currentStep--;
+                    updateStepVisibility();
+                }
+            });
+            
+            // Validate current step
+            function validateCurrentStep() {
+                const currentStepContent = document.querySelector(`.step-content[data-step="${currentStep}"]`);
+                const requiredFields = currentStepContent.querySelectorAll('[required]');
+                
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value) {
+                        field.style.borderColor = 'var(--danger-color)';
+                        isValid = false;
+                    } else {
+                        field.style.borderColor = '';
+                    }
+                });
+                
+                return isValid;
+            }
+            
+                       // Update product preview
+            function updateProductPreview() {
+                const title = document.getElementById('product_title').value || 'Product Title';
+                const price = document.getElementById('product_price').value || '0.00';
+                const description = document.getElementById('product_discription').value || 'Product description will appear here.';
+                const stock = document.getElementById('product_stock').value || '0';
+                const category = document.getElementById('category').value || 'Category';
+                const brand = document.getElementById('product_brand').value || 'Brand';
+                const size = document.getElementById('product_size').value;
+                const material = document.getElementById('material').value;
+                
+                document.getElementById('previewTitle').textContent = title;
+                document.getElementById('previewPrice').textContent = `$${price}`;
+                document.getElementById('previewDescription').textContent = description;
+                document.getElementById('previewStock').textContent = `${stock} in stock`;
+                document.getElementById('previewCategory').textContent = category;
+                document.getElementById('previewBrand').textContent = brand;
+                
+                // Show/hide optional meta items
+                if (size) {
+                    document.getElementById('previewSizeContainer').style.display = 'flex';
+                    document.getElementById('previewSize').textContent = size;
+                } else {
+                    document.getElementById('previewSizeContainer').style.display = 'none';
+                }
+                
+                if (material) {
+                    document.getElementById('previewMaterialContainer').style.display = 'flex';
+                    document.getElementById('previewMaterial').textContent = material;
+                } else {
+                    document.getElementById('previewMaterialContainer').style.display = 'none';
+                }
+                
+                // Update colors
+                const colorsContainer = document.getElementById('previewColors');
+                colorsContainer.innerHTML = '';
+                
+                for (let i = 1; i <= 4; i++) {
+                    const colorInput = document.getElementById(`product_color${i}`);
+                    if (colorInput && colorInput.value) {
+                        const colorDot = document.createElement('div');
+                        colorDot.className = 'color-dot';
+                        colorDot.style.backgroundColor = colorInput.value;
+                        colorDot.setAttribute('data-color', colorInput.value);
+                        colorDot.addEventListener('click', function() {
+                            document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                        colorsContainer.appendChild(colorDot);
+                    }
+                }
+                
+                // Update images
+                updatePreviewImages();
+            }
+            
+            // Function to update preview images
+            function updatePreviewImages() {
+                const mainImageContainer = document.getElementById('previewMainImage');
+                const thumbnailsContainer = document.getElementById('previewThumbnails');
+                
+                // Clear containers
+                mainImageContainer.innerHTML = '';
+                thumbnailsContainer.innerHTML = '';
+                
+                // Collect all images
+                const imageFiles = [];
+                for (let i = 1; i <= 6; i++) {
+                    const fileInput = document.getElementById(`product_image${i}`);
+                    if (fileInput && fileInput.files && fileInput.files[0]) {
+                        imageFiles.push({
+                            index: i,
+                            file: fileInput.files[0]
+                        });
+                    }
+                }
+                
+                if (imageFiles.length === 0) {
+                    // No images, show placeholder
+                    const placeholder = document.createElement('div');
+                    placeholder.className = 'product-image-placeholder';
+                    placeholder.innerHTML = '<i class="fas fa-image"></i>';
+                    mainImageContainer.appendChild(placeholder);
+                    return;
+                }
+                
+                // Create main image (first image)
+                const mainImg = document.createElement('img');
+                mainImg.src = URL.createObjectURL(imageFiles[0].file);
+                mainImg.alt = 'Product Image';
+                mainImageContainer.appendChild(mainImg);
+                
+                // Create thumbnails for all images
+                imageFiles.forEach((imageData, index) => {
+                    const thumbnail = document.createElement('div');
+                    thumbnail.className = 'product-thumbnail';
+                    if (index === 0) thumbnail.classList.add('active');
+                    
+                    const thumbImg = document.createElement('img');
+                    thumbImg.src = URL.createObjectURL(imageData.file);
+                    thumbImg.alt = `Thumbnail ${index + 1}`;
+                    
+                    thumbnail.appendChild(thumbImg);
+                    thumbnailsContainer.appendChild(thumbnail);
+                    
+                    // Add click event to switch main image
+                    thumbnail.addEventListener('click', function() {
+                        // Update main image
+                        mainImageContainer.innerHTML = '';
+                        const newMainImg = document.createElement('img');
+                        newMainImg.src = thumbImg.src;
+                        newMainImg.alt = 'Product Image';
+                        mainImageContainer.appendChild(newMainImg);
+                        
+                        // Update active thumbnail
+                        document.querySelectorAll('.product-thumbnail').forEach(thumb => {
+                            thumb.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                    });
+                });
+            }
+            
+            // Image preview functionality
+            const imageInputs = document.querySelectorAll('input[type="file"]');
+            imageInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const previewId = 'preview' + this.id.replace('product_image', '');
+                    const previewDiv = document.getElementById(previewId);
+                    if (!previewDiv) return;
+                    
+                    previewDiv.innerHTML = '';
+                    
+                    if (this.files && this.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            previewDiv.appendChild(img);
+                            
+                            // Update preview if we're on the preview step
+                            if (currentStep === 5) {
+                                updateProductPreview();
+                            }
+                        }
+                        reader.readAsDataURL(this.files[0]);
+                    }
+                });
+            });
+            
+            // Add event listeners to form fields for live preview updates
+            const formFields = document.querySelectorAll('#productForm input, #productForm textarea');
+            formFields.forEach(field => {
+                field.addEventListener('input', updateProductPreview);
+            });
+            
+            // Also generate description when key fields change
+            const keyFields = ['product_title', 'product_name', 'category', 'product_brand', 'product_price'];
+            keyFields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.addEventListener('change', function() {
+                        // Only auto-generate if we're on step 2 or about to go to step 2
+                        if (currentStep === 2 || (currentStep === 1 && document.getElementById('product_discription').value === '')) {
+                            generateProductDescription();
+                        }
+                    });
+                }
+            });
+            
+            // Function to get the next pcode
+            async function getNextPcode() {
+                try {
+                    // Try to fetch the current pcode from the local file
+                    const response = await fetch('pcode.txt');
+                    if (response.ok) {
+                        const text = await response.text();
+                        const currentPcode = parseInt(text.trim()) || 0;
+                        return currentPcode + 1;
+                    }
+                } catch (error) {
+                    console.log('Error reading pcode.txt, using default pcode (1)');
+                }
+                return 1; // Default if file doesn't exist or error
+            }
+            
+            // Function to upload image and return its URL
+            async function uploadImage(file) {
+                // Create a FormData object to send the file
+                const formData = new FormData();
+                
+                // Generate a timestamp and safe filename for consistency
+                const timestamp = new Date().getTime();
+                const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                const newFilename = `${timestamp}_${safeName}`;
+                
+                // Rename the file before uploading
+                const renamedFile = new File([file], newFilename, { type: file.type });
+                
+                // Add the file to the form data
+                formData.append('image', renamedFile);
+                
+                try {
+                    // Upload to image upload API
+                    const uploadResponse = await fetch('https://minitzgo.com/upload_image.php', {
+                        method: 'POST',
+                        headers: {
+                            'x-api-key': 'fabfa7809edb9a407986de6180d96fc753769f116bc70b8a7681af98067150ed'
+                        },
+                        body: formData
+                    });
+                    
+                    if (!uploadResponse.ok) {
+                        const errorText = await uploadResponse.text();
+                        console.error('Upload response not OK:', errorText);
+                        throw new Error('Image upload failed - server returned an error');
+                    }
+                    
+                    const uploadResult = await uploadResponse.json();
+                    console.log('Upload result:', uploadResult);
+                    
+                    if (uploadResult.success && uploadResult.url) {
+                        return uploadResult.url;
+                    } else {
+                        throw new Error(uploadResult.error || 'Image upload failed - no URL returned');
+                    }
+                } catch (error) {
+                    console.error('Error uploading image:', error);
+                    throw error; // Re-throw to handle in the calling function
+                }
+            }
+            
+            // Form submission
+            submitProductBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                const statusElement = document.getElementById('statusMessage');
+                statusElement.textContent = 'Uploading product...';
+                statusElement.className = 'status loading';
+                modal.classList.remove('active');
+                
+                try {
+                    // Get the next pcode
+                    const pcode = await getNextPcode();
+                    
+                    // Upload images first
+                    const imageUrls = {};
+                    let hasUploadedAtLeastOneImage = false;
+                    
+                    for (let i = 1; i <= 6; i++) {
+                        const fileInput = document.getElementById(`product_image${i}`);
+                        if (fileInput.files[0]) {
+                            statusElement.textContent = `Uploading image ${i}...`;
+                            try {
+                                const imagePath = await uploadImage(fileInput.files[0]);
+                                imageUrls[`product_image${i}`] = imagePath;
+                                hasUploadedAtLeastOneImage = true;
+                            } catch (error) {
+                                statusElement.textContent = `Error uploading image ${i}: ${error.message}`;
+                                statusElement.className = 'status error';
+                                return;
+                            }
+                        }
+                    }
+                    
+                    if (!hasUploadedAtLeastOneImage) {
+                        statusElement.textContent = 'At least one image is required';
+                        statusElement.className = 'status error';
+                        return;
+                    }
+                    
+                    statusElement.textContent = 'Uploading product data...';
+                    
+                    // Prepare the data to send to the API
+                    const apiData = {
+                        category: document.getElementById('category').value,
+                        offers: document.getElementById('offers').value,
+                        cid: document.getElementById('cid').value,
+                        client_name: document.getElementById('client_name').value,
+                        product_discription: document.getElementById('product_discription').value,
+                        product_title: document.getElementById('product_title').value,
+                        product_name: document.getElementById('product_name').value,
+                        product_brand: document.getElementById('product_brand').value,
+                        product_price: document.getElementById('product_price').value,
+                        product_size: document.getElementById('product_size').value,
+                        material: document.getElementById('material').value,
+                        cordinates: document.getElementById('cordinates').value,
+                        product_stock: document.getElementById('product_stock').value,
+                        product_ratings: document.getElementById('product_ratings').value,
+                        product_color1: document.getElementById('product_color1').value,
+                        product_color2: document.getElementById('product_color2').value,
+                        product_color3: document.getElementById('product_color3').value,
+                        product_color4: document.getElementById('product_color4').value,
+                        pcode: pcode.toString(),
+                        ...imageUrls
+                    };
+                    
+                    // Filter out empty optional fields
+                    Object.keys(apiData).forEach(key => {
+                        if (apiData[key] === '' || apiData[key] === null || apiData[key] === undefined) {
+                            delete apiData[key];
+                        }
+                    });
+                    
+                    // Send to API
+                    const apiKey = 'fabfa7809edb9a407986de6180d96fc753769f116bc70b8a7681af98067150ed';
+                    const endpoint = 'https://minitzgo.com/api/post_products.php';
+                    
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-api-key': apiKey
+                        },
+                        body: JSON.stringify(apiData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        statusElement.textContent = 'Product uploaded successfully!';
+                        statusElement.className = 'status success';
+                        document.getElementById('productForm').reset();
+                        
+                        // Clear image previews
+                        for (let i = 1; i <= 6; i++) {
+                            const previewDiv = document.getElementById(`preview${i}`);
+                            if (previewDiv) previewDiv.innerHTML = '';
+                        }
+                        
+                        // Reset step to first step
+                        currentStep = 1;
+                        updateStepVisibility();
+                    } else {
+                        statusElement.textContent = `Error: ${result.message || 'Unknown error occurred'}`;
+                        statusElement.className = 'status error';
+                    }
+                } catch (error) {
+                    statusElement.textContent = `Error: ${error.message}`;
+                    statusElement.className = 'status error';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

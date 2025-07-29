@@ -1,142 +1,15 @@
-<?php
-// Start session if not already started
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 
-// Check if user is logged in
-if (!isset($_SESSION['cid']) || empty($_SESSION['cid'])) {
-    header('Location: login.php');
-    exit();
-}
-
-// Include authentication check
-require_once 'includes/auth.php';
-// Connect to database using config/db.php ($conn is the DB connection)
-require_once 'config/db.php';
-
-// Fetch billing data
-$invoices = [];
-$totalRevenue = 0;
-$monthlyRevenue = 0;
-$pendingAmount = 0;
-$paidAmount = 0;
-
-if ($conn) {
-    $cid = $_SESSION['cid'];
-    $search = $_GET['search'] ?? '';
-    $status = $_GET['status'] ?? '';
-    $month = $_GET['month'] ?? '';
-    
-    // Get invoices
-    $query = "SELECT o.*, c.name as customer_name, c.email as customer_email 
-              FROM orders o 
-              LEFT JOIN customers c ON o.customer_id = c.id 
-              WHERE o.cid = ?";
-    $params = [$cid];
-    $types = "s";
-    
-    if (!empty($search)) {
-        $query .= " AND (o.order_id LIKE ? OR c.name LIKE ? OR c.email LIKE ?)";
-        $searchTerm = "%$search%";
-        $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
-        $types .= "sss";
-    }
-    
-    if (!empty($status)) {
-        $query .= " AND o.status = ?";
-        $params[] = $status;
-        $types .= "s";
-    }
-    
-    if (!empty($month)) {
-        $query .= " AND DATE_FORMAT(o.created_at, '%Y-%m') = ?";
-        $params[] = $month;
-        $types .= "s";
-    }
-    
-    $query .= " ORDER BY o.created_at DESC LIMIT 50";
-    
-    $stmt = $conn->prepare($query);
-    if ($stmt) {
-        $stmt->bind_param($types, ...$params);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        while ($row = $result->fetch_assoc()) {
-            $invoices[] = $row;
-        }
-        $stmt->close();
-    }
-    
-    // Calculate totals
-    $stmt = $conn->prepare("SELECT SUM(total_amount) as total FROM orders WHERE cid = ?");
-    if ($stmt) {
-        $stmt->bind_param("s", $cid);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $totalRevenue = $row['total'] ?? 0;
-        $stmt->close();
-    }
-    
-    // Monthly revenue
-    $currentMonth = date('Y-m');
-    $stmt = $conn->prepare("SELECT SUM(total_amount) as total FROM orders WHERE cid = ? AND DATE_FORMAT(created_at, '%Y-%m') = ?");
-    if ($stmt) {
-        $stmt->bind_param("ss", $cid, $currentMonth);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $monthlyRevenue = $row['total'] ?? 0;
-        $stmt->close();
-    }
-    
-    // Pending and paid amounts
-    $stmt = $conn->prepare("SELECT SUM(total_amount) as total FROM orders WHERE cid = ? AND status = 'Pending'");
-    if ($stmt) {
-        $stmt->bind_param("s", $cid);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $pendingAmount = $row['total'] ?? 0;
-        $stmt->close();
-    }
-    
-    $stmt = $conn->prepare("SELECT SUM(total_amount) as total FROM orders WHERE cid = ? AND status = 'Delivered'");
-    if ($stmt) {
-        $stmt->bind_param("s", $cid);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $row = $result->fetch_assoc();
-        $paidAmount = $row['total'] ?? 0;
-        $stmt->close();
-    }
-}
-
-// Demo data fallback
-if (empty($invoices)) {
-    $invoices = [
-        ['id' => 1, 'order_id' => 'INV-2024-001', 'customer_name' => 'John Smith', 'customer_email' => 'john@example.com', 'total_amount' => 299.99, 'status' => 'Delivered', 'created_at' => '2024-01-20', 'payment_method' => 'Credit Card'],
-        ['id' => 2, 'order_id' => 'INV-2024-002', 'customer_name' => 'Sarah Johnson', 'customer_email' => 'sarah@example.com', 'total_amount' => 149.50, 'status' => 'Pending', 'created_at' => '2024-01-19', 'payment_method' => 'PayPal'],
-        ['id' => 3, 'order_id' => 'INV-2024-003', 'customer_name' => 'Mike Wilson', 'customer_email' => 'mike@example.com', 'total_amount' => 89.99, 'status' => 'Delivered', 'created_at' => '2024-01-18', 'payment_method' => 'Bank Transfer'],
-        ['id' => 4, 'order_id' => 'INV-2024-004', 'customer_name' => 'Lisa Brown', 'customer_email' => 'lisa@example.com', 'total_amount' => 199.99, 'status' => 'Cancelled', 'created_at' => '2024-01-17', 'payment_method' => 'Credit Card'],
-        ['id' => 5, 'order_id' => 'INV-2024-005', 'customer_name' => 'David Lee', 'customer_email' => 'david@example.com', 'total_amount' => 349.99, 'status' => 'Delivered', 'created_at' => '2024-01-16', 'payment_method' => 'Credit Card']
-    ];
-    $totalRevenue = 1089.46;
-    $monthlyRevenue = 1089.46;
-    $pendingAmount = 149.50;
-    $paidAmount = 739.97;
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minitzgo Store - Billing</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+   <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/chart.min.js"></script>
+ 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script>
         tailwind.config = {
             theme: {
@@ -151,6 +24,130 @@ if (empty($invoices)) {
             }
         }
     </script>
+
+     <script>
+        // Implementation of Clickup
+        (function (){
+            const token = "pk_94881012_G78HRP3S6J0VII22LCUS2RQ8EUDZFB8L" 
+            const list_id = 901609689051;
+
+            const reportedErrors = JSON.parse(localStorage.getItem("reportedErrors")) || [];
+
+            function generateErrorKey(message, file = "", line = "", column = "") {
+                return `${message}-${file}-${line}-${column}`;
+            }
+
+            function storeErrorKey(key) {
+                reportedErrors.push(key)
+                localStorage.setItem("reportedErrors", JSON.stringify(reportedErrors))
+            }
+
+            async function reportToClickUp({ message, filename, lineno, colno, stack }) {
+                const errorKey = generateErrorKey(message, filename, lineno, colno);
+                if (reportedErrors.includes(errorKey)) {
+                    console.log("Duplicate error. Skipping task creation.");
+                    return;
+                }
+
+                storeErrorKey(errorKey);
+
+                const task = {
+                    name: `⚠️ JS Error: ${message}`,
+                    description: `
+                    **File**: \`${filename}\`
+                    **Line**: ${lineno}, Column: ${colno}
+
+                    **Message**:
+                    \`\`\`
+                    ${message}
+                    \`\`\`
+
+                    **Stack**:
+                    \`\`\`js
+                    ${stack || "No stack trace"}
+                    \`\`\`
+                    `.trim(),
+                    priority: 2,
+                    status: "to do"
+                };
+
+                try{
+                    const res = await fetch(`https://api.clickup.com/api/v2/list/${901609689051}/task`, {
+                        method: "POST",
+                        headers: {
+                            Authorization: token,
+                            "Content-Type": "application/json"
+                        }, body: JSON.stringify(task)
+                    })
+
+                    const result = await res.json()
+                    if(res.ok){
+                        console.log("Clickup task created", result.id)
+                    } else{
+                        console.log("Failed to create Clickup task", result)
+                    }
+                } catch(err) {
+                    console.log("Internal server error", err)
+                }   
+            }  
+            
+            // Catch uncaught JS errors (ReferenceError, TypeError, etc.)
+            window.addEventListener("error", function (event) {
+                if (event.target && event.target.tagName) {
+                    // Resource loading error (ERR_NAME_NOT_RESOLVED)
+                    const src = event.target.src || event.target.href || "unknown";
+                    reportToClickUp({
+                        message: `Resource load failure (${event.target.tagName})`,
+                        filename: src,
+                        lineno: 0,
+                        colno: 0,
+                        stack: "Possible ERR_NAME_NOT_RESOLVED or 404"
+                    });
+                } else {
+                    const { message, filename, lineno, colno, error } = event;
+                    reportToClickUp({
+                        message,
+                        filename,
+                        lineno,
+                        colno,
+                        stack: error?.stack || "No stack trace"
+                    });
+                }
+            }, true);
+
+            // Catch unhandled promise rejections
+            window.addEventListener("unhandledrejection", function (event) {
+                const reason = event.reason;
+                const message = reason?.message || JSON.stringify(reason);
+                const stack = reason?.stack || "No stack";
+                reportToClickUp({
+                    message,
+                    filename: "Promise",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            });
+
+            // Override console.error
+            const originalConsoleError = console.error;
+            console.error = function (...args) {
+                originalConsoleError.apply(console, args);
+                const message = args.map(arg => typeof arg === "string" ? arg : JSON.stringify(arg)).join(" ");
+                const stack = new Error().stack;
+                reportToClickUp({
+                    message,
+                    filename: "console.error",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            };
+        })();
+        
+    </script>
+
+
     <style>
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -698,5 +695,7 @@ if (empty($invoices)) {
             transition: all 0.2s;
         }
     </style>
+
+    
 </body>
-</html>
+</html> 

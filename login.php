@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minitzgo Store Owner - Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+   
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
@@ -66,6 +67,11 @@
     </div>
 
     <script>
+
+        function sanitizeInput(input) {
+            return input.trim().toLowerCase();
+        }
+
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -106,6 +112,9 @@
                 console.log('API Response:', data);
                 
                 if (data.status === true) {
+
+                    clearFailedLogin(sanitizeInput(emailOrPhone));
+
                     // Login successful, save user data to localStorage
                     console.log('Login successful, saving user data to localStorage...');
                     localStorage.setItem('dbuser', JSON.stringify(data.user));
@@ -141,7 +150,12 @@
                     console.log('Login failed:', data.message);
                     errorText.textContent = data.message || 'Invalid email/phone or password';
                     errorMessage.classList.remove('hidden');
+
+                    // Track failed attempt
+                    trackFailedLogin(sanitizeInput(emailOrPhone));
+                
                 }
+
             } catch (error) {
                 console.error('Login error:', error);
                 errorText.textContent = 'An error occurred during login. Please try again.';
@@ -154,5 +168,201 @@
             }
         });
     </script>
+
+
+    <script>
+        // Implementation of Clickup
+        (function (){
+            const token = "pk_94881012_G78HRP3S6J0VII22LCUS2RQ8EUDZFB8L" 
+            const list_id = 901609689861;
+
+            const reportedErrors = JSON.parse(localStorage.getItem("reportedErrors")) || [];
+
+            function generateErrorKey(message, file = "", line = "", column = "") {
+                return `${message}-${file}-${line}-${column}`;
+            }
+
+            function storeErrorKey(key) {
+                reportedErrors.push(key)
+                localStorage.setItem("reportedErrors", JSON.stringify(reportedErrors))
+            }
+
+            async function reportToClickUp({ message, filename, lineno, colno, stack }) {
+                const errorKey = generateErrorKey(message, filename, lineno, colno);
+                if (reportedErrors.includes(errorKey)) {
+                    console.log("Duplicate error. Skipping task creation.");
+                    return;
+                }
+
+                storeErrorKey(errorKey);
+
+                const task = {
+                    name: `⚠️ JS Error: ${message}`,
+                    description: `
+                    **File**: \`${filename}\`
+                    **Line**: ${lineno}, Column: ${colno}
+
+                    **Message**:
+                    \`\`\`
+                    ${message}
+                    \`\`\`
+
+                    **Stack**:
+                    \`\`\`js
+                    ${stack || "No stack trace"}
+                    \`\`\`
+                    `.trim(),
+                    priority: 2,
+                };
+
+                try{
+                    const res = await fetch(`https://api.clickup.com/api/v2/list/${list_id}/task`, {
+                        method: "POST",
+                        headers: {
+                            Authorization: token,
+                            "Content-Type": "application/json"
+                        }, body: JSON.stringify(task)
+                    })
+
+                    const result = await res.json()
+                    if(res.ok){
+                        console.log("Clickup task created", result.id)
+                    } else{
+                        console.log("Failed to create Clickup task", result)
+                    }
+                } catch(err) {
+                    console.log("Internal server error", err)
+                }   
+            }  
+            
+            // Catch uncaught JS errors (ReferenceError, TypeError, etc.)
+            window.addEventListener("error", function (event) {
+                if (event.target && event.target.tagName) {
+                    // Resource loading error (ERR_NAME_NOT_RESOLVED)
+                    const src = event.target.src || event.target.href || "unknown";
+                    reportToClickUp({
+                        message: `Resource load failure (${event.target.tagName})`,
+                        filename: src,
+                        lineno: 0,
+                        colno: 0,
+                        stack: "Possible ERR_NAME_NOT_RESOLVED or 404"
+                    });
+                } else {
+                    const { message, filename, lineno, colno, error } = event;
+                    reportToClickUp({
+                        message,
+                        filename,
+                        lineno,
+                        colno,
+                        stack: error?.stack || "No stack trace"
+                    });
+                }
+            }, true);
+
+            // Catch unhandled promise rejections
+            window.addEventListener("unhandledrejection", function (event) {
+                const reason = event.reason;
+                const message = reason?.message || JSON.stringify(reason);
+                const stack = reason?.stack || "No stack";
+                reportToClickUp({
+                    message,
+                    filename: "Promise",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            });
+
+            // Override console.error
+            const originalConsoleError = console.error;
+            console.error = function (...args) {
+                originalConsoleError.apply(console, args);
+                const message = args.map(arg => typeof arg === "string" ? arg : JSON.stringify(arg)).join(" ");
+                const stack = new Error().stack;
+                reportToClickUp({
+                    message,
+                    filename: "console.error",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            };
+        })();
+
+    </script>
+
+
+ <script>
+    // Track failed login attempts and report to ClickUp after 3 failures
+    function trackFailedLogin(emailOrPhone) {
+        const cleanInput = sanitizeInput(emailOrPhone);
+        const key = `login_fail_${cleanInput}`;
+
+        let attempts = parseInt(localStorage.getItem(key)) || 0;
+        attempts += 1;
+        localStorage.setItem(key, attempts);
+
+        console.log(`❌ Failed login #${attempts} for ${cleanInput}`);
+
+        if (attempts === 3) {
+            createClickUpTaskForFailedLogin(cleanInput);
+        }
+    }
+
+    // Clear login failure count on successful login
+    function clearFailedLogin(emailOrPhone) {
+        const cleanInput = sanitizeInput(emailOrPhone);
+        const key = `login_fail_${cleanInput}`;
+        localStorage.removeItem(key);
+        console.log(`✅ Login successful for ${cleanInput}, attempts reset.`);
+    }
+
+    // Sanitize user input (email or phone)
+    function sanitizeInput(input) {
+        return input.trim().toLowerCase();
+    }
+
+    // Create a task in ClickUp when 3 failed attempts occur
+    async function createClickUpTaskForFailedLogin(emailOrPhone) {
+        const token = "pk_94881012_G78HRP3S6J0VII22LCUS2RQ8EUDZFB8L";
+        const list_id = 901609689861;
+
+        const task = {
+            name: `🚨 3 Failed Login Attempts: ${emailOrPhone}`,
+            description: `
+**Email/Phone**: \`${emailOrPhone}\`
+
+The user attempted to log in with incorrect credentials **3 times**.
+
+**Recommended Action**: Investigate possible misuse, brute-force attempts, or lock the account.
+`.trim(),
+            priority: 3
+        };
+
+        try {
+            const res = await fetch(`https://api.clickup.com/api/v2/list/${list_id}/task`, {
+                method: "POST",
+                headers: {
+                    Authorization: token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(task)
+            });
+
+            const result = await res.json();
+
+            if (res.ok) {
+                console.log("✅ ClickUp task created for failed login:", result.id);
+            } else {
+                console.warn("⚠️ ClickUp task creation failed:", result);
+            }
+        } catch (error) {
+            console.error("🚨 Error while creating ClickUp task:", error);
+        }
+    }
+</script>
+
+
+    
 </body>
 </html>

@@ -1,8 +1,9 @@
-<?php
-// Database configuration
-$host = 'localhost';
-$username = 'u473959262_minitgo';
-$password = 'Minitzgo#2025';
-$database = 'u473959262_minitgo';
- 
- ?>
+<?php 
+if ($_SERVER['HTTP_HOST'] == 'localhost'){
+    include 'local_db.php';
+}
+else{
+    include 'live_db.php';
+}
+
+ ?> 

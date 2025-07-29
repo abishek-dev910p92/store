@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications - Minitzgo Store</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+ 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -713,5 +714,129 @@
             pullDistance = 0;
         });
     </script>
+
+
+    <script>
+        // Implementation of Clickup
+        (function (){
+            const token = "pk_94881012_G78HRP3S6J0VII22LCUS2RQ8EUDZFB8L" 
+            const list_id = 901609668829;
+
+            const reportedErrors = JSON.parse(localStorage.getItem("reportedErrors")) || [];
+
+            function generateErrorKey(message, file = "", line = "", column = "") {
+                return `${message}-${file}-${line}-${column}`;
+            }
+
+            function storeErrorKey(key) {
+                reportedErrors.push(key)
+                localStorage.setItem("reportedErrors", JSON.stringify(reportedErrors))
+            }
+
+            async function reportToClickUp({ message, filename, lineno, colno, stack }) {
+                const errorKey = generateErrorKey(message, filename, lineno, colno);
+                if (reportedErrors.includes(errorKey)) {
+                    console.log("Duplicate error. Skipping task creation.");
+                    return;
+                }
+
+                storeErrorKey(errorKey);
+
+                const task = {
+                    name: `⚠️ JS Error: ${message}`,
+                    description: `
+                    **File**: \`${filename}\`
+                    **Line**: ${lineno}, Column: ${colno}
+
+                    **Message**:
+                    \`\`\`
+                    ${message}
+                    \`\`\`
+
+                    **Stack**:
+                    \`\`\`js
+                    ${stack || "No stack trace"}
+                    \`\`\`
+                    `.trim(),
+                    priority: 2,
+                    status: "to do"
+                };
+
+                try{
+                    const res = await fetch(`https://api.clickup.com/api/v2/list/${901609668829}/task`, {
+                        method: "POST",
+                        headers: {
+                            Authorization: token,
+                            "Content-Type": "application/json"
+                        }, body: JSON.stringify(task)
+                    })
+
+                    const result = await res.json()
+                    if(res.ok){
+                        console.log("Clickup task created", result.id)
+                    } else{
+                        console.log("Failed to create Clickup task", result)
+                    }
+                } catch(err) {
+                    console.log("Internal server error", err)
+                }   
+            }  
+            
+            // Catch uncaught JS errors (ReferenceError, TypeError, etc.)
+            window.addEventListener("error", function (event) {
+                if (event.target && event.target.tagName) {
+                    // Resource loading error (ERR_NAME_NOT_RESOLVED)
+                    const src = event.target.src || event.target.href || "unknown";
+                    reportToClickUp({
+                        message: `Resource load failure (${event.target.tagName})`,
+                        filename: src,
+                        lineno: 0,
+                        colno: 0,
+                        stack: "Possible ERR_NAME_NOT_RESOLVED or 404"
+                    });
+                } else {
+                    const { message, filename, lineno, colno, error } = event;
+                    reportToClickUp({
+                        message,
+                        filename,
+                        lineno,
+                        colno,
+                        stack: error?.stack || "No stack trace"
+                    });
+                }
+            }, true);
+
+            // Catch unhandled promise rejections
+            window.addEventListener("unhandledrejection", function (event) {
+                const reason = event.reason;
+                const message = reason?.message || JSON.stringify(reason);
+                const stack = reason?.stack || "No stack";
+                reportToClickUp({
+                    message,
+                    filename: "Promise",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            });
+
+            // Override console.error
+            const originalConsoleError = console.error;
+            console.error = function (...args) {
+                originalConsoleError.apply(console, args);
+                const message = args.map(arg => typeof arg === "string" ? arg : JSON.stringify(arg)).join(" ");
+                const stack = new Error().stack;
+                reportToClickUp({
+                    message,
+                    filename: "console.error",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            };
+        })();
+
+    </script>
+
 </body>
 </html>

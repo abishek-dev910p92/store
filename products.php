@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minitzgo Store - Products</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+  
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -203,13 +204,13 @@
                     <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-4 text-white shadow-lg">
                         <div class="text-center">
                             <p class="text-purple-100 text-sm font-medium">Total Products</p>
-                            <p class="text-2xl font-bold">156</p>
+                            <p class="text-2xl font-bold total-products-count">0</p>
                         </div>
                     </div>
                     <div class="bg-gradient-to-r from-pink-500 to-pink-600 rounded-2xl p-4 text-white shadow-lg">
                         <div class="text-center">
                             <p class="text-pink-100 text-sm font-medium">Low Stock</p>
-                            <p class="text-2xl font-bold">8</p>
+                            <p class="text-2xl font-bold" id="low-stock-count">0</p>
                         </div>
                     </div>
                 </div>
@@ -223,117 +224,15 @@
                 </div>
 
                 <!-- Products Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                    <!-- Product Card 1 -->
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-all duration-300">
-                        <div class="relative">
-                            <img src="https://via.placeholder.com/300x200?text=Wireless+Headphones" alt="Wireless Headphones" class="w-full h-48 object-cover">
-                            <div class="absolute top-3 right-3">
-                                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">In Stock</span>
-                            </div>
+                <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
+                    <!-- Products will be dynamically loaded here -->
+                    <div class="col-span-full text-center py-10">
+                        <div class="animate-pulse flex flex-col items-center">
+                            <div class="rounded-full bg-gray-200 h-12 w-12 mb-4"></div>
+                            <div class="h-4 bg-gray-200 rounded w-48 mb-2"></div>
+                            <div class="h-3 bg-gray-200 rounded w-32"></div>
                         </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 mb-2">Wireless Headphones</h3>
-                            <p class="text-sm text-gray-600 mb-3 line-clamp-2">High-quality wireless headphones with noise cancellation</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-lg font-bold text-purple-600">$99.99</span>
-                                <span class="text-sm text-gray-500">Stock: 25</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors">
-                                    <i class="fas fa-edit mr-1"></i>
-                                    Edit
-                                </button>
-                                <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors">
-                                    <i class="fas fa-trash mr-1"></i>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Card 2 -->
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-all duration-300" style="animation-delay: 0.1s">
-                        <div class="relative">
-                            <img src="https://via.placeholder.com/300x200?text=Smart+Watch" alt="Smart Watch" class="w-full h-48 object-cover">
-                            <div class="absolute top-3 right-3">
-                                <span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Low Stock</span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 mb-2">Smart Watch</h3>
-                            <p class="text-sm text-gray-600 mb-3 line-clamp-2">Feature-rich smartwatch with health monitoring</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-lg font-bold text-purple-600">$199.99</span>
-                                <span class="text-sm text-gray-500">Stock: 5</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors">
-                                    <i class="fas fa-edit mr-1"></i>
-                                    Edit
-                                </button>
-                                <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors">
-                                    <i class="fas fa-trash mr-1"></i>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Card 3 -->
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-all duration-300" style="animation-delay: 0.2s">
-                        <div class="relative">
-                            <img src="https://via.placeholder.com/300x200?text=Coffee+Mug" alt="Coffee Mug" class="w-full h-48 object-cover">
-                            <div class="absolute top-3 right-3">
-                                <span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">In Stock</span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 mb-2">Premium Coffee Mug</h3>
-                            <p class="text-sm text-gray-600 mb-3 line-clamp-2">Premium ceramic coffee mug with elegant design</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-lg font-bold text-purple-600">$12.99</span>
-                                <span class="text-sm text-gray-500">Stock: 50</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors">
-                                    <i class="fas fa-edit mr-1"></i>
-                                    Edit
-                                </button>
-                                <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors">
-                                    <i class="fas fa-trash mr-1"></i>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Product Card 4 -->
-                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-all duration-300" style="animation-delay: 0.3s">
-                        <div class="relative">
-                            <img src="https://via.placeholder.com/300x200?text=Laptop+Stand" alt="Laptop Stand" class="w-full h-48 object-cover">
-                            <div class="absolute top-3 right-3">
-                                <span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Out of Stock</span>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 mb-2">Adjustable Laptop Stand</h3>
-                            <p class="text-sm text-gray-600 mb-3 line-clamp-2">Ergonomic laptop stand with adjustable height</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-lg font-bold text-purple-600">$49.99</span>
-                                <span class="text-sm text-gray-500">Stock: 0</span>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors">
-                                    <i class="fas fa-edit mr-1"></i>
-                                    Edit
-                                </button>
-                                <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors">
-                                    <i class="fas fa-trash mr-1"></i>
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
+                        <p class="text-gray-500 mt-4">Loading products...</p>
                     </div>
                 </div>
             </div>
@@ -379,48 +278,148 @@
                         </button>
                     </div>
                     
-                    <form class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
-                            <input type="text" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product name">
+                    <form id="add-product-form" class="space-y-4">
+                        <div id="upload-status" class="hidden bg-blue-100 text-blue-700 p-3 rounded-lg mb-4">
+                            <p id="status-message">Uploading product...</p>
                         </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                            <textarea class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" rows="3" placeholder="Enter product description"></textarea>
+
+                        <!-- Store & Client Info (Auto-filled) -->
+                        <div class="bg-gray-50 p-3 rounded-lg mb-2">
+                            <p class="text-sm text-gray-500 mb-2">Store Information (Auto-filled)</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Client ID</label>
+                                    <input type="text" id="cid" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Client Name</label>
+                                    <input type="text" id="client_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Coordinates</label>
+                                    <input type="text" id="cordinates" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Product Details -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Product Title</label>
+                                <input type="text" id="product_title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product title">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                                <input type="text" id="product_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product name">
+                            </div>
+                            <div class="col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                                <textarea id="product_discription" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" rows="3" placeholder="Enter product description"></textarea>
+                            </div>
                         </div>
                         
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Price</label>
-                                <input type="number" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0.00">
+                                <input type="number" id="product_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0.00">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
-                                <input type="number" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0">
+                                <input type="number" id="product_stock" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                    <option value="">Select Category</option>
+                                    <option value="electronics">Electronics</option>
+                                    <option value="clothing">Clothing</option>
+                                    <option value="home">Home & Kitchen</option>
+                                    <option value="beauty">Beauty</option>
+                                    <option value="toys">Toys</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="grocery">Grocery</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                                <input type="text" id="product_brand" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter brand name">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Size</label>
+                                <input type="text" id="product_size" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. S, M, L, XL">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Material</label>
+                                <input type="text" id="material" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Cotton, Plastic">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Ratings</label>
+                                <input type="number" id="product_ratings" min="0" max="5" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0.0 - 5.0">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Offers</label>
+                                <input type="text" id="offers" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. 10% OFF">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 1</label>
+                                <input type="text" id="product_color1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Red">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 2</label>
+                                <input type="text" id="product_color2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Blue">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 3</label>
+                                <input type="text" id="product_color3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Green">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 4</label>
+                                <input type="text" id="product_color4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Yellow">
                             </div>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                            <select class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                <option value="">Select Category</option>
-                                <option value="electronics">Electronics</option>
-                                <option value="clothing">Clothing</option>
-                                <option value="home">Home & Kitchen</option>
-                            </select>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Image</label>
-                            <input type="file" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
+                            <div class="grid grid-cols-2 gap-3 mb-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 1 (Main)</label>
+                                    <input type="file" id="product_image1" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 2</label>
+                                    <input type="file" id="product_image2" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 3</label>
+                                    <input type="file" id="product_image3" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 4</label>
+                                    <input type="file" id="product_image4" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                </div>
+                            </div>
                         </div>
                         
                         <div class="flex space-x-3 pt-4">
                             <button type="button" id="cancel-btn" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors">
                                 Cancel
                             </button>
-                            <button type="submit" class="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transition-all duration-200">
+                            <button type="submit" id="submit-product" class="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transition-all duration-200">
                                 Add Product
                             </button>
                         </div>
@@ -431,6 +430,134 @@
     </div>
 
     <script>
+        console.log('Products page JavaScript loaded');
+        // Global variable to store products
+        let allProducts = [];
+        let filteredProducts = [];
+        
+        // Fetch products from API
+        async function fetchProducts() {
+            try {
+                // Get client ID from localStorage or use default
+                const userData = JSON.parse(localStorage.getItem('dbuser')) || {};
+                const cid = userData.cid || '183287';
+                
+                const response = await fetch('https://minitzgo.com/api/fetch_products.php', { 
+                    method: "POST", 
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        "x-api-key": "2637338988c5f3bbf8d4934dc458b966a21a1d2d56931390f97ce7c4641a2677" 
+                    }, 
+                    body: JSON.stringify({ 
+                        'cid': cid 
+                    }) 
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                if (data && data.data) {
+                    allProducts = data.data;
+                    filteredProducts = [...allProducts];
+                    renderProducts(filteredProducts);
+                    updateProductCount(data.count);
+                }
+            } catch (error) {
+                console.error('Error fetching products:', error);
+            }
+        }
+        
+        // Update product count in the UI
+        function updateProductCount(count) {
+            const totalProductsElements = document.querySelectorAll('.total-products-count');
+            totalProductsElements.forEach(el => {
+                el.textContent = count || 0;
+            });
+            
+            // Update low stock count
+            const lowStockCount = allProducts.filter(product => product.product_stock > 0 && product.product_stock <= 10).length;
+            const lowStockElement = document.getElementById('low-stock-count');
+            if (lowStockElement) {
+                lowStockElement.textContent = lowStockCount;
+            }
+        }
+        
+        // Render products to the UI
+        function renderProducts(products) {
+            const productsContainer = document.getElementById('products-container');
+            if (!productsContainer) return;
+            
+            productsContainer.innerHTML = '';
+            
+            if (products.length === 0) {
+                productsContainer.innerHTML = `
+                    <div class="col-span-full text-center py-10">
+                        <p class="text-gray-500">No products found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            products.forEach((product, index) => {
+                const stockStatus = product.product_stock > 10 ? 
+                    '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">In Stock</span>' :
+                    product.product_stock > 0 ?
+                    '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Low Stock</span>' :
+                    '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Out of Stock</span>';
+                
+                const productCard = document.createElement('div');
+                productCard.className = 'bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-all duration-300';
+                productCard.style.animationDelay = `${index * 0.1}s`;
+                
+                productCard.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.product_image1}" alt="${product.product_name}" class="w-full h-48 object-cover">
+                        <div class="absolute top-3 right-3">
+                            ${stockStatus}
+                        </div>
+                         <div class="absolute top-3 left-3 px-3 bg-red-600 text-white text-xxxt-semibold rounded-full"> 
+                           
+                            
+                            PID:${product.pcode}
+                         </div>
+                    </div>  
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-900 mb-2">${product.product_name}</h3>
+                        
+                       
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${product.product_discription}</p>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-lg font-bold text-purple-600">₹${product.product_price}</span>
+                            <span class="text-sm text-gray-500">Stock: ${product.product_stock}</span>
+                            <span class="text-xs text-gray-500">${product.product_brand}</span>
+                        </div>
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category}</span>
+                            <span class="text-sm text-gray-500">Added on: ${new Date(product.date).toLocaleDateString()}</span>
+                           <b> <span class="text-sm text-blue-500 text-xxxt-bold">Size: ${product.product_size}</span></b>
+
+                        </div>
+                        <div class="flex space-x-2">
+                            <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors" data-pid="${product.pid}">
+                                <i class="fas fa-edit mr-1"></i>
+                                Edit
+                            </button>
+                            <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors" data-pid="${product.pid}">
+                                <i class="fas fa-trash mr-1"></i>
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                productsContainer.appendChild(productCard);
+            });
+        }
+        
         // Filter functionality
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -444,16 +571,36 @@
                 this.classList.add('active', 'bg-purple-500', 'text-white');
                 this.classList.remove('bg-gray-200', 'text-gray-700');
                 
-                // Filter logic would go here
+                // Filter logic
                 const category = this.dataset.category;
                 console.log('Filtering by category:', category);
+                
+                if (category === 'all') {
+                    filteredProducts = [...allProducts];
+                } else {
+                    filteredProducts = allProducts.filter(product => 
+                        product.category.toLowerCase() === category.toLowerCase());
+                }
+                
+                renderProducts(filteredProducts);
             });
         });
 
         // Search functionality
         function handleSearch(searchTerm) {
             console.log('Searching for:', searchTerm);
-            // Search logic would go here
+            if (!searchTerm) {
+                filteredProducts = [...allProducts];
+            } else {
+                const term = searchTerm.toLowerCase();
+                filteredProducts = allProducts.filter(product => 
+                    product.product_name.toLowerCase().includes(term) || 
+                    product.product_discription.toLowerCase().includes(term) ||
+                    product.product_brand.toLowerCase().includes(term) ||
+                    product.category.toLowerCase().includes(term)
+                );
+            }
+            renderProducts(filteredProducts);
         }
 
         document.getElementById('mobile-search')?.addEventListener('input', function(e) {
@@ -463,28 +610,101 @@
         document.getElementById('desktop-search')?.addEventListener('input', function(e) {
             handleSearch(e.target.value);
         });
-
-        // Modal functionality
-        const modal = document.getElementById('add-product-modal');
-        const addProductBtn = document.getElementById('add-product-btn');
-        const mobileAddProductBtn = document.getElementById('mobile-add-product-btn');
-        const closeModalBtn = document.getElementById('close-modal');
-        const cancelBtn = document.getElementById('cancel-btn');
-
+        
+        // Modal functionality - define functions first
         function openModal() {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            const modal = document.getElementById('add-product-modal');
+            if (modal) {
+                console.log('Opening modal');
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                fillFormFromLocalStorage();
+            } else {
+                console.error('Modal element not found when trying to open');
+            }
         }
 
         function closeModal() {
-            modal.classList.add('hidden');
-            document.body.style.overflow = 'auto';
+            const modal = document.getElementById('add-product-modal');
+            if (modal) {
+                console.log('Closing modal');
+                modal.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                const form = document.getElementById('add-product-form');
+                if (form) form.reset();
+                const uploadStatus = document.getElementById('upload-status');
+                if (uploadStatus) uploadStatus.classList.add('hidden');
+            } else {
+                console.error('Modal element not found when trying to close');
+            }
         }
 
-        addProductBtn?.addEventListener('click', openModal);
-        mobileAddProductBtn?.addEventListener('click', openModal);
-        closeModalBtn?.addEventListener('click', closeModal);
-        cancelBtn?.addEventListener('click', closeModal);
+        // Initialize everything when DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            
+            // Initialize products
+            fetchProducts();
+            initializeAddProductForm();
+            
+            // Get modal elements
+            const modal = document.getElementById('add-product-modal');
+            const addProductBtn = document.getElementById('add-product-btn');
+            const mobileAddProductBtn = document.getElementById('mobile-add-product-btn');
+            const closeModalBtn = document.getElementById('close-modal');
+            const cancelBtn = document.getElementById('cancel-btn');
+            
+            // Add debug logging
+            console.log('Modal elements:', { 
+                modal: modal, 
+                addProductBtn: addProductBtn, 
+                mobileAddProductBtn: mobileAddProductBtn, 
+                closeModalBtn: closeModalBtn, 
+                cancelBtn: cancelBtn 
+            });
+            
+            // Set up event listeners
+            if (addProductBtn) {
+                console.log('Adding click event to desktop Add Product button');
+                addProductBtn.addEventListener('click', function(e) {
+                    console.log('Desktop Add Product button clicked');
+                    openModal();
+                });
+            } else {
+                console.error('Desktop Add Product button not found');
+            }
+            
+            if (mobileAddProductBtn) {
+                console.log('Adding click event to mobile Add Product button');
+                mobileAddProductBtn.addEventListener('click', function(e) {
+                    console.log('Mobile Add Product button clicked');
+                    openModal();
+                });
+            } else {
+                console.error('Mobile Add Product button not found');
+            }
+            
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', closeModal);
+            } else {
+                console.error('Close modal button not found');
+            }
+            
+            if (cancelBtn) {
+                cancelBtn.addEventListener('click', closeModal);
+            } else {
+                console.error('Cancel button not found');
+            }
+            
+            // Close modal when clicking outside
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
+                });
+            }
+        });
 
         // Close modal when clicking outside
         modal?.addEventListener('click', function(e) {
@@ -507,6 +727,309 @@
                 }, 100);
             }
         });
+
+        // Function to upload image and return its URL
+        async function uploadImage(file) {
+            // Create a FormData object to send the file
+            const formData = new FormData();
+            
+            // Generate a timestamp and safe filename for consistency
+            const timestamp = new Date().getTime();
+            const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+            const newFilename = `${timestamp}_${safeName}`;
+            
+            // Rename the file before uploading
+            const renamedFile = new File([file], newFilename, { type: file.type });
+            
+            // Add the file to the form data
+            formData.append('image', renamedFile);
+            
+            try {
+                // Upload to image upload API
+                const uploadResponse = await fetch('https://minitzgo.com/upload_image.php', {
+                    method: 'POST',
+                    headers: {
+                        'x-api-key': 'fabfa7809edb9a407986de6180d96fc753769f116bc70b8a7681af98067150ed'
+                    },
+                    body: formData
+                });
+                
+                if (!uploadResponse.ok) {
+                    const errorText = await uploadResponse.text();
+                    console.error('Upload response not OK:', errorText);
+                    throw new Error('Image upload failed - server returned an error');
+                }
+                
+                const uploadResult = await uploadResponse.json();
+                console.log('Upload result:', uploadResult);
+                
+                if (uploadResult.success && uploadResult.url) {
+                    return uploadResult.url;
+                } else {
+                    throw new Error('Image upload failed - no URL returned');
+                }
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                throw error;
+            }
+        }
+
+        // Function to initialize the add product form
+        function initializeAddProductForm() {
+            const form = document.getElementById('add-product-form');
+            const statusElement = document.getElementById('status-message');
+            const uploadStatusDiv = document.getElementById('upload-status');
+
+            if (!form) return;
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Show upload status
+                statusElement.textContent = 'Uploading product...';
+                uploadStatusDiv.classList.remove('hidden');
+                uploadStatusDiv.classList.remove('bg-red-100', 'text-red-700');
+                uploadStatusDiv.classList.add('bg-blue-100', 'text-blue-700');
+                
+                try {
+                    // Generate a random product code
+                    const pcode = Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+                    
+                    // Upload images if provided
+                    const imageUrls = {};
+                    const imageFields = ['product_image1', 'product_image2', 'product_image3', 'product_image4'];
+                    
+                    for (let i = 0; i < imageFields.length; i++) {
+                        const fileInput = document.getElementById(imageFields[i]);
+                        if (fileInput && fileInput.files && fileInput.files[0]) {
+                            statusElement.textContent = `Uploading image ${i+1}...`;
+                            try {
+                                const url = await uploadImage(fileInput.files[0]);
+                                imageUrls[imageFields[i]] = url;
+                            } catch (error) {
+                                console.error(`Error uploading ${imageFields[i]}:`, error);
+                                statusElement.textContent = `Error uploading image ${i+1}. Please try again.`;
+                                uploadStatusDiv.classList.remove('bg-blue-100', 'text-blue-700');
+                                uploadStatusDiv.classList.add('bg-red-100', 'text-red-700');
+                                return;
+                            }
+                        }
+                    }
+                    
+                    // Prepare API data
+                    const apiData = {
+                        category: document.getElementById('category').value,
+                        offers: document.getElementById('offers').value,
+                        cid: document.getElementById('cid').value,
+                        client_name: document.getElementById('client_name').value,
+                        product_discription: document.getElementById('product_discription').value,
+                        product_title: document.getElementById('product_title').value,
+                        product_name: document.getElementById('product_name').value,
+                        product_brand: document.getElementById('product_brand').value,
+                        product_price: document.getElementById('product_price').value,
+                        product_size: document.getElementById('product_size').value,
+                        material: document.getElementById('material').value,
+                        cordinates: document.getElementById('cordinates').value,
+                        product_stock: document.getElementById('product_stock').value,
+                        product_ratings: document.getElementById('product_ratings').value,
+                        product_color1: document.getElementById('product_color1').value,
+                        product_color2: document.getElementById('product_color2').value,
+                        product_color3: document.getElementById('product_color3').value,
+                        product_color4: document.getElementById('product_color4').value,
+                        pcode: pcode.toString(),
+                        ...imageUrls
+                    };
+                    
+                    // Send to API
+                    statusElement.textContent = 'Submitting product data...';
+                    const apiKey = 'fabfa7809edb9a407986de6180d96fc753769f116bc70b8a7681af98067150ed';
+                    const endpoint = 'https://minitzgo.com/api/post_products.php';
+                    
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-api-key': apiKey
+                        },
+                        body: JSON.stringify(apiData)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (response.ok) {
+                        statusElement.textContent = 'Product uploaded successfully!';
+                        uploadStatusDiv.classList.remove('bg-blue-100', 'text-blue-700');
+                        uploadStatusDiv.classList.add('bg-green-100', 'text-green-700');
+                        
+                        // Reset form and refresh products after 2 seconds
+                        setTimeout(() => {
+                            form.reset();
+                            closeModal();
+                            fetchProducts(); // Refresh products list
+                        }, 2000);
+                    } else {
+                        throw new Error(result.message || 'Failed to upload product');
+                    }
+                } catch (error) {
+                    console.error('Error adding product:', error);
+                    statusElement.textContent = error.message || 'An error occurred. Please try again.';
+                    uploadStatusDiv.classList.remove('bg-blue-100', 'text-blue-700');
+                    uploadStatusDiv.classList.add('bg-red-100', 'text-red-700');
+                }
+            });
+        }
+
+        // Function to fill form fields from localStorage
+        function fillFormFromLocalStorage() {
+            try {
+                const userData = JSON.parse(localStorage.getItem('dbuser')) || {};
+                
+                // Fill client information fields
+                if (userData.cid) {
+                    document.getElementById('cid').value = userData.cid;
+                }
+                
+                if (userData.first_name && userData.last_name) {
+                    document.getElementById('client_name').value = `${userData.first_name} ${userData.last_name}`;
+                } else if (userData.name) {
+                    document.getElementById('client_name').value = userData.name;
+                }
+                
+                // Try to get coordinates from localStorage
+                const coordinates = localStorage.getItem('storeCoordinates') || '';
+                document.getElementById('cordinates').value = coordinates;
+                
+                console.log('Form filled with user data:', userData);
+            } catch (error) {
+                console.error('Error filling form from localStorage:', error);
+            }
+        }
     </script>
+
+
+    <script>
+        // Implementation of Clickup
+        (function (){
+            const token = "pk_94881012_G78HRP3S6J0VII22LCUS2RQ8EUDZFB8L" 
+            const list_id = 901609666078;
+
+            const reportedErrors = JSON.parse(localStorage.getItem("reportedErrors")) || [];
+
+            function generateErrorKey(message, file = "", line = "", column = "") {
+                return `${message}-${file}-${line}-${column}`;
+            }
+
+            function storeErrorKey(key) {
+                reportedErrors.push(key)
+                localStorage.setItem("reportedErrors", JSON.stringify(reportedErrors))
+            }
+
+            async function reportToClickUp({ message, filename, lineno, colno, stack }) {
+                const errorKey = generateErrorKey(message, filename, lineno, colno);
+                if (reportedErrors.includes(errorKey)) {
+                    console.log("Duplicate error. Skipping task creation.");
+                    return;
+                }
+
+                storeErrorKey(errorKey);
+
+                const task = {
+                    name: `⚠️ JS Error: ${message}`,
+                    description: `
+                    **File**: \`${filename}\`
+                    **Line**: ${lineno}, Column: ${colno}
+
+                    **Message**:
+                    \`\`\`
+                    ${message}
+                    \`\`\`
+
+                    **Stack**:
+                    \`\`\`js
+                    ${stack || "No stack trace"}
+                    \`\`\`
+                    `.trim(),
+                    priority: 2,
+                    status: "to do"
+                };
+
+                try{
+                    const res = await fetch(`https://api.clickup.com/api/v2/list/${901609666078}/task`, {
+                        method: "POST",
+                        headers: {
+                            Authorization: token,
+                            "Content-Type": "application/json"
+                        }, body: JSON.stringify(task)
+                    })
+
+                    const result = await res.json()
+                    if(res.ok){
+                        console.log("Clickup task created", result.id)
+                    } else{
+                        console.log("Failed to create Clickup task", result)
+                    }
+                } catch(err) {
+                    console.log("Internal server error", err)
+                }   
+            }  
+            
+            // Catch uncaught JS errors (ReferenceError, TypeError, etc.)
+            window.addEventListener("error", function (event) {
+                if (event.target && event.target.tagName) {
+                    // Resource loading error (ERR_NAME_NOT_RESOLVED)
+                    const src = event.target.src || event.target.href || "unknown";
+                    reportToClickUp({
+                        message: `Resource load failure (${event.target.tagName})`,
+                        filename: src,
+                        lineno: 0,
+                        colno: 0,
+                        stack: "Possible ERR_NAME_NOT_RESOLVED or 404"
+                    });
+                } else {
+                    const { message, filename, lineno, colno, error } = event;
+                    reportToClickUp({
+                        message,
+                        filename,
+                        lineno,
+                        colno,
+                        stack: error?.stack || "No stack trace"
+                    });
+                }
+            }, true);
+
+            // Catch unhandled promise rejections
+            window.addEventListener("unhandledrejection", function (event) {
+                const reason = event.reason;
+                const message = reason?.message || JSON.stringify(reason);
+                const stack = reason?.stack || "No stack";
+                reportToClickUp({
+                    message,
+                    filename: "Promise",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            });
+
+            // Override console.error
+            const originalConsoleError = console.error;
+            console.error = function (...args) {
+                originalConsoleError.apply(console, args);
+                const message = args.map(arg => typeof arg === "string" ? arg : JSON.stringify(arg)).join(" ");
+                const stack = new Error().stack;
+                reportToClickUp({
+                    message,
+                    filename: "console.error",
+                    lineno: 0,
+                    colno: 0,
+                    stack
+                });
+            };
+        })();
+
+        
+
+    </script>
+
 </body>
 </html>

@@ -1,0 +1,14 @@
+{
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.10",
+    "tailwindcss": "^4.1.10"
+  },
+  "scripts": {
+    "dev": "tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --watch",
+    "tailwind": "tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --watch",
+    "build-css": "tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --watch",
+    "build": "tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --minify",
+    "build-css-prod": "tailwindcss -i ./assets/css/input.css -o ./assets/css/style.css --minify",
+    "start": "php -S localhost:8000"
+  }
+}
