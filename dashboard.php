@@ -151,7 +151,7 @@ if (!isset($_SESSION['cid'])) {
             <div class="p-4 md:p-6">
                 <div class="mb-6 animate-fade-in">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome back, <?php echo $_SESSION['name']; ?>!👋</h1>
-                    <p class="text-gray-600">Here's what's happening with your store today.</p>
+                    <p class="text-gray-600" >Here's what's happening with your store tomorrow.</p>
                 </div>
 
                 <!-- Stats Cards -->
