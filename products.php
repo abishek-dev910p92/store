@@ -520,10 +520,10 @@
                         <div class="absolute top-3 right-3">
                             ${stockStatus}
                         </div>
-                         <div class="absolute top-3 left-3 px-3 bg-red-600 text-white text-xxxt-semibold rounded-full"> 
+                         <div class="absolute top-3 left-3 px-3 bg-red-600 text-white text-sm rounded-full"> 
                            
                             
-                            PID:${product.pcode}
+                            PCODE: ${product.pcode}
                          </div>
                     </div>  
                     <div class="p-4">
@@ -640,6 +640,31 @@
             }
         }
 
+        // Delete product function
+        async function deleteProduct(pid) {
+            try {
+                const response = await fetch('https://minitzgo.com/api/delete_products.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-api-key': 'afb5678cd20a7bc0eabcc16ddfab114c2ae58321766974b55f03bfbb9a19c55b'
+                    },
+                    body: JSON.stringify({ pid: pid })
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    // Refresh products list after successful deletion
+                    fetchProducts();
+                } else {
+                    throw new Error(result.message || 'Failed to delete product');
+                }
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Failed to delete product. Please try again.');
+            }
+        }
+
         // Initialize everything when DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM fully loaded');
@@ -647,6 +672,17 @@
             // Initialize products
             fetchProducts();
             initializeAddProductForm();
+
+            // Add event delegation for delete buttons
+            document.addEventListener('click', function(e) {
+                const deleteBtn = e.target.closest('button[data-pid]');
+                if (deleteBtn) {
+                    const pid = deleteBtn.dataset.pid;
+                    if (confirm('Are you sure you want to delete this product?')) {
+                        deleteProduct(pid);
+                    }
+                }
+            });
             
             // Get modal elements
             const modal = document.getElementById('add-product-modal');
@@ -898,7 +934,7 @@
                 
                 // Try to get coordinates from localStorage
                 const coordinates = localStorage.getItem('storeCoordinates') || '';
-                document.getElementById('cordinates').value = coordinates;
+                document.getElementById('cordinates').value = userData.coordinates; 
                 
                 console.log('Form filled with user data:', userData);
             } catch (error) {
