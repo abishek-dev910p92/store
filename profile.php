@@ -522,6 +522,9 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <div class="flex items-center">
+        <?php include "includes/header_toggle.php"; ?>
+    </div>
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <i class="fas fa-bell text-lg"></i>
                         <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -540,7 +543,7 @@
                 <div class="px-4 py-4 sm:px-6 lg:px-8 bg-white md:bg-transparent md:pt-6">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                         <h2 class="text-xl font-bold text-gray-900 md:hidden">Seller Profile</h2>
-                        <?php include "includes/header_toggle.php"; ?>
+                        
                     </div>
                 </div>
 
