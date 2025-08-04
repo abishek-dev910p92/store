@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Seller Profile - Minitzgo Store</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/togglerSwitch.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+ 
     <script>
         tailwind.config = {
             theme: {
@@ -539,14 +540,7 @@
                 <div class="px-4 py-4 sm:px-6 lg:px-8 bg-white md:bg-transparent md:pt-6">
                     <div class="flex flex-col md:flex-row md:items-center md:justify-between">
                         <h2 class="text-xl font-bold text-gray-900 md:hidden">Seller Profile</h2>
-                        <div class="flex items-center justify-between mt-3 md:mt-0">
-                            <span class="text-sm font-medium text-gray-700 mr-3">Store Status:</span>
-                            <div class="relative inline-block w-12 mr-2 align-middle select-none">
-                                <input type="checkbox" name="toggle" id="storeStatus" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer right-0"/>
-                                <label for="storeStatus" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
-                            </div>
-                            <span id="statusText" class="text-sm font-medium text-red-500">Offline</span>
-                        </div>
+                        <?php include "includes/header_toggle.php"; ?>
                     </div>
                 </div>
 
@@ -647,13 +641,7 @@
                                             </div>
                                         </div>
                                         
-                                        <div class="mt-2 sm:mt-0 flex items-center">
-                                            <span class="mr-2 text-sm">Toggle Store</span>
-                                            <div class="relative inline-block w-10 mr-2 align-middle select-none">
-                                                <input type="checkbox" name="toggle" id="storeToggle" class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" checked />
-                                                <label for="storeToggle" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer"></label>
-                                            </div>
-                                        </div>
+
                                     </div>
                                     
                                     <div class="pt-4 border-t border-gray-200 mt-auto">
@@ -884,22 +872,43 @@
             closeMobileMenuButton?.addEventListener('click', closeMenu);
             mobileMenuOverlay?.addEventListener('click', closeMenu);
             
-            // Store status toggle
-            const storeStatus = document.getElementById('storeStatus');
-            const statusText = document.getElementById('statusText');
-            
-            storeStatus?.addEventListener('change', function() {
-                if (this.checked) {
-                    statusText.textContent = 'Online';
-                    statusText.classList.remove('text-red-500');
-                    statusText.classList.add('text-green-500');
-                } else {
-                    statusText.textContent = 'Offline';
-                    statusText.classList.remove('text-green-500');
-                    statusText.classList.add('text-red-500');
-                }
-            });
-            
+           // JavaScript
+const storeStatus = document.getElementById('storeStatus');
+const statusText = document.getElementById('statusText');
+
+// ✅ Restore toggle state from localStorage on page load
+window.addEventListener('DOMContentLoaded', () => {
+  const savedStatus = localStorage.getItem('storeStatus');
+  console.log('Saved status:', savedStatus); // Debug line
+
+  const isOnline = savedStatus === 'online';
+  storeStatus.checked = isOnline;
+  updateStatusText(isOnline);
+});
+
+// ✅ Update localStorage and text when toggled
+storeStatus?.addEventListener('change', function () {
+  const isOnline = this.checked;
+  localStorage.setItem('storeStatus', isOnline ? 'online' : 'offline');
+  updateStatusText(isOnline);
+});
+
+// ✅ Function to update status text and color
+function updateStatusText(isOnline) {
+  console.log('Toggle is:', isOnline ? 'Online' : 'Offline'); // Debug line
+  if (isOnline) {
+    statusText.textContent = 'Online';
+    statusText.classList.remove('text-red-500');
+    statusText.classList.add('text-green-500');
+  } else {
+    statusText.textContent = 'Offline';
+    statusText.classList.remove('text-green-500');
+    statusText.classList.add('text-red-500');
+  }
+  
+  // Send the updated status to the API
+  updateClientStatus(statusText.textContent);
+}            
             // Load user data from localStorage
             function loadUserData() {
                 try {
@@ -1177,6 +1186,64 @@
         })();
 
     </script>
+<script>
+    // Function to get cid from LocalStorage
+    function getCidFromLocalStorage() { 
+        const dbuser = JSON.parse(localStorage.getItem('dbuser')); // Fetch 'dbuser' 
+        if (!dbuser || !dbuser.cid) { 
+            console.error('CID not found in local storage'); 
+            return null; 
+        } 
+        return dbuser.cid; // Return only cid 
+    } 
+    
+    // Function to update client status in the database
+    function updateClientStatus(status) {
+        console.log("Sending status to API:", status);
+        
+        fetch('https://minitzgo.com/api/client_status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '47700d1bb2b874b5fb55ff536c0f9d627feb023f8ed228652f364762a41f7690',
+            },
+            body: JSON.stringify({
+                cid: getCidFromLocalStorage(),
+                client_status: status
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('API Response:', data);
+        })
+        .catch(error => {
+            console.error('API Error:', error);
+        });
+    }
+    
+    // Initial status check on page load
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedStatus = localStorage.getItem('storeStatus');
+        console.log('Initial saved status:', savedStatus);
+        
+        // Initialize the storeToggle button
+        const storeToggle = document.getElementById('storeToggle');
+        if (storeToggle) {
+            // Set initial state based on the same status as storeStatus
+            storeToggle.checked = savedStatus === 'online';
+            
+            // Add event listener for storeToggle
+            storeToggle.addEventListener('change', function() {
+                // Sync the storeStatus toggle with this toggle
+                if (storeStatus) {
+                    storeStatus.checked = this.checked;
+                    // Trigger the change event on storeStatus to update everything
+                    storeStatus.dispatchEvent(new Event('change'));
+                }
+            });
+        }
+    });
 
+    </script>  
 </body>
 </html>

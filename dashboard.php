@@ -50,14 +50,7 @@ if (!isset($_SESSION['cid'])) {
             </div>
             <div class="flex items-center space-x-3">
                 
-                <!-- Toggler switch -->
-                <div class="toggle-container">
-                    <label class="switch">
-                    <input type="checkbox" id="statusToggle" onchange="updateStatus()">
-                    <span class="slider"></span>
-                    </label>
-                    <span id="statusText" class="status-text">Offline</span>
-                </div>
+                <?php include "includes/header_toggle.php"; ?>
 
 
                 <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
@@ -136,14 +129,7 @@ if (!isset($_SESSION['cid'])) {
                 </div>
                 <div class="flex items-center space-x-4">
 
-                   <!-- Toggler switch -->
-                    <div class="toggle-container">
-                        <label class="switch">
-                        <input type="checkbox" id="statusToggle" onchange="updateStatus()" >
-                        <span class="slider"></span>
-                        </label>
-                        <span id="statusText" class="status-text">Offline</span>
-                    </div>
+                   <?php include "includes/header_toggle.php"; ?>
 
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <i class="fas fa-bell text-lg"></i>
@@ -332,13 +318,6 @@ if (!isset($_SESSION['cid'])) {
         </div>
     </nav>
 
-    <script>
-        function updateStatus() {
-            const toggle = document.getElementById('statusToggle');
-            const text = document.getElementById('statusText');
-            text.textContent = toggle.checked ? 'Online' : 'Offline';
-        }
-    </script>
 
     <script>
 

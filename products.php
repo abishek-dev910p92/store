@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Minitzgo Store - Products</title>
     <link rel="stylesheet" href="assets/css/style.css">
-  
+    <link rel="stylesheet" href="assets/css/togglerSwitch.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -55,6 +55,7 @@
                 <h1 class="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Products</h1>
             </div>
             <div class="flex items-center space-x-3">
+                <?php include "includes/header_toggle.php"; ?>
                 <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>

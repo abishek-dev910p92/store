@@ -1,62 +1,62 @@
-   <style>
- 
+/* Apple-style Toggle Switch */
+.toggle-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-right: 12px;
+}
 
-    .toggle-container {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
+.toggle-checkbox {
+  height: 0;
+  width: 0;
+  visibility: hidden;
+  position: absolute;
+}
 
-    .switch {
-      position: relative;
-      display: inline-block;
-      width: 60px;
-      height: 20px;
-    }
+.toggle-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 44px;
+  height: 22px;
+  background: #e5e5ea;
+  border-radius: 100px;
+  position: relative;
+  transition: background-color 0.2s;
+  margin: 0;
+  flex-shrink: 0;
+}
 
-    .switch input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-    }
+.toggle-label:after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  background: #fff;
+  border-radius: 50%;
+  transition: 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
 
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ddd;
-      transition: 0.4s;
-      border-radius: 34px;
-    }
+.toggle-checkbox:checked + .toggle-label {
+  background: #4cd964;
+}
 
-    .slider::before {
-      position: absolute;
-      content: "";
-      height: 20px;
-      width: 20px;
-      left: 0;
-      bottom: 0;
-      background-color: white;
-      box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
-      transition: 0.4s;
-      border-radius: 50%;
-    }
+.toggle-checkbox:checked + .toggle-label:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
 
-    input:checked + .slider {
-      background-color: #4cd964;
-    }
+.toggle-label:active:after {
+  width: 22px;
+}
 
-    input:checked + .slider::before {
-      transform: translateX(40px);
-      box-shadow: 2px 2px 6px rgba(0, 128, 0, 0.4);
-    }
-
-    .status-text {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #333;
-    }
-  </style>
+#statusText {
+  font-size: 0.875rem;
+  font-weight: 500;
+  min-width: 48px;
+  margin-left: 4px;
+}

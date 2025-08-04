@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications - Minitzgo Store</title>
     <link rel="stylesheet" href="assets/css/style.css">
- 
+    <link rel="stylesheet" href="assets/css/togglerSwitch.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -91,6 +91,7 @@
                 <h1 class="text-lg font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Notifications</h1>
             </div>
             <div class="flex items-center space-x-2">
+                <?php include "includes/header_toggle.php"; ?>
                 <div class="relative">
                     <span class="bg-red-500 text-white text-xs rounded-full px-2 py-1 animate-pulse">3 new</span>
                 </div>
