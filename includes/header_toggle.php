@@ -1,65 +1,71 @@
 <?php
 // Common header toggle component to be included in all pages
+// Use variables passed from parent file to generate unique IDs
+$toggleId = $toggleId ?? 'storeStatus';
+$statusTextId = $statusTextId ?? 'statusText';
 ?>
 
 <!-- Store Status Toggle -->
 <div class="flex items-center">
     <div class="toggle-container">
-        <input type="checkbox" name="toggle" id="storeStatus" class="toggle-checkbox"/>
-        <label for="storeStatus" class="toggle-label"></label>
-        <span id="statusText" class="text-red-500 text-sm">Offline</span>
+        <input type="checkbox" name="toggle" id="<?= $toggleId ?>" class="toggle-checkbox"/>
+        <label for="<?= $toggleId ?>" class="toggle-label"></label>
+        <span id="<?= $statusTextId ?>" class="text-red-500 text-sm">Offline</span>
     </div>
 </div>
 
 <script>
-// Store status toggle functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const storeStatus = document.getElementById('storeStatus');
-    const statusText = document.getElementById('statusText');
+document.addEventListener('DOMContentLoaded', function () {
+    const togglePairs = [
+        { toggleId: 'storeStatusMobile', statusTextId: 'statusTextMobile' },
+        { toggleId: 'storeStatusDesktop', statusTextId: 'statusTextDesktop' },
+    ];
 
-    // Restore toggle state from localStorage on page load
-    const savedStatus = localStorage.getItem('storeStatus');
-    const isOnline = savedStatus === 'online';
-    storeStatus.checked = isOnline;
-    updateStatusText(isOnline);
+    togglePairs.forEach(pair => {
+        const toggle = document.getElementById(pair.toggleId);
+        const statusText = document.getElementById(pair.statusTextId);
 
-    // Update localStorage and text when toggled
-    storeStatus.addEventListener('change', function() {
-        const isOnline = this.checked;
-        localStorage.setItem('storeStatus', isOnline ? 'online' : 'offline');
-        updateStatusText(isOnline);
+        if (!toggle || !statusText) return;
+
+        // Set initial state from localStorage
+        const savedStatus = localStorage.getItem('storeStatus');
+        const isOnline = savedStatus === 'online';
+        toggle.checked = isOnline;
+        updateStatusText(isOnline, statusText);
+
+        // Add change listener
+        toggle.addEventListener('change', function () {
+            const isOnline = this.checked;
+            localStorage.setItem('storeStatus', isOnline ? 'online' : 'offline');
+            updateStatusText(isOnline, statusText);
+            updateClientStatus(isOnline ? 'Online' : 'Offline');
+        });
     });
 
-    // Function to update status text and color
-    function updateStatusText(isOnline) {
+    function updateStatusText(isOnline, element) {
         if (isOnline) {
-            statusText.textContent = 'Online';
-            statusText.classList.remove('text-red-500');
-            statusText.classList.add('text-green-500');
+            element.textContent = 'Online';
+            element.classList.remove('text-red-500');
+            element.classList.add('text-green-500');
         } else {
-            statusText.textContent = 'Offline';
-            statusText.classList.remove('text-green-500');
-            statusText.classList.add('text-red-500');
+            element.textContent = 'Offline';
+            element.classList.remove('text-green-500');
+            element.classList.add('text-red-500');
         }
-        
-        // Send the updated status to the API
-        updateClientStatus(statusText.textContent);
     }
 
-    // Function to get cid from LocalStorage
-    function getCidFromLocalStorage() { 
-        const dbuser = JSON.parse(localStorage.getItem('dbuser')); // Fetch 'dbuser' 
-        if (!dbuser || !dbuser.cid) { 
-            console.error('CID not found in local storage'); 
-            return null; 
-        } 
-        return dbuser.cid; // Return only cid 
-    } 
-    
-    // Function to update client status in the database
+    function getCidFromLocalStorage() {
+        const dbuser = JSON.parse(localStorage.getItem('dbuser'));
+        if (!dbuser || !dbuser.cid) {
+            console.error('CID not found in local storage');
+            return null;
+        }
+        return dbuser.cid;
+    }
+
     function updateClientStatus(status) {
         console.log("Sending status to API:", status);
-        
+
         fetch('https://minitzgo.com/api/client_status.php', {
             method: 'POST',
             headers: {
@@ -71,13 +77,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 client_status: status
             }),
         })
-        .then(response => response.json())
-        .then(data => {
-            console.log('API Response:', data);
-        })
-        .catch(error => {
-            console.error('API Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
     }
 });
 </script>
