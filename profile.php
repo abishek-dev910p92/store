@@ -401,9 +401,14 @@
                 <h1 class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Profile</h1>
             </div>
             <div class="flex items-center space-x-3">
-                <div class="flex items-center">
-                    <?php include "includes/header_toggle.php"; ?>
-                </div>
+
+                <?php
+                    $toggleId = 'storeStatusMobile';
+                    $statusTextId = 'statusTextMobile';
+                    include "includes/header_toggle.php";
+                ?>
+
+                
                 <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -525,9 +530,12 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <div class="flex items-center">
-                        <?php include "includes/header_toggle.php"; ?>
-                    </div>
+                    <?php
+                        $toggleId = 'storeStatusDesktop';
+                        $statusTextId = 'statusTextDesktop';
+                        include "includes/header_toggle.php";
+                    ?>
+                    
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <i class="fas fa-bell text-lg"></i>
                         <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -1250,5 +1258,177 @@ function updateStatusText(isOnline) {
     });
 
     </script>  
+
+    <script>
+document.addEventListener('DOMContentLoaded', function () {
+    const togglePairs = [
+        { toggleId: 'storeStatusMobile', statusTextId: 'statusTextMobile' },
+        { toggleId: 'storeStatusDesktop', statusTextId: 'statusTextDesktop' },
+    ];
+
+    togglePairs.forEach(pair => {
+        const toggle = document.getElementById(pair.toggleId);
+        const statusText = document.getElementById(pair.statusTextId);
+
+        if (!toggle || !statusText) return;
+
+        // Set initial state from localStorage
+        const savedStatus = localStorage.getItem('storeStatus');
+        const isOnline = savedStatus === 'online';
+        toggle.checked = isOnline;
+        updateStatusText(isOnline, statusText);
+
+        // Add change listener
+        toggle.addEventListener('change', function () {
+            const isOnline = this.checked;
+            localStorage.setItem('storeStatus', isOnline ? 'online' : 'offline');
+            updateStatusText(isOnline, statusText);
+            updateClientStatus(isOnline ? 'Online' : 'Offline');
+        });
+    });
+
+    function updateStatusText(isOnline, element) {
+        if (isOnline) {
+            element.textContent = 'Online';
+            element.classList.remove('text-red-500');
+            element.classList.add('text-green-500');
+        } else {
+            element.textContent = 'Offline';
+            element.classList.remove('text-green-500');
+            element.classList.add('text-red-500');
+        }
+    }
+
+    function getCidFromLocalStorage() {
+        const dbuser = JSON.parse(localStorage.getItem('dbuser'));
+        if (!dbuser || !dbuser.cid) {
+            console.error('CID not found in local storage');
+            return null;
+        }
+        return dbuser.cid;
+    }
+
+    function updateClientStatus(status) {
+        console.log("Sending status to API:", status);
+
+        fetch('https://minitzgo.com/api/client_status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '47700d1bb2b874b5fb55ff536c0f9d627feb023f8ed228652f364762a41f7690',
+            },
+            body: JSON.stringify({
+                cid: getCidFromLocalStorage(),
+                client_status: status
+            }),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data);
+            })
+            .catch(error => {
+                console.error('API Error:', error);
+            });
+    }
+});
+</script>
+
+
+    <!-- header_toggle.php -->
+
+    <!-- <script>
+
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("🟢 Toggle script loaded!");
+        // console.log("🟡 Found toggles:", document.querySelectorAll('.store-status-toggle'));
+  // Store status toggle functionality
+// document.addEventListener('DOMContentLoaded', function() {
+    const toggles = document.querySelectorAll('.store-status-toggle');
+
+    // Restore toggle state from localStorage on page load
+    const savedStatus = localStorage.getItem('storeStatus');
+    const isOnline = savedStatus === 'online';
+    
+    // Update all toggles to the saved state
+    toggles.forEach(toggle => {
+        const checkbox = toggle.querySelector('.toggle-checkbox');
+        const statusText = toggle.querySelector('.statusText');
+        checkbox.checked = isOnline;
+        updateStatusText(statusText, isOnline);
+
+    // Update localStorage and text when toggled
+    checkbox.addEventListener('change', function() {
+        const isOnline = this.checked;
+        localStorage.setItem('storeStatus', isOnline ? 'online' : 'offline');
+        // Update all toggles to new status
+            toggles.forEach(tgl => {
+                const cb = tgl.querySelector('.toggle-checkbox');
+                const st = tgl.querySelector('.statusText');
+                cb.checked = isOnline;
+                updateStatusText(st, isOnline);
+            });
+
+            // Send API update once per change
+            updateClientStatus(isOnline ? 'Online' : 'Offline');
+        });
+    });
+    
+
+    // Function to update status text and color
+    function updateStatusText(element, isOnline) {
+        if (isOnline) {
+            element.textContent = 'Online';
+            element.classList.remove('text-red-500');
+            element.classList.add('text-green-500');
+        } else {
+            element.textContent = 'Offline';
+            element.classList.remove('text-green-500');
+            element.classList.add('text-red-500');
+        }
+        
+        // Send the updated status to the API
+        // updateClientStatus(element.textContent);
+    }
+
+    // Function to get cid from LocalStorage
+    function getCidFromLocalStorage() { 
+        const dbuser = JSON.parse(localStorage.getItem('dbuser')); // Fetch 'dbuser' 
+        if (!dbuser || !dbuser.cid) { 
+            console.error('CID not found in local storage'); 
+            return null; 
+        } 
+        return dbuser.cid; // Return only cid 
+    } 
+    
+    // Function to update client status in the database
+    function updateClientStatus(status) {
+        console.log("Sending status to API:", status);
+
+        const cid = getCidFromLocalStorage();
+        if (!cid) return;
+        
+        fetch('https://minitzgo.com/api/client_status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-api-key': '47700d1bb2b874b5fb55ff536c0f9d627feb023f8ed228652f364762a41f7690',
+            },
+            body: JSON.stringify({
+                cid,
+                client_status: status
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('API Response:', data);
+        })
+        .catch(error => {
+            console.error('API Error:', error);
+        });
+    }
+});
+</script> -->
+<!-- <script src="assets/js/toggle.js"></script> -->
+
 </body>
 </html>
