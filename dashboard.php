@@ -50,9 +50,12 @@ if (!isset($_SESSION['cid'])) {
             </div>
             <div class="flex items-center space-x-3">
                 
-                <?php include "includes/header_toggle.php"; ?>
-
-
+                <?php
+                    $toggleId = 'storeStatusMobile';
+                    $statusTextId = 'statusTextMobile';
+                    include "includes/header_toggle.php";
+                ?>
+ 
                 <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -129,7 +132,11 @@ if (!isset($_SESSION['cid'])) {
                 </div>
                 <div class="flex items-center space-x-4">
 
-                   <?php include "includes/header_toggle.php"; ?>
+                  <?php
+                        $toggleId = 'storeStatusDesktop';
+                        $statusTextId = 'statusTextDesktop';
+                        include "includes/header_toggle.php";
+                    ?>
 
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <i class="fas fa-bell text-lg"></i>
