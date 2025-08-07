@@ -71,7 +71,7 @@
     --container-md: 28rem;
     --container-lg: 32rem;
     --container-7xl: 80rem;
-    --text-xs: 0.75rem;
+    --text-xs: 0.80rem;
     --text-xs--line-height: calc(1 / 0.75);
     --text-sm: 0.875rem;
     --text-sm--line-height: calc(1.25 / 0.875);
@@ -479,6 +479,9 @@
   }
   .min-h-screen {
     min-height: 100vh;
+  }
+  #searchbar {
+    width: 60%;
   }
   .w-2 {
     width: calc(var(--spacing) * 2);
@@ -1354,10 +1357,10 @@
       }
     }
   }
-  .hover\:bg-red-50 {
+  .hover\:bg-white {
     &:hover {
       @media (hover: hover) {
-        background-color: var(--color-red-50);
+        background-color: var(--color-white);
       }
     }
   }
