@@ -1,6 +1,5 @@
 <?php
 // Common header toggle component to be included in all pages
-// Use variables passed from parent file to generate unique IDs
 $toggleId = $toggleId ?? 'storeStatus';
 $statusTextId = $statusTextId ?? 'statusText';
 ?>
