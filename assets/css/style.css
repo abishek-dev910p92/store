@@ -480,7 +480,8 @@
   .min-h-screen {
     min-height: 100vh;
   }
-  #searchbar {
+  /* Dashboard searchbar width */
+  #searchbar{
     width: 60%;
   }
   .w-2 {
