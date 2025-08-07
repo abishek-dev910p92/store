@@ -237,13 +237,16 @@ if (!isset($_SESSION['cid'])) {
                     <!-- User Name Section -->
                     <div class="relative" id="userMenu">
                         <!-- Click & Hover Target -->
-                        <div class="flex items-center space-x-3 cursor-pointer">
+                        <div id="userBtn" class="flex items-center space-x-3 cursor-pointer">
                             <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                                 <span class="text-white font-semibold text-sm">SO</span>
                             </div>
                             <button class="text-sm font-medium text-gray-700 hover:underline cursor-pointer">
-                                <?php echo $_SESSION['name']; ?>
+                                <?php 
+                                    echo ucwords(strtolower($_SESSION['name'])); 
+                                ?>
                             </button>
+
                         </div>
 
                         <!-- Dropdown -->
@@ -277,7 +280,7 @@ if (!isset($_SESSION['cid'])) {
                             }
                         });
                     </script>
-                    
+
                 </div>
             </div>
         </header>
