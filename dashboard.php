@@ -154,7 +154,7 @@ if (!isset($_SESSION['cid'])) {
                 </a>
             </nav>
             <div class="flex-shrink-0 border-t border-gray-200 p-4">
-                <a href="logout.php" class="text-red-600 hover:bg-red-50 hover:text-red-700 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
+                <a href="logout.php" class="text-white bg-red-500 hover:bg-white hover:text-red-700 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
                     <i class="fas fa-sign-out-alt mr-3"></i>
                     Logout
                 </a>
@@ -172,7 +172,7 @@ if (!isset($_SESSION['cid'])) {
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
-                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Search...">
+                        <input type="text" id="searchbar" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Search...">
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -261,7 +261,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo totalSale($conn, $cid); ?></p>
                                 <p class="text-blue-200 text-xs mt-1">+12% from last month</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-dollar-sign text-xl"></i>
                             </div>
                         </div>
@@ -274,7 +274,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchProducts($conn, $cid); ?></p>
                                 <p class="text-green-200 text-xs mt-1"><?php echo randomnumbers($conn, $cid); ?></p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-box text-xl"></i>
                             </div>
                         </div>
@@ -287,7 +287,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchTotalOrders($conn, $cid); ?></p>
                                 <p class="text-purple-200 text-xs mt-1">+more orders this week</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-shopping-cart text-xl"></i>
                             </div>
                         </div>
@@ -301,7 +301,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-orange-200 text-xs mt-1"><?php echo checkThisWeekOrders($conn, $cid); ?></p>
                              
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-calendar-day text-xl"></i>
                             </div>
                         </div>
@@ -311,7 +311,7 @@ if (!isset($_SESSION['cid'])) {
                 <!-- Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     <!-- Sales Chart -->
-                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="height: 350px;">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="height: 370px;">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Daily Sales Trend</h3>
                             <div class="flex space-x-2">
@@ -325,7 +325,7 @@ if (!isset($_SESSION['cid'])) {
                     </div>
                     
                     <!-- Order Status Chart -->
-                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="animation-delay: 0.1s; height: 450px;">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="animation-delay: 0.1s; height: 370px;">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Order Status</h3>
                             <div class="flex space-x-4 text-sm">
@@ -353,32 +353,32 @@ if (!isset($_SESSION['cid'])) {
                 <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="animation-delay: 0.2s">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
                     <div class="space-y-4">
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-shopping-cart text-green-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">New order #1234 received</p>
                                 <p class="text-xs text-gray-500">2 minutes ago</p>
                             </div>
                             <span class="text-sm font-semibold text-green-600">$89.99</span>
                         </div>
                         
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-box text-blue-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">Product "Wireless Headphones" updated</p>
                                 <p class="text-xs text-gray-500">15 minutes ago</p>
                             </div>
                         </div>
                         
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-user text-purple-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">New customer registered</p>
                                 <p class="text-xs text-gray-500">1 hour ago</p>
                             </div>
