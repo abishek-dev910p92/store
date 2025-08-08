@@ -353,32 +353,32 @@ if (!isset($_SESSION['cid'])) {
                 <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="animation-delay: 0.2s">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
                     <div class="space-y-4">
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-shopping-cart text-green-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">New order #1234 received</p>
                                 <p class="text-xs text-gray-500">2 minutes ago</p>
                             </div>
                             <span class="text-sm font-semibold text-green-600">$89.99</span>
                         </div>
                         
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-box text-blue-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">Product "Wireless Headphones" updated</p>
                                 <p class="text-xs text-gray-500">15 minutes ago</p>
                             </div>
                         </div>
                         
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-user text-purple-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">New customer registered</p>
                                 <p class="text-xs text-gray-500">1 hour ago</p>
                             </div>
