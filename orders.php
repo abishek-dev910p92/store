@@ -1101,6 +1101,7 @@ include "backend/dashboard.php";
             let dbUser = localStorage.getItem('dbuser');
             let cid = dbUser ? JSON.parse(dbUser)?.cid : null;
             
+            
             // Handle Mark Complete button clicks for mobile
             if (mobileLiveOrdersContainer) {
                 mobileLiveOrdersContainer.addEventListener('click', handleMarkComplete);
@@ -1551,6 +1552,8 @@ include "backend/dashboard.php";
             
             // Add reject order functionality
             document.addEventListener('click', function(e) {
+           
+
                 if (e.target.closest('.reject-order')) {
                     const button = e.target.closest('.reject-order');
                     const oid = button.getAttribute('data-oid');
@@ -1901,10 +1904,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </td>
                 <td class="px-4 py-3">
-                    <button class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition-all duration-200">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Cancel
-                    </button>
+                 <!-- Example inside a loop -->
+                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Cancel</button>
+                   
                 </td>
             `;
             
@@ -2151,6 +2153,58 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
     })();
+
+
+
+
+//cancle buttion in table orders update
+
+document.addEventListener('click', function (event) {
+  // Get customer ID from localStorage
+  let dbUser = localStorage.getItem('dbuser');
+  let cid = dbUser ? JSON.parse(dbUser)?.cid : null;
+
+  if (event.target.classList.contains('cancelOrderBtn')) {
+    const oid = event.target.getAttribute('data-oid');
+ 
+
+    if (confirm(`Are you sure you want to cancel Order ID ${oid}?`)) {
+      fetch('https://minitzgo.com/api/cancel_live_order.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': 'd0145238fabc26381f3e493ef5103144c6c496280d015bf23cef9ae3b09e87aa'
+        },
+        body: JSON.stringify({
+          cid: cid,
+          oid: oid,
+          product_status: 'finding delivery boy'
+        }),
+      })
+      .then(res => res.json())
+      .then(response => {
+        console.log('Cancel API Response:', response);
+
+        if (response.status === true) {
+          alert(`Order ${oid} cancelled successfully.`);
+          // Optionally remove or update the row in the UI
+          
+          event.target.closest('tr').remove();
+        } else {
+          alert(`Failed to cancel Order ${oid}: ${response.message}`);
+        }
+      })
+      .catch(err => {
+        console.error('Cancel error:', err);
+        alert('Error occurred while cancelling the order.');
+      });
+                    
+    console.log("date", date);
+    }
+  }
+});
+  
+    
 </script>
 
 

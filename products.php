@@ -543,10 +543,7 @@
 
                         </div>
                         <div class="flex space-x-2">
-                            <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors" data-pid="${product.pid}">
-                                <i class="fas fa-edit mr-1"></i>
-                                Edit
-                            </button>
+                            
                             <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors" data-pid="${product.pid}">
                                 <i class="fas fa-trash mr-1"></i>
                                 Delete
