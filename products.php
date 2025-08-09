@@ -55,7 +55,12 @@
                 <h1 class="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Products</h1>
             </div>
             <div class="flex items-center space-x-3">
-                <?php include "includes/header_toggle.php"; ?>
+                <?php
+                    $toggleId = 'storeStatusMobile';
+                    $statusTextId = 'statusTextMobile';
+                    include "includes/header_toggle.php";
+                ?>
+
                 <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -127,10 +132,16 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
-                        <input type="text" id="desktop-search" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" placeholder="Search products...">
+                        <input type="text" id="desktop-search" class="search block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-200" placeholder="Search products...">
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+                    <?php
+                        $toggleId = 'storeStatusDesktop';
+                        $statusTextId = 'statusTextDesktop';
+                        include "includes/header_toggle.php";
+                    ?>
+
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <i class="fas fa-bell text-lg"></i>
                         <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -181,13 +192,13 @@
                 <!-- Desktop Filters -->
                 <div class="hidden md:flex md:items-center md:justify-between md:mb-6">
                     <div class="flex space-x-4">
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 pointer">
                             <option value="">All Categories</option>
                             <option value="electronics">Electronics</option>
                             <option value="clothing">Clothing</option>
                             <option value="home">Home & Kitchen</option>
                         </select>
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 pointer">
                             <option value="">All Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -333,7 +344,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 pointer">
                                     <option value="">Select Category</option>
                                     <option value="electronics">Electronics</option>
                                     <option value="clothing">Clothing</option>
@@ -534,17 +545,20 @@
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-lg font-bold text-purple-600">₹${product.product_price}</span>
                             <span class="text-sm text-gray-500">Stock: ${product.product_stock}</span>
-                            <span class="text-xs text-gray-500">${product.product_brand}</span>
+                            <em><span class="text-xs text-gray-500">${product.product_brand}</span></em>
                         </div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category}</span>
+                        <div id="rows" class="flex justify-between mb-3">
+                            ${product.category.length <= 15 ? `<span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category} </span>`  : "Category length should be less than 15"}
                             <span class="text-sm text-gray-500">Added on: ${new Date(product.date).toLocaleDateString()}</span>
                            <b> <span class="text-sm text-blue-500 text-xxxt-bold">Size: ${product.product_size}</span></b>
 
                         </div>
                         <div class="flex space-x-2">
-                            
-                            <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors" data-pid="${product.pid}">
+                            <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors pointer" data-pid="${product.pid}">
+                                <i class="fas fa-edit mr-1"></i>
+                                Edit
+                            </button>
+                            <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors pointer" data-pid="${product.pid}">
                                 <i class="fas fa-trash mr-1"></i>
                                 Delete
                             </button>

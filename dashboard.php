@@ -50,13 +50,61 @@ if (!isset($_SESSION['cid'])) {
             </div>
             <div class="flex items-center space-x-3">
                 
-                <?php include "includes/header_toggle.php"; ?>
+                <?php
+                    $toggleId = 'storeStatusMobile';
+                    $statusTextId = 'statusTextMobile';
+                    include "includes/header_toggle.php";
+                ?>
+
+                <div class="relative inline-block w-full max-w-xs" id="notificationWrapperMobile">
+                    <!-- Bell Icon -->
+                    <button id="notificationBellMobile" class="p-2 text-gray-600 hover:text-gray-800 relative">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div id="notificationDropdownMobile" class="hidden absolute right-0 mt-2 w-[80vw] max-w-sm bg-white border border-gray-200 rounded-xl shadow-xl z-50">
+                        <ul class="p-1 text-xs text-gray-800">
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">New Order Received</li>
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Payment Confirmed</li>
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Low Stock Alert</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <script>
+                    const mobileBell = document.getElementById('notificationBellMobile');
+                    const mobileDropdown = document.getElementById('notificationDropdownMobile');
+                    const mobileWrapper = document.getElementById('notificationWrapperMobile');
+                    let isMobileDropdownOpen = false;
+
+                    // Show on hover (optional, for tablets or landscape mode)
+                    mobileWrapper.addEventListener('mouseenter', () => {
+                        if (!isMobileDropdownOpen) mobileDropdown.classList.remove('hidden');
+                    });
+
+                    mobileWrapper.addEventListener('mouseleave', () => {
+                        if (!isMobileDropdownOpen) mobileDropdown.classList.add('hidden');
+                    });
+
+                    // Toggle on click
+                    mobileBell.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        isMobileDropdownOpen = !isMobileDropdownOpen;
+                        mobileDropdown.classList.toggle('hidden', !isMobileDropdownOpen);
+                    });
+
+                    // Close if clicked outside
+                    document.addEventListener('click', (e) => {
+                        if (!mobileWrapper.contains(e.target)) {
+                            isMobileDropdownOpen = false;
+                            mobileDropdown.classList.add('hidden');
+                        }
+                    });
+                </script>
 
 
-                <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
-                    <i class="fas fa-bell text-lg"></i>
-                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                     <span class="text-white font-semibold text-sm">SO</span>
                 </div>
@@ -106,7 +154,7 @@ if (!isset($_SESSION['cid'])) {
                 </a>
             </nav>
             <div class="flex-shrink-0 border-t border-gray-200 p-4">
-                <a href="logout.php" class="text-red-600 hover:bg-red-50 hover:text-red-700 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
+                <a href="logout.php" class="text-white bg-red-500 hover:bg-white hover:text-red-700 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
                     <i class="fas fa-sign-out-alt mr-3"></i>
                     Logout
                 </a>
@@ -124,17 +172,67 @@ if (!isset($_SESSION['cid'])) {
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
-                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Search...">
+                        <input type="text" id="searchbar" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Search...">
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
 
-                   <?php include "includes/header_toggle.php"; ?>
+                  <?php
+                        $toggleId = 'storeStatusDesktop';
+                        $statusTextId = 'statusTextDesktop';
+                        include "includes/header_toggle.php";
+                    ?>
 
-                    <button class="p-2 text-gray-400 hover:text-gray-500 relative">
-                        <i class="fas fa-bell text-lg"></i>
-                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                    </button>
+
+                    <div class="relative inline-block" id="notificationWrapper">
+                        <!-- Bell Icon -->
+                        <button id="notificationBell" class="p-2 text-gray-400 hover:text-gray-600 relative">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-gray-50 border border-gray-200 rounded-xl shadow-lg z-50">
+                            <ul class="p-1 text-sm text-gray-800">
+                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">New Order Received</li>
+                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Payment Confirmed</li>
+                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Low Stock Alert</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <script>
+                        const bell = document.getElementById('notificationBell');
+                        const dropdown = document.getElementById('notificationDropdown');
+                        const wrapper = document.getElementById('notificationWrapper');
+                        let isLockedOpen = false;
+
+                        // Hover to show
+                        wrapper.addEventListener('mouseenter', () => {
+                            if (!isLockedOpen) dropdown.classList.remove('hidden');
+                        });
+
+                        wrapper.addEventListener('mouseleave', () => {
+                            if (!isLockedOpen) dropdown.classList.add('hidden');
+                        });
+
+                        // Click to toggle lock
+                        bell.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            isLockedOpen = !isLockedOpen;
+                            dropdown.classList.toggle('hidden', !isLockedOpen);
+                        });
+
+                        // Close if clicked outside
+                        document.addEventListener('click', (e) => {
+                            if (!wrapper.contains(e.target)) {
+                            isLockedOpen = false;
+                            dropdown.classList.add('hidden');
+                            }
+                        });
+                    </script>
+
+
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                             <span class="text-white font-semibold text-sm">SO</span>
@@ -163,7 +261,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo totalSale($conn, $cid); ?></p>
                                 <p class="text-blue-200 text-xs mt-1">+12% from last month</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-dollar-sign text-xl"></i>
                             </div>
                         </div>
@@ -176,7 +274,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchProducts($conn, $cid); ?></p>
                                 <p class="text-green-200 text-xs mt-1"><?php echo randomnumbers($conn, $cid); ?></p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-box text-xl"></i>
                             </div>
                         </div>
@@ -189,7 +287,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchTotalOrders($conn, $cid); ?></p>
                                 <p class="text-purple-200 text-xs mt-1">+more orders this week</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-shopping-cart text-xl"></i>
                             </div>
                         </div>
@@ -203,7 +301,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-orange-200 text-xs mt-1"><?php echo checkThisWeekOrders($conn, $cid); ?></p>
                              
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-calendar-day text-xl"></i>
                             </div>
                         </div>
@@ -213,7 +311,7 @@ if (!isset($_SESSION['cid'])) {
                 <!-- Charts Section -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                     <!-- Sales Chart -->
-                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="height: 350px;">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="height: 370px;">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Daily Sales Trend</h3>
                             <div class="flex space-x-2">
@@ -227,7 +325,7 @@ if (!isset($_SESSION['cid'])) {
                     </div>
                     
                     <!-- Order Status Chart -->
-                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="animation-delay: 0.1s; height: 450px;">
+                    <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="animation-delay: 0.1s; height: 370px;">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-gray-900">Order Status</h3>
                             <div class="flex space-x-4 text-sm">
@@ -255,32 +353,32 @@ if (!isset($_SESSION['cid'])) {
                 <div class="bg-white rounded-2xl shadow-lg p-6 animate-slide-up" style="animation-delay: 0.2s">
                     <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
                     <div class="space-y-4">
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-shopping-cart text-green-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">New order #1234 received</p>
                                 <p class="text-xs text-gray-500">2 minutes ago</p>
                             </div>
                             <span class="text-sm font-semibold text-green-600">$89.99</span>
                         </div>
                         
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-box text-blue-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">Product "Wireless Headphones" updated</p>
                                 <p class="text-xs text-gray-500">15 minutes ago</p>
                             </div>
                         </div>
                         
-                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl">
+                        <div class="flex items-center space-x-4 p-3 bg-gray-50 rounded-xl shadow">
                             <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
                                 <i class="fas fa-user text-purple-600"></i>
                             </div>
-                            <div class="flex-1">
+                            <div class="flex-1 pointer">
                                 <p class="text-sm font-medium text-gray-900">New customer registered</p>
                                 <p class="text-xs text-gray-500">1 hour ago</p>
                             </div>
