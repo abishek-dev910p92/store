@@ -602,6 +602,9 @@
   .gap-6 {
     gap: calc(var(--spacing) * 6);
   }
+  .search {
+    width: 60% !important;
+  }
   .pointer {
     cursor: pointer;
   }
