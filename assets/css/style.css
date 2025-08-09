@@ -484,6 +484,9 @@
   #searchbar{
     width: 60%;
   }
+  #rows {
+    flex-direction: column;
+  }
   .w-2 {
     width: calc(var(--spacing) * 2);
   }
