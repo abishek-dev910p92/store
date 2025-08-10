@@ -534,7 +534,7 @@
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-lg font-bold text-purple-600">₹${product.product_price}</span>
                             <span class="text-sm text-gray-500">Stock: ${product.product_stock}</span>
-                            <span class="text-xs text-gray-500">${product.product_brand}</span>
+                            <em><span class="text-xs text-gray-500">${product.product_brand}</span></em>
                         </div>
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category}</span>
