@@ -55,7 +55,11 @@
                 <h1 class="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Products</h1>
             </div>
             <div class="flex items-center space-x-3">
-                <?php include "includes/header_toggle.php"; ?>
+                <?php
+                    $toggleId = 'storeStatusMobile';
+                    $statusTextId = 'statusTextMobile';
+                    include "includes/header_toggle.php";
+                ?>
                 <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -131,6 +135,7 @@
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
+
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <i class="fas fa-bell text-lg"></i>
                         <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -536,8 +541,10 @@
                             <span class="text-sm text-gray-500">Stock: ${product.product_stock}</span>
                             <span class="text-xs text-gray-500">${product.product_brand}</span>
                         </div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category}</span>
+                        <div id="rows" class="flex justify-between mb-3">
+                            ${product.category.length <= 15
+                            ? `<span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category}</span>`
+                            : `<span class="text-sm text-red-500">Category length should be less than 15</span>`}
                             <span class="text-sm text-gray-500">Added on: ${new Date(product.date).toLocaleDateString()}</span>
                            <b> <span class="text-sm text-blue-500 text-xxxt-bold">Size: ${product.product_size}</span></b>
 
