@@ -756,7 +756,7 @@ include "backend/dashboard.php";
                 
                 // Filter logic
                 const status = this.dataset.status;
-                console.log('Filtering by status:', status);
+                // console.log('Filtering by status:', status);
                 
                 // Filter total orders
                 if (originalOrders.length === 0 && allOrders.length > 0) {
@@ -780,7 +780,7 @@ include "backend/dashboard.php";
                 const liveOrderCards = document.querySelectorAll('.live-order-card');
                 
                 if (liveOrderCards.length > 0) {
-                    console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${status}`);
+                    // console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${status}`);
                     
                     liveOrderCards.forEach(card => {
                         if (status === 'all' || !status) {
@@ -921,7 +921,7 @@ include "backend/dashboard.php";
         let originalLiveOrders = [];
         
         function handleSearch(searchTerm) {
-            console.log('Searching for:', searchTerm);
+            // console.log('Searching for:', searchTerm);
             
             if (!searchTerm.trim()) {
                 // If search is empty, restore original data
@@ -965,7 +965,7 @@ include "backend/dashboard.php";
             const liveOrderCards = document.querySelectorAll('.live-order-card');
             
             if (liveOrderCards.length > 0) {
-                console.log(`Searching ${liveOrderCards.length} live order cards for: ${searchTerm}`);
+                // console.log(`Searching ${liveOrderCards.length} live order cards for: ${searchTerm}`);
                 
                 liveOrderCards.forEach(card => {
                     const cardText = card.textContent.toLowerCase();
@@ -994,7 +994,7 @@ include "backend/dashboard.php";
         // Date filtering functionality
         document.querySelector('input[type="date"]')?.addEventListener('change', function(e) {
             const selectedDate = e.target.value;
-            console.log('Filtering by date:', selectedDate);
+            // console.log('Filtering by date:', selectedDate);
             
             if (!selectedDate) {
                 // If no date selected, restore original data
@@ -1044,7 +1044,7 @@ include "backend/dashboard.php";
         // Desktop status filter functionality
         document.querySelector('select')?.addEventListener('change', function(e) {
             const selectedStatus = e.target.value;
-            console.log('Filtering by status:', selectedStatus);
+            // console.log('Filtering by status:', selectedStatus);
             
             // Filter total orders
             if (originalOrders.length === 0 && allOrders.length > 0) {
@@ -1068,7 +1068,7 @@ include "backend/dashboard.php";
             const liveOrderCards = document.querySelectorAll('.live-order-card');
             
             if (liveOrderCards.length > 0) {
-                console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${selectedStatus}`);
+                // console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${selectedStatus}`);
                 
                 liveOrderCards.forEach(card => {
                     if (!selectedStatus || selectedStatus === '') {
@@ -1120,7 +1120,7 @@ include "backend/dashboard.php";
                     const liveOrderCard = e.target.closest('.live-order-card');
                     
                     if (liveOrderCard) {
-                        console.log('Mark Complete clicked for card:', liveOrderCard);
+                        // console.log('Mark Complete clicked for card:', liveOrderCard);
                         
                         // Get the button and disable it to prevent multiple clicks
                         const button = e.target.closest('button');
@@ -1132,7 +1132,7 @@ include "backend/dashboard.php";
                         let orderIDText = '';
                         if (orderIDElement) {
                             orderIDText = orderIDElement.textContent.trim();
-                            console.log('Found orderIDText:', orderIDText);
+                            // console.log('Found orderIDText:', orderIDText);
                         }
                         
                         // Extract just the number part from "Order #123"
@@ -1140,7 +1140,7 @@ include "backend/dashboard.php";
                         const orderIDMatch = orderIDText.match(/#([\d]+)/);
                         if (orderIDMatch && orderIDMatch[1]) {
                             orderID = orderIDMatch[1];
-                            console.log('Extracted orderID from text:', orderID);
+                            // console.log('Extracted orderID from text:', orderID);
                         }
                         
                         // Try to get the order ID from the reject button's data-oid attribute as fallback
@@ -1148,7 +1148,7 @@ include "backend/dashboard.php";
                         let dataOid = null;
                         if (rejectButton) {
                             dataOid = rejectButton.getAttribute('data-oid');
-                            console.log('Found data-oid attribute:', dataOid);
+                            // console.log('Found data-oid attribute:', dataOid);
                         }
                         
                         // Try to get the order ID from the complete button's data-oid attribute as another fallback
@@ -1156,32 +1156,32 @@ include "backend/dashboard.php";
                         let completeDataOid = null;
                         if (completeButton) {
                             completeDataOid = completeButton.getAttribute('data-oid');
-                            console.log('Found complete button data-oid attribute:', completeDataOid);
+                            // console.log('Found complete button data-oid attribute:', completeDataOid);
                         }
                         
                         // Try to get the order ID from the card's data-oid attribute as another fallback
                         const cardDataOid = liveOrderCard.getAttribute('data-oid');
                         if (cardDataOid) {
-                            console.log('Found card data-oid attribute:', cardDataOid);
+                            // console.log('Found card data-oid attribute:', cardDataOid);
                         }
                         
                         const finalOrderID = orderID || dataOid || completeDataOid || cardDataOid || Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-                        console.log('Final orderID to use:', finalOrderID);
+                        // console.log('Final orderID to use:', finalOrderID);
                         
                         // Extract customer name
                         const customerElement = liveOrderCard.querySelector('p.text-xs.text-gray-500.truncate-text');
                         const customerName = customerElement ? customerElement.textContent.trim() : 'Customer';
-                        console.log('Extracted customerName:', customerName);
+                        // console.log('Extracted customerName:', customerName);
                         
                         // Extract amount
                         const amountElement = liveOrderCard.querySelector('p.font-bold.text-gray-900.text-sm');
                         const amount = amountElement ? amountElement.textContent.trim() : '₹0';
-                        console.log('Extracted amount:', amount);
+                        // console.log('Extracted amount:', amount);
                         
                         // Extract product image
                         const imgElement = liveOrderCard.querySelector('img');
                         const productImage = imgElement ? imgElement.src : 'https://via.placeholder.com/150/FF5733/FFFFFF?text=Product';
-                        console.log('Extracted productImage:', productImage);
+                        // console.log('Extracted productImage:', productImage);
                         
                         // Make API call to mark order as complete
                         fetch('https://minitzgo.com/api/complete_live_order.php', {
@@ -1198,7 +1198,7 @@ include "backend/dashboard.php";
                         })
                         .then(response => response.json())
                         .then(data => {
-                            console.log('Complete order API response:', data);
+                            // console.log('Complete order API response:', data);
                             
                             // Add to mobile orders list
                             if (mobileOrdersContainer) {
@@ -1353,7 +1353,7 @@ include "backend/dashboard.php";
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Live orders data:', data);
+                    // console.log('Live orders data:', data);
                     
                     // Clear loading indicators
                     if (mobileLiveOrdersContainer) {
@@ -1373,8 +1373,8 @@ include "backend/dashboard.php";
                     if (Array.isArray(ordersData) && ordersData.length > 0) {
                         // Display live orders in mobile view
                         if (mobileLiveOrdersContainer) {
-                            console.log('Creating mobile live order cards for', ordersData.length, 'orders');
-                            console.log('Creating mobile live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating mobile live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating mobile live order cards for', ordersData.length, 'orders');
                             ordersData.forEach((order, index) => {
                                 const newMobileCard = document.createElement('div');
                                 newMobileCard.className = 'live-order-card bg-white rounded-2xl shadow-lg p-5 animate-bounce-in relative hover:shadow-xl transition-all duration-200';
@@ -1406,7 +1406,7 @@ include "backend/dashboard.php";
                                 } else {
                                     orderId = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                                 }
-                                console.log('Mobile order ID extracted:', orderId, 'from order:', order);
+                                // console.log('Mobile order ID extracted:', orderId, 'from order:', order);
                                 
                                 // Set data-oid attribute on the card itself
                                 newMobileCard.setAttribute('data-oid', orderId);
@@ -1439,8 +1439,8 @@ include "backend/dashboard.php";
                         
                         // Display live orders in desktop view
                         if (desktopLiveOrdersContainer) {
-                            console.log('Creating desktop live order cards for', ordersData.length, 'orders');
-                            console.log('Creating desktop live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating desktop live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating desktop live order cards for', ordersData.length, 'orders');
                             ordersData.forEach((order, index) => {
                                 const newDesktopCard = document.createElement('div');
                                 newDesktopCard.className = 'live-order-card bg-white rounded-2xl shadow-lg p-5 animate-bounce-in relative flex flex-col h-full min-h-[200px] hover:shadow-xl transition-all duration-200';
@@ -1472,7 +1472,7 @@ include "backend/dashboard.php";
                                 } else {
                                     orderId = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                                 }
-                                console.log('Desktop order ID extracted:', orderId, 'from order:', order);
+                                // console.log('Desktop order ID extracted:', orderId, 'from order:', order);
                                 
                                 // Set data-oid attribute on the card itself
                                 newDesktopCard.setAttribute('data-oid', orderId);
@@ -1652,7 +1652,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let mobileOrdersPerPage = 5; // Default to 5 orders per page for mobile
     let allOrders = [];
 
-    console.log("cid", cid);
+  
 
     if (!cid) {
         console.error("CID not found in localStorage.");
@@ -1699,7 +1699,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         })
         .then((data) => {
-            console.log("Total Orders Response:", data);
+            // console.log("Total Orders Response:", data);
 
             const totalOrders = Array.isArray(data) ? data.length : 'N/A';
             const totalRow = document.getElementById('totalOrdersCount');
@@ -2053,7 +2053,7 @@ document.addEventListener("DOMContentLoaded", () => {
         async function reportToClickUp({ message, filename, lineno, colno, stack }) {
             const errorKey = generateErrorKey(message, filename, lineno, colno);
             if (reportedErrors.includes(errorKey)) {
-                console.log("Duplicate error. Skipping task creation.");
+                // console.log("Duplicate error. Skipping task creation.");
                 return;
             }
 
@@ -2091,7 +2091,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const result = await res.json();
                 if (res.ok) {
-                    console.log("ClickUp task created:", result.id);
+                    // console.log("ClickUp task created:", result.id);
                 } else {
                     console.error("Failed to create ClickUp task:", result);
                 }
@@ -2183,7 +2183,7 @@ document.addEventListener('click', function (event) {
       })
       .then(res => res.json())
       .then(response => {
-        console.log('Cancel API Response:', response);
+        // console.log('Cancel API Response:', response);
 
         if (response.status === true) {
           alert(`Order ${oid} cancelled successfully.`);
@@ -2199,12 +2199,12 @@ document.addEventListener('click', function (event) {
         alert('Error occurred while cancelling the order.');
       });
                     
-    console.log("date", date);
+ 
     }
   }
 });
   
-    
+    console.log("cancel order", order.date);
 </script>
 
 
