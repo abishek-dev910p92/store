@@ -692,7 +692,7 @@ include "backend/dashboard.php";
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment mode</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reject</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ordersTableBody" class="bg-white divide-y divide-gray-200">
@@ -1905,7 +1905,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
                 <td class="px-4 py-3">
                  <!-- Example inside a loop -->
-                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Cancel</button>
+                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Reject</button>
                    
                 </td>
             `;
