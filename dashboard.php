@@ -50,13 +50,61 @@ if (!isset($_SESSION['cid'])) {
             </div>
             <div class="flex items-center space-x-3">
                 
-                <?php include "includes/header_toggle.php"; ?>
+                <?php
+                    $toggleId = 'storeStatusMobile';
+                    $statusTextId = 'statusTextMobile';
+                    include "includes/header_toggle.php";
+                ?>
+
+                <div class="relative inline-block w-full max-w-xs" id="notificationWrapperMobile">
+                    <!-- Bell Icon -->
+                    <button id="notificationBellMobile" class="p-2 text-gray-600 hover:text-gray-800 relative">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div id="notificationDropdownMobile" class="hidden absolute right-0 mt-2 w-[80vw] max-w-sm bg-white border border-gray-200 rounded-xl shadow-xl z-50">
+                        <ul class="p-1 text-xs text-gray-800">
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">New Order Received</li>
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Payment Confirmed</li>
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Low Stock Alert</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <script>
+                    const mobileBell = document.getElementById('notificationBellMobile');
+                    const mobileDropdown = document.getElementById('notificationDropdownMobile');
+                    const mobileWrapper = document.getElementById('notificationWrapperMobile');
+                    let isMobileDropdownOpen = false;
+
+                    // Show on hover (optional, for tablets or landscape mode)
+                    mobileWrapper.addEventListener('mouseenter', () => {
+                        if (!isMobileDropdownOpen) mobileDropdown.classList.remove('hidden');
+                    });
+
+                    mobileWrapper.addEventListener('mouseleave', () => {
+                        if (!isMobileDropdownOpen) mobileDropdown.classList.add('hidden');
+                    });
+
+                    // Toggle on click
+                    mobileBell.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        isMobileDropdownOpen = !isMobileDropdownOpen;
+                        mobileDropdown.classList.toggle('hidden', !isMobileDropdownOpen);
+                    });
+
+                    // Close if clicked outside
+                    document.addEventListener('click', (e) => {
+                        if (!mobileWrapper.contains(e.target)) {
+                            isMobileDropdownOpen = false;
+                            mobileDropdown.classList.add('hidden');
+                        }
+                    });
+                </script>
 
 
-                <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
-                    <i class="fas fa-bell text-lg"></i>
-                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                     <span class="text-white font-semibold text-sm">SO</span>
                 </div>
@@ -129,12 +177,62 @@ if (!isset($_SESSION['cid'])) {
                 </div>
                 <div class="flex items-center space-x-4">
 
-                   <?php include "includes/header_toggle.php"; ?>
+                  <?php
+                        $toggleId = 'storeStatusDesktop';
+                        $statusTextId = 'statusTextDesktop';
+                        include "includes/header_toggle.php";
+                    ?>
 
-                    <button class="p-2 text-gray-400 hover:text-gray-500 relative">
-                        <i class="fas fa-bell text-lg"></i>
-                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                    </button>
+
+                    <div class="relative inline-block" id="notificationWrapper">
+                        <!-- Bell Icon -->
+                        <button id="notificationBell" class="p-2 text-gray-400 hover:text-gray-600 relative">
+                            <i class="fas fa-bell text-lg"></i>
+                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                        </button>
+
+                        <!-- Dropdown -->
+                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-gray-50 border border-gray-200 rounded-xl shadow-lg z-50">
+                            <ul class="p-1 text-sm text-gray-800">
+                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">New Order Received</li>
+                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Payment Confirmed</li>
+                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Low Stock Alert</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <script>
+                        const bell = document.getElementById('notificationBell');
+                        const dropdown = document.getElementById('notificationDropdown');
+                        const wrapper = document.getElementById('notificationWrapper');
+                        let isLockedOpen = false;
+
+                        // Hover to show
+                        wrapper.addEventListener('mouseenter', () => {
+                            if (!isLockedOpen) dropdown.classList.remove('hidden');
+                        });
+
+                        wrapper.addEventListener('mouseleave', () => {
+                            if (!isLockedOpen) dropdown.classList.add('hidden');
+                        });
+
+                        // Click to toggle lock
+                        bell.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            isLockedOpen = !isLockedOpen;
+                            dropdown.classList.toggle('hidden', !isLockedOpen);
+                        });
+
+                        // Close if clicked outside
+                        document.addEventListener('click', (e) => {
+                            if (!wrapper.contains(e.target)) {
+                            isLockedOpen = false;
+                            dropdown.classList.add('hidden');
+                            }
+                        });
+                    </script>
+
+
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                             <span class="text-white font-semibold text-sm">SO</span>
