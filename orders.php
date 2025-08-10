@@ -1905,7 +1905,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </td>
                 <td class="px-4 py-3">
                  <!-- Example inside a loop -->
-                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Cancel</button>
+                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Reject</button>
                    
                 </td>
             `;
