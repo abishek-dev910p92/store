@@ -181,13 +181,13 @@
                 <!-- Desktop Filters -->
                 <div class="hidden md:flex md:items-center md:justify-between md:mb-6">
                     <div class="flex space-x-4">
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 pointer">
                             <option value="">All Categories</option>
                             <option value="electronics">Electronics</option>
                             <option value="clothing">Clothing</option>
                             <option value="home">Home & Kitchen</option>
                         </select>
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500 pointer">
                             <option value="">All Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -333,7 +333,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 pointer">
                                     <option value="">Select Category</option>
                                     <option value="electronics">Electronics</option>
                                     <option value="clothing">Clothing</option>
@@ -543,11 +543,11 @@
 
                         </div>
                         <div class="flex space-x-2">
-                            <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors" data-pid="${product.pid}">
+                            <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors pointer" data-pid="${product.pid}">
                                 <i class="fas fa-edit mr-1"></i>
                                 Edit
                             </button>
-                            <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors" data-pid="${product.pid}">
+                            <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors pointer" data-pid="${product.pid}">
                                 <i class="fas fa-trash mr-1"></i>
                                 Delete
                             </button>
