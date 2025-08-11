@@ -480,6 +480,9 @@
   .min-h-screen {
     min-height: 100vh;
   }
+  #rows {
+    flex-direction: column;
+  }
   .w-2 {
     width: calc(var(--spacing) * 2);
   }
