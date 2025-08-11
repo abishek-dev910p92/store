@@ -333,6 +333,9 @@
       max-width: 96rem;
     }
   }
+  .search {
+    width: 60% !important;
+  }
   .m-6 {
     margin: calc(var(--spacing) * 6);
   }
