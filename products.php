@@ -109,7 +109,7 @@
                 </a>
             </nav>
             <div class="flex-shrink-0 border-t border-gray-200 p-4">
-                <a href="logout.php" class="text-red-600 hover:bg-red-50 hover:text-red-700 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
+                <a href="logout.php" class="bg-red-500 text-white hover:bg-white hover:text-red-700 group flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200">
                     <i class="fas fa-sign-out-alt mr-3"></i>
                     Logout
                 </a>
