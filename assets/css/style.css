@@ -333,6 +333,9 @@
       max-width: 96rem;
     }
   }
+  .pointer {
+    cursor: pointer;
+  }
   .m-6 {
     margin: calc(var(--spacing) * 6);
   }
