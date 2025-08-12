@@ -118,7 +118,7 @@ if (!isset($_SESSION['cid'])) {
 
 
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-sm">SO</span>
+                    <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                 </div>
             </div>
         </div>
@@ -260,16 +260,18 @@ if (!isset($_SESSION['cid'])) {
                                 ?>
                             </button>
 
+ 
+                    <button class="p-2 text-gray-400 hover:text-gray-500 relative">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                    </button>
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                         </div>
-
-                        <!-- Dropdown -->
-                        <div id="userDropdown" class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50">
-                            <ul class="py-1 text-sm text-gray-700">
-                                <li><a href="profile.php" class="block px-2 py-2 rounded-lg rounde hover:bg-gray-200">Profile</a></li>
-                                <li><a href="logout.php" class="block px-2 py-2 rounded-lg hover:bg-gray-200">Logout</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                        <span class="text-sm font-medium text-gray-700" data-user-name><?php echo $_SESSION['name']; ?></span>
+ 
+ 
 
                     <script>
                         const userMenu = document.getElementById("userMenu");
@@ -303,7 +305,7 @@ if (!isset($_SESSION['cid'])) {
             <!-- Welcome Section -->
             <div class="p-4 md:p-6">
                 <div class="mb-6 animate-fade-in">
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome back, <?php echo $_SESSION['name']; ?>!👋</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome back, <span data-user-name><?php echo $_SESSION['name']; ?></span>!👋</h1>
                     <p class="text-gray-600" >Here's what's happening with your store today.</p>
                 </div>
 
@@ -661,36 +663,42 @@ if (!isset($_SESSION['cid'])) {
 
         
     </script>
-<script>
+
+    <script>
+(() => {
+  try {
+    const raw = localStorage.getItem('dbuser');
+    if (!raw) return; // nothing to hydrate; keep PHP + SO fallback
+
+    const u = JSON.parse(raw);
+    const first = (u.first_name || '').trim();
+    const last  = (u.last_name  || '').trim();
+
+    // Prefer explicit first/last; fall back to a generic name if present
+    const full  = [first, last].filter(Boolean).join(' ').trim() || (u.name || '').trim();
+
+    // Build initials; fall back to first letters of words in full name
+    const initials =
+      ((first[0] || '') + (last[0] || '')).toUpperCase() ||
+      (full ? full.split(/\s+/).map(s => s[0] || '').join('').slice(0,2).toUpperCase() : '');
+
+    // Update all initials bubbles
+    document.querySelectorAll('[data-user-initials]').forEach(el => {
+      if (initials) el.textContent = initials;
+    });
+
+    // Update all full-name spots
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      if (full) el.textContent = full;
+    });
+  } catch (e) {
+    console.error('Header hydrate failed', e);
+  }
+})();
+</script>
+
+
+
  
-                        const bell = document.getElementById('notificationBell');
-                        const dropdown = document.getElementById('notificationDropdown');
-                        const wrapper = document.getElementById('notificationWrapper');
-                        let isLockedOpen = false;
-
-                        // Hover to show
-                        wrapper.addEventListener('mouseenter', () => {
-                            if (!isLockedOpen) dropdown.classList.remove('hidden');
-                        });
-
-                        wrapper.addEventListener('mouseleave', () => {
-                            if (!isLockedOpen) dropdown.classList.add('hidden');
-                        });
-
-                        // Click to toggle lock
-                        bell.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            isLockedOpen = !isLockedOpen;
-                            dropdown.classList.toggle('hidden', !isLockedOpen);
-                        });
-
-                        // Close if clicked outside
-                        document.addEventListener('click', (e) => {
-                            if (!wrapper.contains(e.target)) {
-                            isLockedOpen = false;
-                            dropdown.classList.add('hidden');
-                            }
-                        });
-                    </script>
 </body>
 </html>

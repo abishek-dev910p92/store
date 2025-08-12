@@ -353,7 +353,7 @@ include "backend/dashboard.php";
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
                 </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-sm">SO</span>
+                    <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                 </div>
             </div>
         </div>
@@ -429,9 +429,9 @@ include "backend/dashboard.php";
                     </button>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm">SO</span>
+                            <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                         </div>
-                        <span class="text-sm font-medium text-gray-700"> <?php echo $_SESSION['name']; ?></span>
+                        <span class="text-sm font-medium text-gray-700" data-user-name> <?php echo $_SESSION['name']; ?></span>
                     </div>
                 </div>
             </div>
@@ -705,7 +705,7 @@ include "backend/dashboard.php";
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment mode</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reject</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ordersTableBody" class="bg-white divide-y divide-gray-200">
@@ -2138,12 +2138,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </td>
                 <td class="px-4 py-3">
-                    <button class="cancelOrderBtn" data-oid="${order.oid}" data-date="${order.date}" 
-                        style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px; 
-                        ${!isRejectable ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
-                        ${!isRejectable ? 'disabled' : ''}>
-                       Accept
-                    </button>
+ 
+                 <!-- Example inside a loop -->
+                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Reject</button>
+                   
+ 
                 </td>
             `;
             
@@ -2459,6 +2458,34 @@ document.addEventListener('click', function (event) {
   
  console.log(`${order.date || 'Unknown date'}`);
 </script>
+<script>
+(() => {
+  try {
+    const raw = localStorage.getItem('dbuser');
+    if (!raw) return;
+
+    const u = JSON.parse(raw);
+    const first = (u.first_name || '').trim();
+    const last  = (u.last_name  || '').trim();
+    const full  = [first, last].filter(Boolean).join(' ').trim() || (u.name || '').trim();
+
+    const initials =
+      ((first[0] || '') + (last[0] || '')).toUpperCase() ||
+      (full ? full.split(/\s+/).map(s => s[0] || '').join('').slice(0,2).toUpperCase() : '');
+
+    document.querySelectorAll('[data-user-initials]').forEach(el => {
+      if (initials) el.textContent = initials;
+    });
+
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      if (full) el.textContent = full;
+    });
+  } catch (e) {
+    console.error('Header hydrate failed', e);
+  }
+})();
+</script>
+
 
 
 
