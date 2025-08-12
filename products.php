@@ -432,45 +432,61 @@
 
     <script>
         console.log('Products page JavaScript loaded');
-        // Global variable to store products
+        
+        // Global arrays
         let allProducts = [];
         let filteredProducts = [];
-        
+
         // Fetch products from API
-        async function fetchProducts() {
-            try {
-                // Get client ID from localStorage or use default
-                const userData = JSON.parse(localStorage.getItem('dbuser')) || {};
-                const cid = userData.cid || '183287';
-                
-                const response = await fetch('https://minitzgo.com/api/fetch_products.php', { 
-                    method: "POST", 
-                    headers: { 
-                        'Content-Type': 'application/json', 
-                        "x-api-key": "2637338988c5f3bbf8d4934dc458b966a21a1d2d56931390f97ce7c4641a2677" 
-                    }, 
-                    body: JSON.stringify({ 
-                        'cid': cid 
-                    }) 
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                
-                const data = await response.json();
-                console.log('API Response:', data);
-                
-                if (data && data.data) {
-                    allProducts = data.data;
-                    filteredProducts = [...allProducts];
-                    renderProducts(filteredProducts);
-                    updateProductCount(data.count);
-                }
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
+        async function fetchProducts(forceRefresh = false) {
+        try {
+        // Check localStorage first
+        let localProducts = JSON.parse(localStorage.getItem('products'));
+
+        if (localProducts && localProducts.length > 0 && !forceRefresh) {
+            console.log('Loaded products from localStorage');
+            allProducts = localProducts;
+            filteredProducts = [...allProducts];
+            renderProducts(filteredProducts);
+            updateProductCount(filteredProducts.length);
+            return; 
         }
+
+        // Otherwise, fetch from API
+        const userData = JSON.parse(localStorage.getItem('dbuser')) || {};
+        const cid = userData.cid || '183287';
+
+        const response = await fetch('https://minitzgo.com/api/fetch_products.php', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                "x-api-key": "2637338988c5f3bbf8d4934dc458b966a21a1d2d56931390f97ce7c4641a2677"
+            },
+            body: JSON.stringify({ 'cid': cid })
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const data = await response.json();
+        console.log('API Response:', data);
+
+        if (data && data.data) {
+            allProducts = data.data;
+            filteredProducts = [...allProducts];
+
+            // Save to localStorage for persistence
+            localStorage.setItem('products', JSON.stringify(allProducts));
+
+            renderProducts(filteredProducts);
+            updateProductCount(data.count);
+        }
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+        }
+
         
         // Update product count in the UI
         function updateProductCount(count) {
@@ -486,79 +502,76 @@
                 lowStockElement.textContent = lowStockCount;
             }
         }
-        
-        // Render products to the UI
-        function renderProducts(products) {
-            const productsContainer = document.getElementById('products-container');
-            if (!productsContainer) return;
-            
-            productsContainer.innerHTML = '';
-            
-            if (products.length === 0) {
-                productsContainer.innerHTML = `
-                    <div class="col-span-full text-center py-10">
-                        <p class="text-gray-500">No products found</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            products.forEach((product, index) => {
-                const stockStatus = product.product_stock > 10 ? 
-                    '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">In Stock</span>' :
-                    product.product_stock > 0 ?
-                    '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Low Stock</span>' :
-                    '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Out of Stock</span>';
-                
-                const productCard = document.createElement('div');
-                productCard.className = 'bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-all duration-300';
-                productCard.style.animationDelay = `${index * 0.1}s`;
-                
-                productCard.innerHTML = `
-                    <div class="relative">
-                        <img src="${product.product_image1}" alt="${product.product_name}" class="w-full h-48 object-cover">
-                        <div class="absolute top-3 right-3">
-                            ${stockStatus}
-                        </div>
-                         <div class="absolute top-3 left-3 px-3 bg-red-600 text-white text-sm rounded-full"> 
-                           
-                            
-                            PCODE: ${product.pcode}
-                         </div>
-                    </div>  
-                    <div class="p-4">
-                        <h3 class="font-semibold text-gray-900 mb-2">${product.product_name}</h3>
-                        
-                       
-                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">${product.product_discription}</p>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-lg font-bold text-purple-600">₹${product.product_price}</span>
-                            <span class="text-sm text-gray-500">Stock: ${product.product_stock}</span>
-                            <span class="text-xs text-gray-500">${product.product_brand}</span>
-                        </div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category}</span>
-                            <span class="text-sm text-gray-500">Added on: ${new Date(product.date).toLocaleDateString()}</span>
-                           <b> <span class="text-sm text-blue-500 text-xxxt-bold">Size: ${product.product_size}</span></b>
 
-                        </div>
-                        <div class="flex space-x-2">
-                            <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors" data-pid="${product.pid}">
-                                <i class="fas fa-edit mr-1"></i>
-                                Edit
-                            </button>
-                            <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors" data-pid="${product.pid}">
-                                <i class="fas fa-trash mr-1"></i>
-                                Delete
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                productsContainer.appendChild(productCard);
-            });
-        }
+        let products = JSON.parse(localStorage.getItem('products')) || [];
         
+        //  Render products to the UI
+        
+        function renderProducts(products) {
+        const productsContainer = document.getElementById('products-container');
+        if (!productsContainer) return;
+
+        productsContainer.innerHTML = '';
+
+        if (products.length === 0) {
+            productsContainer.innerHTML = `
+            <div class="col-span-full text-center py-10">
+                <p class="text-gray-500">No products found</p>
+            </div>
+            `;
+        return;
+        }
+
+        products.forEach((product, index) => {
+            const stockStatus = product.product_stock > 10 ?
+                '<span class="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">In Stock</span>' :
+                product.product_stock > 0 ?
+                '<span class="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">Low Stock</span>' :
+                '<span class="px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full">Out of Stock</span>';
+
+            const productCard = document.createElement('div');
+            productCard.className = 'bg-white rounded-2xl shadow-lg overflow-hidden animate-slide-up hover:shadow-xl transition-all duration-300';
+            productCard.style.animationDelay = `${index * 0.1}s`;
+
+            productCard.innerHTML = `
+                <div class="relative">
+                    <img src="${product.product_image1}" alt="${product.product_name}" class="w-full h-48 object-cover">
+                    <div class="absolute top-3 right-3">${stockStatus}</div>
+                    <div class="absolute top-3 left-3 px-3 bg-red-600 text-white text-sm rounded-full">
+                        PCODE: ${product.pcode}
+                    </div>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-semibold text-gray-900 mb-2 editable" data-field="product_name">${product.product_name}</h3>
+                    <p class="text-sm text-gray-600 mb-3 line-clamp-2 editable" data-field="product_discription">${product.product_discription}</p>
+
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-lg font-bold text-purple-600 editable" data-field="product_price">₹${product.product_price}</span>
+                        <span class="text-sm text-gray-500 editable" data-field="product_stock">Stock: ${product.product_stock}</span>
+                        <span class="text-xs text-gray-500 editable" data-field="product_brand">${product.product_brand}</span>
+                    </div>
+
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm text-black-800 editable" data-field="category">Category: ${product.category}</span>
+                        <span class="text-sm text-gray-500 editable" data-field="date">Added on: ${new Date(product.date).toLocaleDateString()}</span>
+                        <b><span class="text-sm text-blue-500 editable" data-field="product_size">Size: ${product.product_size}</span></b>
+                    </div>
+
+                    <div class="flex space-x-2">
+                        <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors edit-btn" data-pid="${product.pid}">
+                            <i class="fas fa-edit mr-1"></i>Edit
+                        </button>
+                        <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors delete-btn" data-pid="${product.pid}">
+                            <i class="fas fa-trash mr-1"></i>Delete
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            productsContainer.appendChild(productCard);
+        });
+        }
+
         // Filter functionality
         document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -674,15 +687,77 @@
             initializeAddProductForm();
 
             // Add event delegation for delete buttons
+            
             document.addEventListener('click', function(e) {
-                const deleteBtn = e.target.closest('button[data-pid]');
-                if (deleteBtn) {
-                    const pid = deleteBtn.dataset.pid;
-                    if (confirm('Are you sure you want to delete this product?')) {
-                        deleteProduct(pid);
-                    }
-                }
+            const editBtn = e.target.closest('.edit-btn');
+            const deleteBtn = e.target.closest('.delete-btn');
+
+            if (editBtn) {
+            const card = editBtn.closest('.bg-white');
+            const pid = editBtn.dataset.pid;
+            const isEditing = editBtn.textContent.trim() === "Save";
+
+            if (!isEditing) {
+            // Enter edit mode
+            card.querySelectorAll('.editable').forEach(el => {
+                el.contentEditable = "true";
+                el.classList.add('border', 'border-yellow-400', 'p-1', 'rounded');
             });
+            editBtn.innerHTML = `<i class="fas fa-save mr-1"></i>Save`;
+
+            } else {
+            // Save edits
+            const updatedData = {};
+            card.querySelectorAll('.editable').forEach(el => {
+                const field = el.dataset.field;
+                let value = el.innerText.trim();
+
+            switch (field) {
+                case 'product_price':
+                    value = value.replace(/^₹\s*/, '');
+                    break;
+                case 'product_stock':
+                    value = value.replace(/^Stock:\s*/, '');
+                    break;
+                case 'category':
+                    value = value.replace(/^Category:\s*/, '');
+                    break;
+                case 'date':
+                    value = value.replace(/^Added on:\s*/, '');
+                    break;
+                case 'product_size':
+                    value = value.replace(/^Size:\s*/, '');
+                    break;
+            }
+
+            updatedData[field] = value;
+
+                el.contentEditable = "false";
+                el.classList.remove('border', 'border-yellow-400', 'p-1', 'rounded');
+            });
+
+            // Update in products array
+            products = products.map(p => p.pid == pid ? {...p, ...updatedData} : p);
+
+            // Save to localStorage
+            localStorage.setItem('products', JSON.stringify(products));
+
+            // Reset buttons
+            editBtn.innerHTML = `<i class="fas fa-edit mr-1"></i>Edit`;
+            deleteBtn.innerHTML = `<i class="fas fa-trash mr-1"></i>Delete`;
+
+            renderProducts(products); 
+            }
+            }
+
+            if (deleteBtn && deleteBtn.textContent.trim() === "Delete") {
+            const pid = deleteBtn.dataset.pid;
+            if (confirm('Are you sure you want to delete this product?')) {
+            deleteProduct(pid);
+            }
+            }
+        });
+
             
             // Get modal elements
             const modal = document.getElementById('add-product-modal');
