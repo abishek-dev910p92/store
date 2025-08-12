@@ -181,13 +181,13 @@
                 <!-- Desktop Filters -->
                 <div class="hidden md:flex md:items-center md:justify-between md:mb-6">
                     <div class="flex space-x-4">
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <select id="desktop-category" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
                             <option value="">All Categories</option>
                             <option value="electronics">Electronics</option>
                             <option value="clothing">Clothing</option>
                             <option value="home">Home & Kitchen</option>
                         </select>
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
+                        <select id="desktop-status" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
                             <option value="">All Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -585,6 +585,34 @@
                 
                 renderProducts(filteredProducts);
             });
+        });
+
+        // Desktop category filter
+        document.getElementById('desktop-category').addEventListener('change', function() {
+        const category = this.value.toLowerCase();
+        if (!category) {
+            filteredProducts = [...allProducts];
+        } else {
+            filteredProducts = allProducts.filter(product =>
+            product.category.toLowerCase() === category
+            );
+        }
+        renderProducts(filteredProducts);
+        });
+
+        // Desktop status filter (optional extra filter)
+        document.getElementById('desktop-status').addEventListener('change', function() {
+        const status = this.value.toLowerCase();
+        let productsToFilter = [...allProducts];
+
+        if (status) {
+            productsToFilter = productsToFilter.filter(product =>
+            product.status.toLowerCase() === status
+            );
+        }
+
+        filteredProducts = productsToFilter;
+        renderProducts(filteredProducts);
         });
 
         // Search functionality
