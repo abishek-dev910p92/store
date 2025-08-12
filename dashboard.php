@@ -183,7 +183,8 @@ if (!isset($_SESSION['cid'])) {
                         include "includes/header_toggle.php";
                     ?>
 
-
+                    
+                    <!-- Notification Bell Section-->
                     <div class="relative inline-block" id="notificationWrapper">
                         <!-- Bell Icon -->
                         <button id="notificationBell" class="p-2 text-gray-400 hover:text-gray-600 relative">
@@ -233,12 +234,53 @@ if (!isset($_SESSION['cid'])) {
                     </script>
 
 
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm">SO</span>
+                    <!-- User Name Section -->
+                    <div class="relative" id="userMenu">
+                        <!-- Click & Hover Target -->
+                        <div id="userBtn" class="flex items-center space-x-3 cursor-pointer">
+                            <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold text-sm">SO</span>
+                            </div>
+                            <button class="text-sm font-medium text-gray-700 hover:underline cursor-pointer">
+                                <?php 
+                                    echo ucwords(strtolower($_SESSION['name'])); 
+                                ?>
+                            </button>
+
                         </div>
-                        <span class="text-sm font-medium text-gray-700"><?php echo $_SESSION['name']; ?></span>
+
+                        <!-- Dropdown -->
+                        <div id="userDropdown" class="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg hidden z-50">
+                            <ul class="py-1 text-sm text-gray-700">
+                                <li><a href="profile.php" class="block px-2 py-2 rounded-lg rounde hover:bg-gray-200">Profile</a></li>
+                                <li><a href="logout.php" class="block px-2 py-2 rounded-lg hover:bg-gray-200">Logout</a></li>
+                            </ul>
+                        </div>
                     </div>
+
+                    <script>
+                        const userMenu = document.getElementById("userMenu");
+                        const userBtn = document.getElementById("userBtn");
+                        const userDropdown = document.getElementById("userDropdown");
+
+                        // Show on hover
+                        userMenu.addEventListener("mouseenter", function () {
+                            userDropdown.classList.remove("hidden");
+                        });
+
+                        // Hide when mouse leaves
+                        userMenu.addEventListener("mouseleave", function () {
+                            userDropdown.classList.add("hidden");
+                        });
+
+                        // Optional: close dropdown if clicked outside
+                        document.addEventListener("click", function (e) {
+                            if (!userMenu.contains(e.target)) {
+                                userDropdown.classList.add("hidden");
+                            }
+                        });
+                    </script>
+
                 </div>
             </div>
         </header>
