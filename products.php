@@ -268,7 +268,7 @@
     </nav>
 
     <!-- Add Product Modal -->
-    <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+    <div id="add-product-modal" class="fixed inset-0 bg-gradient-to-r from-purple-500 to-pink-600 bg-opacity-50 z-50 hidden">
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
                 <div class="p-6">
