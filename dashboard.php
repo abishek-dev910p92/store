@@ -261,8 +261,8 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo totalSale($conn, $cid); ?></p>
                                 <p class="text-blue-200 text-xs mt-1">+12% from last month</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
-                                <i class="fas fa-dollar-sign text-xl"></i>
+                            <div class="bg-opacity-20 rounded-xl p-3">
+                                <i class="fa-solid fa-indian-rupee-sign text-xl"></i>
                             </div>
                         </div>
                     </div>
@@ -274,7 +274,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchProducts($conn, $cid); ?></p>
                                 <p class="text-green-200 text-xs mt-1"><?php echo randomnumbers($conn, $cid); ?></p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-box text-xl"></i>
                             </div>
                         </div>
@@ -287,7 +287,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchTotalOrders($conn, $cid); ?></p>
                                 <p class="text-purple-200 text-xs mt-1">+more orders this week</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-shopping-cart text-xl"></i>
                             </div>
                         </div>
@@ -301,7 +301,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-orange-200 text-xs mt-1"><?php echo checkThisWeekOrders($conn, $cid); ?></p>
                              
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-calendar-day text-xl"></i>
                             </div>
                         </div>
