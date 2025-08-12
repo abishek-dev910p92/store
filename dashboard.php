@@ -36,7 +36,19 @@ if (!isset($_SESSION['cid'])) {
         });
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ <script src="assets/js/notification.js"></script>
 
+    <style>
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(-5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+</style>
+
+    
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Mobile Header -->
@@ -184,54 +196,55 @@ if (!isset($_SESSION['cid'])) {
                     ?>
 
                     
-                    <!-- Notification Bell Section-->
-                    <div class="relative inline-block" id="notificationWrapper">
-                        <!-- Bell Icon -->
-                        <button id="notificationBell" class="p-2 text-gray-400 hover:text-gray-600 relative">
-                            <i class="fas fa-bell text-lg"></i>
-                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                        </button>
+               <!-- Notification Bell Section -->
+<div class="relative inline-block" id="notificationWrapper">
+    <!-- Bell Icon -->
+    <button id="notificationBell" class="p-2 text-gray-500 hover:text-gray-700 relative focus:outline-none">
+        <i class="fas fa-bell text-lg"></i>
+        <span id="notificationCount"
+              class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center shadow-md">
+            3
+        </span>
+    </button>
 
-                        <!-- Dropdown -->
-                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-gray-50 border border-gray-200 rounded-xl shadow-lg z-50">
-                            <ul class="p-1 text-sm text-gray-800">
-                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">New Order Received</li>
-                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Payment Confirmed</li>
-                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Low Stock Alert</li>
-                            </ul>
-                        </div>
+    <!-- Dropdown -->
+    <div id="notificationDropdown"
+         class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden animate-fadeIn">
 
+        <!-- Notification List -->
+        <ul id="notificationbody" class="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">New Order Received</p>
+                        <p class="text-xs text-gray-500">Just now</p>
                     </div>
-                    <script>
-                        const bell = document.getElementById('notificationBell');
-                        const dropdown = document.getElementById('notificationDropdown');
-                        const wrapper = document.getElementById('notificationWrapper');
-                        let isLockedOpen = false;
+                </div>
+            </li>
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-green-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">Payment Confirmed</p>
+                        <p class="text-xs text-gray-500">5 mins ago</p>
+                    </div>
+                </div>
+            </li>
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-yellow-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">Low Stock Alert</p>
+                        <p class="text-xs text-gray-500">10 mins ago</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
 
-                        // Hover to show
-                        wrapper.addEventListener('mouseenter', () => {
-                            if (!isLockedOpen) dropdown.classList.remove('hidden');
-                        });
-
-                        wrapper.addEventListener('mouseleave', () => {
-                            if (!isLockedOpen) dropdown.classList.add('hidden');
-                        });
-
-                        // Click to toggle lock
-                        bell.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            isLockedOpen = !isLockedOpen;
-                            dropdown.classList.toggle('hidden', !isLockedOpen);
-                        });
-
-                        // Close if clicked outside
-                        document.addEventListener('click', (e) => {
-                            if (!wrapper.contains(e.target)) {
-                            isLockedOpen = false;
-                            dropdown.classList.add('hidden');
-                            }
-                        });
-                    </script>
+                    
 
 
                     <!-- User Name Section -->
@@ -648,6 +661,36 @@ if (!isset($_SESSION['cid'])) {
 
         
     </script>
+<script>
+ 
+                        const bell = document.getElementById('notificationBell');
+                        const dropdown = document.getElementById('notificationDropdown');
+                        const wrapper = document.getElementById('notificationWrapper');
+                        let isLockedOpen = false;
 
+                        // Hover to show
+                        wrapper.addEventListener('mouseenter', () => {
+                            if (!isLockedOpen) dropdown.classList.remove('hidden');
+                        });
+
+                        wrapper.addEventListener('mouseleave', () => {
+                            if (!isLockedOpen) dropdown.classList.add('hidden');
+                        });
+
+                        // Click to toggle lock
+                        bell.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            isLockedOpen = !isLockedOpen;
+                            dropdown.classList.toggle('hidden', !isLockedOpen);
+                        });
+
+                        // Close if clicked outside
+                        document.addEventListener('click', (e) => {
+                            if (!wrapper.contains(e.target)) {
+                            isLockedOpen = false;
+                            dropdown.classList.add('hidden');
+                            }
+                        });
+                    </script>
 </body>
 </html>

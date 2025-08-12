@@ -481,10 +481,23 @@ include "backend/dashboard.php";
                         </select>
                         <input type="date" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <button id="export-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all duration-200">
-                        <i class="fas fa-download mr-2"></i>
-                        Export CSV
-                    </button>
+                    <div class="relative">
+                        <button id="export-dropdown-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center">
+                            <i class="fas fa-download mr-2"></i>
+                            Export Data
+                            <i class="fas fa-chevron-down ml-2"></i>
+                        </button>
+                        <div id="export-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 z-50 hidden">
+                            <button id="export-csv-btn" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-t-xl flex items-center">
+                                <i class="fas fa-file-csv mr-3 text-green-600"></i>
+                                Export as CSV
+                            </button>
+                            <button id="export-pdf-btn" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-b-xl flex items-center">
+                                <i class="fas fa-file-pdf mr-3 text-red-600"></i>
+                                Export as PDF
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Live Orders Section (Mobile Only) -->
@@ -802,8 +815,23 @@ include "backend/dashboard.php";
             });
         });
         
+        // Export dropdown functionality
+        const exportDropdownBtn = document.getElementById('export-dropdown-btn');
+        const exportDropdown = document.getElementById('export-dropdown');
+        
+        exportDropdownBtn?.addEventListener('click', function(e) {
+            e.stopPropagation();
+            exportDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function() {
+            exportDropdown?.classList.add('hidden');
+        });
+        
         // CSV Export functionality
-        document.getElementById('export-btn')?.addEventListener('click', async function() {
+        document.getElementById('export-csv-btn')?.addEventListener('click', async function() {
+            exportDropdown.classList.add('hidden');
             const button = this;
             const originalText = button.innerHTML;
             
@@ -855,7 +883,7 @@ include "backend/dashboard.php";
                         date: order.date || 'N/A'
                     }))
                 ];
-                
+             
                 if (combinedData.length === 0) {
                     alert('No data to export');
                     return;
@@ -915,6 +943,167 @@ include "backend/dashboard.php";
                 button.disabled = false;
             }
         });
+        
+        // PDF Export functionality
+        document.getElementById('export-pdf-btn')?.addEventListener('click', async function() {
+            exportDropdown.classList.add('hidden');
+            const button = this;
+            const originalText = button.innerHTML;
+            
+            // Show loading state
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Generating PDF...';
+            button.disabled = true;
+            
+            try {
+                // Load jsPDF library if not already loaded
+                if (typeof window.jsPDF === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                    document.head.appendChild(script);
+                    
+                    await new Promise((resolve, reject) => {
+                        script.onload = resolve;
+                        script.onerror = reject;
+                    });
+                }
+                
+                // Get live orders data
+                const liveOrdersData = [];
+                const liveOrderCards = document.querySelectorAll('.live-order-card');
+                
+                liveOrderCards.forEach(card => {
+                    if (card.style.display !== 'none') {
+                        const orderIdElement = card.querySelector('p.font-semibold.text-gray-900');
+                        const customerElement = card.querySelector('p.text-xs.text-gray-500.truncate-text');
+                        const amountElement = card.querySelector('p.font-bold.text-gray-900');
+                        const statusElement = card.querySelector('span.rounded-full');
+                        const timeElements = card.querySelectorAll('p.text-xs.text-gray-500');
+                        const timeElement = timeElements.length > 1 ? timeElements[1] : null;
+                        
+                        if (orderIdElement && customerElement && amountElement) {
+                            liveOrdersData.push({
+                                type: 'Live Order',
+                                orderId: orderIdElement.textContent.trim(),
+                                customer: customerElement.textContent.trim(),
+                                amount: amountElement.textContent.trim(),
+                                status: statusElement ? statusElement.textContent.trim() : 'Processing',
+                                time: timeElement ? timeElement.textContent.trim() : 'Just now',
+                                date: new Date().toLocaleDateString()
+                            });
+                        }
+                    }
+                });
+                
+                // Combine live orders and total orders
+                const combinedData = [
+                    ...liveOrdersData,
+                    ...allOrders.map(order => ({
+                        type: 'Total Order',
+                        orderId: order.oid || order.order_id || 'N/A',
+                        customer: order.customer_name || 'N/A',
+                        product: order.product_title || 'N/A',
+                        amount: order.product_price || '0',
+                        status: order.product_status || 'N/A',
+                        paymentMode: order.payment_mode || 'N/A',
+                        date: order.date || 'N/A'
+                    }))
+                ];
+                
+                if (combinedData.length === 0) {
+                    alert('No data to export');
+                    return;
+                }
+                
+                // Create PDF
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Add title
+                doc.setFontSize(20);
+                doc.setTextColor(40, 40, 40);
+                doc.text('Orders Export Report', 20, 20);
+                
+                // Add date
+                doc.setFontSize(12);
+                doc.setTextColor(100, 100, 100);
+                doc.text(`Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 20, 30);
+                
+                // Add summary
+                doc.setFontSize(14);
+                doc.setTextColor(40, 40, 40);
+                doc.text(`Total Orders: ${combinedData.length}`, 20, 45);
+                
+                // Table headers
+                const headers = ['Type', 'Order ID', 'Customer/Product', 'Amount', 'Status', 'Date'];
+                let yPosition = 60;
+                
+                // Draw table header
+                doc.setFontSize(10);
+                doc.setTextColor(255, 255, 255);
+                doc.setFillColor(59, 130, 246); // Blue background
+                doc.rect(20, yPosition - 5, 170, 10, 'F');
+                
+                let xPosition = 25;
+                const columnWidths = [25, 25, 45, 25, 25, 25];
+                
+                headers.forEach((header, index) => {
+                    doc.text(header, xPosition, yPosition);
+                    xPosition += columnWidths[index];
+                });
+                
+                yPosition += 15;
+                
+                // Add table rows
+                doc.setTextColor(40, 40, 40);
+                combinedData.forEach((row, index) => {
+                    if (yPosition > 270) { // Start new page if needed
+                        doc.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    xPosition = 25;
+                    const rowData = [
+                        row.type,
+                        row.orderId,
+                        row.customer || row.product || 'N/A',
+                        row.amount,
+                        row.status,
+                        row.date
+                    ];
+                    
+                    // Alternate row colors
+                    if (index % 2 === 0) {
+                        doc.setFillColor(248, 250, 252);
+                        doc.rect(20, yPosition - 5, 170, 10, 'F');
+                    }
+                    
+                    rowData.forEach((cell, cellIndex) => {
+                        const cellText = String(cell || '').substring(0, 15); // Limit text length
+                        doc.text(cellText, xPosition, yPosition);
+                        xPosition += columnWidths[cellIndex];
+                    });
+                    
+                    yPosition += 10;
+                });
+                
+                // Save the PDF
+                const fileName = `orders_export_${new Date().toISOString().split('T')[0]}.pdf`;
+                doc.save(fileName);
+                
+                // Show success message
+                button.innerHTML = '<i class="fas fa-check mr-3"></i>PDF Generated!';
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }, 2000);
+                
+            } catch (error) {
+                console.error('PDF Export error:', error);
+                alert('Error generating PDF. Please try again.');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        });
 
         // Enhanced search functionality for both live orders and total orders
         let originalOrders = [];
@@ -954,7 +1143,7 @@ include "backend/dashboard.php";
                     field.toLowerCase().includes(searchTerm.toLowerCase())
                 );
             });
-            
+      
             allOrders = filteredOrders;
             currentPage = 1;
             mobileCurrentPage = 1;
@@ -1411,6 +1600,13 @@ include "backend/dashboard.php";
                                 // Set data-oid attribute on the card itself
                                 newMobileCard.setAttribute('data-oid', orderId);
                                 
+                                // Check if order is older than 2 minutes
+                                const orderTime = new Date(order.order_time || order.date || new Date());
+                                const currentTime = new Date();
+                                const timeDifference = (currentTime - orderTime) / (1000 * 60); // Convert to minutes
+                                const isRejectable = timeDifference <= 5; // Can reject if less than or equal to 5 minutes old
+
+                                
                                 newMobileCard.innerHTML = `
                                     <span class="absolute top-2 right-2 mt-2 ${statusClass} text-xs ml-4 font-medium rounded-full">${statusText}</span>
                                     <div class="flex items-start space-x-4 mb-4 p-2">
@@ -1427,7 +1623,11 @@ include "backend/dashboard.php";
                                         </div>
                                     </div>
                                     <div class="flex space-x-3 px-2 pb-2">
-                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-xs font-medium reject-order" data-oid="${orderId}">
+                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-xs font-medium reject-order" 
+                                            data-oid="${orderId}" 
+                                            data-order-time="${order.order_time || order.date || ''}"
+                                            ${!isRejectable ? 'disabled' : ''}
+                                            style="${!isRejectable ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                                             <i class="fas fa-times mr-1"></i>Reject
                                         </button>
                                     </div>
@@ -1477,6 +1677,12 @@ include "backend/dashboard.php";
                                 // Set data-oid attribute on the card itself
                                 newDesktopCard.setAttribute('data-oid', orderId);
                                 
+                                // Check if order is older than 2 minutes
+                                const orderTime = new Date(order.order_time || order.date || new Date());
+                                const currentTime = new Date();
+                                const timeDifference = (currentTime - orderTime) / (1000 * 60); // Convert to minutes
+                                const isRejectable = timeDifference <= 5; // Can reject if less than or equal to 5 minutes old
+                                
                                 newDesktopCard.innerHTML = `
                                     <span class="absolute top-4 right-4 px-2 py-1 ${statusClass} text-xs font-medium rounded-full">${statusText}</span>
                                     <div class="flex items-start space-x-4 mb-4 flex-grow p-6">
@@ -1493,7 +1699,11 @@ include "backend/dashboard.php";
                                         </div>
                                     </div>
                                     <div class="flex space-x-3 mt-auto px-2 pb-2">
-                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium reject-order" data-oid="${orderId}">
+                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium reject-order" 
+                                            data-oid="${orderId}" 
+                                            data-order-time="${order.order_time || order.date || ''}"
+                                            ${!isRejectable ? 'disabled' : ''}
+                                            style="${!isRejectable ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                                             <i class="fas fa-times mr-1"></i>Reject
                                         </button>
                                     </div>
@@ -1552,14 +1762,32 @@ include "backend/dashboard.php";
             
             // Add reject order functionality
             document.addEventListener('click', function(e) {
-           
-
                 if (e.target.closest('.reject-order')) {
                     const button = e.target.closest('.reject-order');
+                    
+                    // Check if button is disabled
+                    if (button.disabled) {
+                        alert('This order cannot be rejected as it is older than 2 minutes.');
+                        return;
+                    }
+                    
                     const oid = button.getAttribute('data-oid');
+                    const orderTime = new Date(button.getAttribute('data-order-time'));
                     
                     if (!oid) {
                         alert('Order ID not found');
+                        return;
+                    }
+                    
+                    // Double-check if order is still rejectable (within 2 minutes)
+                    const currentTime = new Date();
+                    const timeDifference = (currentTime - orderTime) / (1000 * 60); // Convert to minutes
+                    
+                    if (timeDifference > 2) {
+                        alert('This order cannot be rejected as it is older than 2 minutes.');
+                        button.disabled = true;
+                        button.style.opacity = '0.5';
+                        button.style.cursor = 'not-allowed';
                         return;
                     }
                     
@@ -1887,6 +2115,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? order.product_image
                 : 'assets/img/no-image.png';
 
+            // Check if order is older than 2 minutes
+            const orderDate = new Date(order.date);
+            const currentDate = new Date();
+            const timeDifference = (currentDate - orderDate) / (1000 * 60); // Convert to minutes
+            const isRejectable = timeDifference <= 5; // Can reject if less than or equal to 5 minutes old
+            
             row.innerHTML = `
                 <td class="px-4 py-3 font-medium text-gray-900">ODR${order.oid  || '#ORD-' + Math.floor(Math.random() * 1000).toString().padStart(3, '0')}</td>
                 <td class="px-4 py-3">${order.date}</td>
@@ -1904,9 +2138,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </td>
                 <td class="px-4 py-3">
-                 <!-- Example inside a loop -->
-                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Cancel</button>
-                   
+                    <button class="cancelOrderBtn" data-oid="${order.oid}" data-date="${order.date}" 
+                        style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px; 
+                        ${!isRejectable ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
+                        ${!isRejectable ? 'disabled' : ''}>
+                       Accept
+                    </button>
                 </td>
             `;
             
@@ -2026,6 +2263,7 @@ document.addEventListener("DOMContentLoaded", () => {
             mobileOrdersContainer.appendChild(card);
         });
     }
+
 
     Totalorders();
 });
@@ -2157,7 +2395,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
-//cancle buttion in table orders update
+//cancel button in table orders update
 
 document.addEventListener('click', function (event) {
   // Get customer ID from localStorage
@@ -2165,10 +2403,27 @@ document.addEventListener('click', function (event) {
   let cid = dbUser ? JSON.parse(dbUser)?.cid : null;
 
   if (event.target.classList.contains('cancelOrderBtn')) {
+    // If button is disabled, don't proceed
+    if (event.target.disabled) {
+      alert('This order cannot be rejected as it is older than 2 minutes.');
+      return;
+    }
+    
     const oid = event.target.getAttribute('data-oid');
- 
+    const orderDate = new Date(event.target.getAttribute('data-date'));
+    const currentDate = new Date();
+    const timeDifference = (currentDate - orderDate) / (1000 * 60); // Convert to minutes
+    
+    // Double-check if order is still rejectable (within 2 minutes)
+    if (timeDifference > 5) {
+      alert('This order cannot be rejected as it is older than 2 minutes.');
+      event.target.disabled = true;
+      event.target.style.opacity = '0.5';
+      event.target.style.cursor = 'not-allowed';
+      return;
+    }
 
-    if (confirm(`Are you sure you want to cancel Order ID ${oid}?`)) {
+    if (confirm(`Are you sure you want to Accept This Order ID ${oid}?`)) {
       fetch('https://minitzgo.com/api/cancel_live_order.php', {
         method: 'POST',
         headers: {
@@ -2186,7 +2441,7 @@ document.addEventListener('click', function (event) {
         // console.log('Cancel API Response:', response);
 
         if (response.status === true) {
-          alert(`Order ${oid} cancelled successfully.`);
+          alert(`Order ${oid} Accepted  successfully.`);
           // Optionally remove or update the row in the UI
           
           event.target.closest('tr').remove();
@@ -2198,13 +2453,11 @@ document.addEventListener('click', function (event) {
         console.error('Cancel error:', err);
         alert('Error occurred while cancelling the order.');
       });
-                    
- 
     }
   }
 });
   
-    console.log("cancel order", order.date);
+ console.log(`${order.date || 'Unknown date'}`);
 </script>
 
 
