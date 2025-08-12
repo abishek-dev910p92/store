@@ -36,7 +36,19 @@ if (!isset($_SESSION['cid'])) {
         });
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ <script src="assets/js/notification.js"></script>
 
+    <style>
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(-5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+</style>
+
+    
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Mobile Header -->
@@ -50,13 +62,61 @@ if (!isset($_SESSION['cid'])) {
             </div>
             <div class="flex items-center space-x-3">
                 
-                <?php include "includes/header_toggle.php"; ?>
+                <?php
+                    $toggleId = 'storeStatusMobile';
+                    $statusTextId = 'statusTextMobile';
+                    include "includes/header_toggle.php";
+                ?>
+
+                <div class="relative inline-block w-full max-w-xs" id="notificationWrapperMobile">
+                    <!-- Bell Icon -->
+                    <button id="notificationBellMobile" class="p-2 text-gray-600 hover:text-gray-800 relative">
+                        <i class="fas fa-bell text-xl"></i>
+                        <span class="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
+                    </button>
+
+                    <!-- Dropdown -->
+                    <div id="notificationDropdownMobile" class="hidden absolute right-0 mt-2 w-[80vw] max-w-sm bg-white border border-gray-200 rounded-xl shadow-xl z-50">
+                        <ul class="p-1 text-xs text-gray-800">
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">New Order Received</li>
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Payment Confirmed</li>
+                            <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Low Stock Alert</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <script>
+                    const mobileBell = document.getElementById('notificationBellMobile');
+                    const mobileDropdown = document.getElementById('notificationDropdownMobile');
+                    const mobileWrapper = document.getElementById('notificationWrapperMobile');
+                    let isMobileDropdownOpen = false;
+
+                    // Show on hover (optional, for tablets or landscape mode)
+                    mobileWrapper.addEventListener('mouseenter', () => {
+                        if (!isMobileDropdownOpen) mobileDropdown.classList.remove('hidden');
+                    });
+
+                    mobileWrapper.addEventListener('mouseleave', () => {
+                        if (!isMobileDropdownOpen) mobileDropdown.classList.add('hidden');
+                    });
+
+                    // Toggle on click
+                    mobileBell.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        isMobileDropdownOpen = !isMobileDropdownOpen;
+                        mobileDropdown.classList.toggle('hidden', !isMobileDropdownOpen);
+                    });
+
+                    // Close if clicked outside
+                    document.addEventListener('click', (e) => {
+                        if (!mobileWrapper.contains(e.target)) {
+                            isMobileDropdownOpen = false;
+                            mobileDropdown.classList.add('hidden');
+                        }
+                    });
+                </script>
 
 
-                <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
-                    <i class="fas fa-bell text-lg"></i>
-                    <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                     <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                 </div>
@@ -129,8 +189,78 @@ if (!isset($_SESSION['cid'])) {
                 </div>
                 <div class="flex items-center space-x-4">
 
-                   <?php include "includes/header_toggle.php"; ?>
+                  <?php
+                        $toggleId = 'storeStatusDesktop';
+                        $statusTextId = 'statusTextDesktop';
+                        include "includes/header_toggle.php";
+                    ?>
 
+                    
+               <!-- Notification Bell Section -->
+<div class="relative inline-block" id="notificationWrapper">
+    <!-- Bell Icon -->
+    <button id="notificationBell" class="p-2 text-gray-500 hover:text-gray-700 relative focus:outline-none">
+        <i class="fas fa-bell text-lg"></i>
+        <span id="notificationCount"
+              class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center shadow-md">
+            3
+        </span>
+    </button>
+
+    <!-- Dropdown -->
+    <div id="notificationDropdown"
+         class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden animate-fadeIn">
+
+        <!-- Notification List -->
+        <ul id="notificationbody" class="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">New Order Received</p>
+                        <p class="text-xs text-gray-500">Just now</p>
+                    </div>
+                </div>
+            </li>
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-green-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">Payment Confirmed</p>
+                        <p class="text-xs text-gray-500">5 mins ago</p>
+                    </div>
+                </div>
+            </li>
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-yellow-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">Low Stock Alert</p>
+                        <p class="text-xs text-gray-500">10 mins ago</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+                    
+
+
+                    <!-- User Name Section -->
+                    <div class="relative" id="userMenu">
+                        <!-- Click & Hover Target -->
+                        <div id="userBtn" class="flex items-center space-x-3 cursor-pointer">
+                            <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                                <span class="text-white font-semibold text-sm">SO</span>
+                            </div>
+                            <button class="text-sm font-medium text-gray-700 hover:underline cursor-pointer">
+                                <?php 
+                                    echo ucwords(strtolower($_SESSION['name'])); 
+                                ?>
+                            </button>
+
+ 
                     <button class="p-2 text-gray-400 hover:text-gray-500 relative">
                         <i class="fas fa-bell text-lg"></i>
                         <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
@@ -140,7 +270,32 @@ if (!isset($_SESSION['cid'])) {
                             <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                         </div>
                         <span class="text-sm font-medium text-gray-700" data-user-name><?php echo $_SESSION['name']; ?></span>
-                    </div>
+ 
+ 
+
+                    <script>
+                        const userMenu = document.getElementById("userMenu");
+                        const userBtn = document.getElementById("userBtn");
+                        const userDropdown = document.getElementById("userDropdown");
+
+                        // Show on hover
+                        userMenu.addEventListener("mouseenter", function () {
+                            userDropdown.classList.remove("hidden");
+                        });
+
+                        // Hide when mouse leaves
+                        userMenu.addEventListener("mouseleave", function () {
+                            userDropdown.classList.add("hidden");
+                        });
+
+                        // Optional: close dropdown if clicked outside
+                        document.addEventListener("click", function (e) {
+                            if (!userMenu.contains(e.target)) {
+                                userDropdown.classList.add("hidden");
+                            }
+                        });
+                    </script>
+
                 </div>
             </div>
         </header>
@@ -163,7 +318,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo totalSale($conn, $cid); ?></p>
                                 <p class="text-blue-200 text-xs mt-1">+12% from last month</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-dollar-sign text-xl"></i>
                             </div>
                         </div>
@@ -176,7 +331,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchProducts($conn, $cid); ?></p>
                                 <p class="text-green-200 text-xs mt-1"><?php echo randomnumbers($conn, $cid); ?></p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-box text-xl"></i>
                             </div>
                         </div>
@@ -189,7 +344,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchTotalOrders($conn, $cid); ?></p>
                                 <p class="text-purple-200 text-xs mt-1">+more orders this week</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-shopping-cart text-xl"></i>
                             </div>
                         </div>
@@ -203,7 +358,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-orange-200 text-xs mt-1"><?php echo checkThisWeekOrders($conn, $cid); ?></p>
                              
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-calendar-day text-xl"></i>
                             </div>
                         </div>
@@ -508,6 +663,7 @@ if (!isset($_SESSION['cid'])) {
 
         
     </script>
+
     <script>
 (() => {
   try {
@@ -542,5 +698,7 @@ if (!isset($_SESSION['cid'])) {
 </script>
 
 
+
+ 
 </body>
 </html>
