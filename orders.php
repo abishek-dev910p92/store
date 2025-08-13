@@ -353,7 +353,7 @@ include "backend/dashboard.php";
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
                 </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
+                    <span class="text-white font-semibold text-sm">SO</span>
                 </div>
             </div>
         </div>
@@ -429,9 +429,9 @@ include "backend/dashboard.php";
                     </button>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
+                            <span class="text-white font-semibold text-sm">SO</span>
                         </div>
-                        <span class="text-sm font-medium text-gray-700" data-user-name> <?php echo $_SESSION['name']; ?></span>
+                        <span class="text-sm font-medium text-gray-700"> <?php echo $_SESSION['name']; ?></span>
                     </div>
                 </div>
             </div>
@@ -481,23 +481,10 @@ include "backend/dashboard.php";
                         </select>
                         <input type="date" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <div class="relative">
-                        <button id="export-dropdown-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all duration-200 flex items-center">
-                            <i class="fas fa-download mr-2"></i>
-                            Export Data
-                            <i class="fas fa-chevron-down ml-2"></i>
-                        </button>
-                        <div id="export-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-200 z-50 hidden">
-                            <button id="export-csv-btn" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-t-xl flex items-center">
-                                <i class="fas fa-file-csv mr-3 text-green-600"></i>
-                                Export as CSV
-                            </button>
-                            <button id="export-pdf-btn" class="w-full text-left px-4 py-3 hover:bg-gray-50 rounded-b-xl flex items-center">
-                                <i class="fas fa-file-pdf mr-3 text-red-600"></i>
-                                Export as PDF
-                            </button>
-                        </div>
-                    </div>
+                    <button id="export-btn" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-6 py-2 rounded-xl hover:shadow-lg transition-all duration-200">
+                        <i class="fas fa-download mr-2"></i>
+                        Export CSV
+                    </button>
                 </div>
 
                 <!-- Live Orders Section (Mobile Only) -->
@@ -705,7 +692,7 @@ include "backend/dashboard.php";
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment mode</th>
                                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Image</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reject</th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ordersTableBody" class="bg-white divide-y divide-gray-200">
@@ -815,23 +802,8 @@ include "backend/dashboard.php";
             });
         });
         
-        // Export dropdown functionality
-        const exportDropdownBtn = document.getElementById('export-dropdown-btn');
-        const exportDropdown = document.getElementById('export-dropdown');
-        
-        exportDropdownBtn?.addEventListener('click', function(e) {
-            e.stopPropagation();
-            exportDropdown.classList.toggle('hidden');
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function() {
-            exportDropdown?.classList.add('hidden');
-        });
-        
         // CSV Export functionality
-        document.getElementById('export-csv-btn')?.addEventListener('click', async function() {
-            exportDropdown.classList.add('hidden');
+        document.getElementById('export-btn')?.addEventListener('click', async function() {
             const button = this;
             const originalText = button.innerHTML;
             
@@ -939,167 +911,6 @@ include "backend/dashboard.php";
             } catch (error) {
                 console.error('Export error:', error);
                 alert('Error exporting data. Please try again.');
-                button.innerHTML = originalText;
-                button.disabled = false;
-            }
-        });
-        
-        // PDF Export functionality
-        document.getElementById('export-pdf-btn')?.addEventListener('click', async function() {
-            exportDropdown.classList.add('hidden');
-            const button = this;
-            const originalText = button.innerHTML;
-            
-            // Show loading state
-            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-3"></i>Generating PDF...';
-            button.disabled = true;
-            
-            try {
-                // Load jsPDF library if not already loaded
-                if (typeof window.jsPDF === 'undefined') {
-                    const script = document.createElement('script');
-                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-                    document.head.appendChild(script);
-                    
-                    await new Promise((resolve, reject) => {
-                        script.onload = resolve;
-                        script.onerror = reject;
-                    });
-                }
-                
-                // Get live orders data
-                const liveOrdersData = [];
-                const liveOrderCards = document.querySelectorAll('.live-order-card');
-                
-                liveOrderCards.forEach(card => {
-                    if (card.style.display !== 'none') {
-                        const orderIdElement = card.querySelector('p.font-semibold.text-gray-900');
-                        const customerElement = card.querySelector('p.text-xs.text-gray-500.truncate-text');
-                        const amountElement = card.querySelector('p.font-bold.text-gray-900');
-                        const statusElement = card.querySelector('span.rounded-full');
-                        const timeElements = card.querySelectorAll('p.text-xs.text-gray-500');
-                        const timeElement = timeElements.length > 1 ? timeElements[1] : null;
-                        
-                        if (orderIdElement && customerElement && amountElement) {
-                            liveOrdersData.push({
-                                type: 'Live Order',
-                                orderId: orderIdElement.textContent.trim(),
-                                customer: customerElement.textContent.trim(),
-                                amount: amountElement.textContent.trim(),
-                                status: statusElement ? statusElement.textContent.trim() : 'Processing',
-                                time: timeElement ? timeElement.textContent.trim() : 'Just now',
-                                date: new Date().toLocaleDateString()
-                            });
-                        }
-                    }
-                });
-                
-                // Combine live orders and total orders
-                const combinedData = [
-                    ...liveOrdersData,
-                    ...allOrders.map(order => ({
-                        type: 'Total Order',
-                        orderId: order.oid || order.order_id || 'N/A',
-                        customer: order.customer_name || 'N/A',
-                        product: order.product_title || 'N/A',
-                        amount: order.product_price || '0',
-                        status: order.product_status || 'N/A',
-                        paymentMode: order.payment_mode || 'N/A',
-                        date: order.date || 'N/A'
-                    }))
-                ];
-                
-                if (combinedData.length === 0) {
-                    alert('No data to export');
-                    return;
-                }
-                
-                // Create PDF
-                const { jsPDF } = window.jspdf;
-                const doc = new jsPDF();
-                
-                // Add title
-                doc.setFontSize(20);
-                doc.setTextColor(40, 40, 40);
-                doc.text('Orders Export Report', 20, 20);
-                
-                // Add date
-                doc.setFontSize(12);
-                doc.setTextColor(100, 100, 100);
-                doc.text(`Generated on: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`, 20, 30);
-                
-                // Add summary
-                doc.setFontSize(14);
-                doc.setTextColor(40, 40, 40);
-                doc.text(`Total Orders: ${combinedData.length}`, 20, 45);
-                
-                // Table headers
-                const headers = ['Type', 'Order ID', 'Customer/Product', 'Amount', 'Status', 'Date'];
-                let yPosition = 60;
-                
-                // Draw table header
-                doc.setFontSize(10);
-                doc.setTextColor(255, 255, 255);
-                doc.setFillColor(59, 130, 246); // Blue background
-                doc.rect(20, yPosition - 5, 170, 10, 'F');
-                
-                let xPosition = 25;
-                const columnWidths = [25, 25, 45, 25, 25, 25];
-                
-                headers.forEach((header, index) => {
-                    doc.text(header, xPosition, yPosition);
-                    xPosition += columnWidths[index];
-                });
-                
-                yPosition += 15;
-                
-                // Add table rows
-                doc.setTextColor(40, 40, 40);
-                combinedData.forEach((row, index) => {
-                    if (yPosition > 270) { // Start new page if needed
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    
-                    xPosition = 25;
-                    const rowData = [
-                        row.type,
-                        row.orderId,
-                        row.customer || row.product || 'N/A',
-                        row.amount,
-                        row.status,
-                        row.date
-                    ];
-                    
-                    // Alternate row colors
-                    if (index % 2 === 0) {
-                        doc.setFillColor(248, 250, 252);
-                        doc.rect(20, yPosition - 5, 170, 10, 'F');
-                    }
-                    
-                    rowData.forEach((cell, cellIndex) => {
-                        const cellText = String(cell || '').substring(0, 15); // Limit text length
-                        doc.text(cellText, xPosition, yPosition);
-                        xPosition += columnWidths[cellIndex];
-                    });
-                    
-                    yPosition += 10;
-                });
-                
-                // Save the PDF
-                const fileName = `orders_export_${new Date().toISOString().split('T')[0]}.pdf`;
-                doc.save(fileName);
-                
-                // Show success message
-                button.innerHTML = '<i class="fas fa-check mr-3"></i>PDF Generated!';
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.disabled = false;
-                }, 2000);
-                
-            } catch (error) {
-                console.error('PDF Export error:', error);
-                alert('Error generating PDF. Please try again.');
                 button.innerHTML = originalText;
                 button.disabled = false;
             }
@@ -2138,11 +1949,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </td>
                 <td class="px-4 py-3">
- 
-                 <!-- Example inside a loop -->
-                    <button class="cancelOrderBtn" data-oid="${order.oid} data-date="${order.date}" style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px;">Reject</button>
-                   
- 
+                    <button class="cancelOrderBtn" data-oid="${order.oid}" data-date="${order.date}" 
+                        style="background-color: red; color: white; padding: 5px 10px; border-radius: 8px; 
+                        ${!isRejectable ? 'opacity: 0.5; cursor: not-allowed;' : ''}" 
+                        ${!isRejectable ? 'disabled' : ''}>
+                       Accept
+                    </button>
                 </td>
             `;
             
@@ -2458,34 +2270,6 @@ document.addEventListener('click', function (event) {
   
  console.log(`${order.date || 'Unknown date'}`);
 </script>
-<script>
-(() => {
-  try {
-    const raw = localStorage.getItem('dbuser');
-    if (!raw) return;
-
-    const u = JSON.parse(raw);
-    const first = (u.first_name || '').trim();
-    const last  = (u.last_name  || '').trim();
-    const full  = [first, last].filter(Boolean).join(' ').trim() || (u.name || '').trim();
-
-    const initials =
-      ((first[0] || '') + (last[0] || '')).toUpperCase() ||
-      (full ? full.split(/\s+/).map(s => s[0] || '').join('').slice(0,2).toUpperCase() : '');
-
-    document.querySelectorAll('[data-user-initials]').forEach(el => {
-      if (initials) el.textContent = initials;
-    });
-
-    document.querySelectorAll('[data-user-name]').forEach(el => {
-      if (full) el.textContent = full;
-    });
-  } catch (e) {
-    console.error('Header hydrate failed', e);
-  }
-})();
-</script>
-
 
 
 

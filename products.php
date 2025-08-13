@@ -1,6 +1,3 @@
-<?php
-session_start();
-?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,7 +64,7 @@ session_start();
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
                 </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-sm" data-user-initials >SO</span>
+                    <span class="text-white font-semibold text-sm">SO</span>
                 </div>
             </div>
         </div>
@@ -143,9 +140,9 @@ session_start();
                     </button>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
+                            <span class="text-white font-semibold text-sm">SO</span>
                         </div>
-                        <span class="text-sm font-medium text-gray-700" data-user-name ><?php echo $_SESSION['name']; ?></span>
+                        <span class="text-sm font-medium text-gray-700">Store Owner</span>
                     </div>
                 </div>
             </div>
@@ -539,18 +536,7 @@ session_start();
                         <p class="text-sm text-gray-600 mb-3 line-clamp-2">${product.product_discription}</p>
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-lg font-bold text-purple-600">₹${product.product_price}</span>
-                            <div class="stock-control flex items-center space-x-1" data-pid="${product.pid}" data-current-stock="${product.product_stock}">
-                                <button class="stock-decrease-btn bg-red-100 hover:bg-red-200 text-red-700 w-7 h-7 rounded-full flex items-center justify-center transition-colors shadow-sm">
-                                    <i class="fas fa-minus text-xs"></i>
-                                </button>
-                                <div class="relative">
-                                    <input type="number" class="stock-input w-16 h-8 text-center border border-purple-200 rounded-md text-sm focus:border-purple-400 focus:ring-1 focus:ring-purple-400 focus:outline-none" value="${product.product_stock}" min="0">
-                                    <span class="absolute -top-2 -right-2 text-[10px] text-gray-500 bg-white px-1 rounded-sm">Stock</span>
-                                </div>
-                                <button class="stock-increase-btn bg-green-100 hover:bg-green-200 text-green-700 w-7 h-7 rounded-full flex items-center justify-center transition-colors shadow-sm">
-                                    <i class="fas fa-plus text-xs"></i>
-                                </button>
-                            </div>
+                            <span class="text-sm text-gray-500">Stock: ${product.product_stock}</span>
                             <span class="text-xs text-gray-500">${product.product_brand}</span>
                         </div>
                         <div class="flex items-center justify-between mb-3">
@@ -679,123 +665,6 @@ session_start();
             }
         }
 
-        // Function to update product stock
-        async function updateProductStock(productId, newStock) {
-            try {
-                // Convert stock to a number and validate
-                newStock = parseInt(newStock);
-                if (isNaN(newStock) || newStock < 0) {
-                    throw new Error('Invalid stock value');
-                }
-                
-                // Prepare data for API call
-                const data = { 
-                    pid: productId, 
-                    stock: newStock
-                };
-                
-                // Show loading indicator
-                const stockControls = document.querySelectorAll(`.stock-control[data-pid="${productId}"]`);
-                stockControls.forEach(control => {
-                    control.classList.add('opacity-50');
-                    control.querySelectorAll('button, input').forEach(el => el.disabled = true);
-                });
-                
-                // Make API call using fetch
-                const response = await fetch('https://minitzgo.com/api/stockupdate.php', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-api-key': '0ef1e68d55ec041cfa7bc9695b585515de7234681c01aff5a19e1e4a170787d5'
-                    },
-                    body: JSON.stringify(data)
-                });
-                
-                const result = await response.json();
-                
-                // Remove loading indicator
-                stockControls.forEach(control => {
-                    control.classList.remove('opacity-50');
-                    control.querySelectorAll('button, input').forEach(el => el.disabled = false);
-                });
-                
-                if (result.status === true) {
-                    console.log('Stock updated successfully');
-                    
-                    // Update all instances of this product in the UI
-                    stockControls.forEach(control => {
-                        control.dataset.currentStock = newStock;
-                        control.querySelector('.stock-input').value = newStock;
-                        
-                        // Update stock status badge
-                        const productCard = control.closest('.bg-white');
-                        if (productCard) {
-                            const statusBadge = productCard.querySelector('.absolute.top-3.right-3 span');
-                            if (statusBadge) {
-                                if (newStock > 10) {
-                                    statusBadge.className = 'px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full';
-                                    statusBadge.textContent = 'In Stock';
-                                } else if (newStock > 0) {
-                                    statusBadge.className = 'px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full';
-                                    statusBadge.textContent = 'Low Stock';
-                                } else {
-                                    statusBadge.className = 'px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded-full';
-                                    statusBadge.textContent = 'Out of Stock';
-                                }
-                            }
-                        }
-                    });
-                    
-                    // Update the product in our local data
-                    const productIndex = allProducts.findIndex(p => p.pid === productId);
-                    if (productIndex !== -1) {
-                        allProducts[productIndex].product_stock = newStock;
-                        
-                        // Also update in filtered products if present
-                        const filteredIndex = filteredProducts.findIndex(p => p.pid === productId);
-                        if (filteredIndex !== -1) {
-                            filteredProducts[filteredIndex].product_stock = newStock;
-                        }
-                    }
-                    
-                    // Show success feedback with enhanced toast
-                    const successToast = document.createElement('div');
-                    successToast.className = 'fixed bottom-4 right-4 bg-white text-green-700 px-5 py-3 rounded-xl shadow-xl z-50 animate-fade-in flex items-center space-x-2 border-l-4 border-green-500';
-                    successToast.innerHTML = `
-                        <i class="fas fa-check-circle text-green-500 text-xl"></i>
-                        <div>
-                            <p class="font-medium">Stock Updated</p>
-                            <p class="text-xs text-gray-500">New stock: ${newStock}</p>
-                        </div>
-                    `;
-                    document.body.appendChild(successToast);
-                    
-                    // Add pulse animation to the updated stock input
-                    stockControls.forEach(control => {
-                        const input = control.querySelector('.stock-input');
-                        input.classList.add('stock-update-pulse');
-                        setTimeout(() => {
-                            input.classList.remove('stock-update-pulse');
-                        }, 1000);
-                    });
-                    
-                    setTimeout(() => {
-                        successToast.classList.add('animate-fade-out');
-                        setTimeout(() => successToast.remove(), 500);
-                    }, 2000);
-                    
-                    // Update low stock count
-                    updateProductCount(allProducts.length);
-                } else {
-                    console.error('Error updating stock:', result.message);
-                    alert('Error updating stock: ' + (result.message || 'Unknown error'));
-                }
-            } catch (error) {
-                console.error('Error in stock update:', error);
-                alert('Error updating stock: ' + error.message);
-            }
-        }
-
         // Initialize everything when DOM is fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM fully loaded');
@@ -803,103 +672,15 @@ session_start();
             // Initialize products
             fetchProducts();
             initializeAddProductForm();
-            
-            // Add CSS for animations and stock control styling
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes fadeIn {
-                    from { opacity: 0; transform: translateY(10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                @keyframes fadeOut {
-                    from { opacity: 1; transform: translateY(0); }
-                    to { opacity: 0; transform: translateY(10px); }
-                }
-                @keyframes stockPulse {
-                    0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.5); }
-                    70% { box-shadow: 0 0 0 6px rgba(139, 92, 246, 0); }
-                    100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
-                }
-                .animate-fade-in {
-                    animation: fadeIn 0.3s ease-out forwards;
-                }
-                .animate-fade-out {
-                    animation: fadeOut 0.3s ease-in forwards;
-                }
-                .stock-update-pulse {
-                    animation: stockPulse 1s ease-out;
-                    border-color: #8b5cf6;
-                }
-                .stock-input::-webkit-inner-spin-button, 
-                .stock-input::-webkit-outer-spin-button { 
-                    opacity: 0.5;
-                    height: 20px;
-                }
-                .stock-control {
-                    transition: opacity 0.3s ease;
-                }
-                .stock-decrease-btn:hover, .stock-increase-btn:hover {
-                    transform: scale(1.05);
-                }
-            `;
-            document.head.appendChild(style);
 
-            // Add event delegation for delete buttons and stock controls
+            // Add event delegation for delete buttons
             document.addEventListener('click', function(e) {
-                // Handle delete buttons
-                const deleteBtn = e.target.closest('button[data-pid]:not(.stock-decrease-btn):not(.stock-increase-btn)');
+                const deleteBtn = e.target.closest('button[data-pid]');
                 if (deleteBtn) {
                     const pid = deleteBtn.dataset.pid;
                     if (confirm('Are you sure you want to delete this product?')) {
                         deleteProduct(pid);
                     }
-                }
-                
-                // Handle stock decrease button
-                const decreaseBtn = e.target.closest('.stock-decrease-btn');
-                if (decreaseBtn) {
-                    const stockControl = decreaseBtn.closest('.stock-control');
-                    const input = stockControl.querySelector('.stock-input');
-                    const currentValue = parseInt(input.value);
-                    if (!isNaN(currentValue) && currentValue > 0) {
-                        input.value = currentValue - 1;
-                        updateProductStock(stockControl.dataset.pid, currentValue - 1);
-                    }
-                }
-                
-                // Handle stock increase button
-                const increaseBtn = e.target.closest('.stock-increase-btn');
-                if (increaseBtn) {
-                    const stockControl = increaseBtn.closest('.stock-control');
-                    const input = stockControl.querySelector('.stock-input');
-                    const currentValue = parseInt(input.value);
-                    if (!isNaN(currentValue)) {
-                        input.value = currentValue + 1;
-                        updateProductStock(stockControl.dataset.pid, currentValue + 1);
-                    }
-                }
-            });
-            
-            // Handle direct input changes with debounce
-            let stockUpdateTimeout;
-            document.addEventListener('change', function(e) {
-                if (e.target.classList.contains('stock-input')) {
-                    const stockControl = e.target.closest('.stock-control');
-                    const newValue = parseInt(e.target.value);
-                    
-                    // Clear any pending update
-                    clearTimeout(stockUpdateTimeout);
-                    
-                    // Validate input
-                    if (isNaN(newValue) || newValue < 0) {
-                        e.target.value = stockControl.dataset.currentStock;
-                        return;
-                    }
-                    
-                    // Update after a short delay to avoid multiple rapid updates
-                    stockUpdateTimeout = setTimeout(() => {
-                        updateProductStock(stockControl.dataset.pid, newValue);
-                    }, 500);
                 }
             });
             
@@ -1286,39 +1067,6 @@ session_start();
         
 
     </script>
-    <script>
-(() => {
-  try {
-    const raw = localStorage.getItem('dbuser');
-    if (!raw) return; // nothing to hydrate; keep PHP + SO fallback
-
-    const u = JSON.parse(raw);
-    const first = (u.first_name || '').trim();
-    const last  = (u.last_name  || '').trim();
-
-    // Prefer explicit first/last; fall back to a generic name if present
-    const full  = [first, last].filter(Boolean).join(' ').trim() || (u.name || '').trim();
-
-    // Build initials; fall back to first letters of words in full name
-    const initials =
-      ((first[0] || '') + (last[0] || '')).toUpperCase() ||
-      (full ? full.split(/\s+/).map(s => s[0] || '').join('').slice(0,2).toUpperCase() : '');
-
-    // Update all initials bubbles
-    document.querySelectorAll('[data-user-initials]').forEach(el => {
-      if (initials) el.textContent = initials;
-    });
-
-    // Update all full-name spots
-    document.querySelectorAll('[data-user-name]').forEach(el => {
-      if (full) el.textContent = full;
-    });
-  } catch (e) {
-    console.error('Header hydrate failed', e);
-  }
-})();
-</script>
-
 
   
 
