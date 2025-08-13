@@ -284,7 +284,7 @@ if (!isset($_SESSION['cid'])) {
             <!-- Welcome Section -->
             <div class="p-4 md:p-6">
                 <div class="mb-6 animate-fade-in">
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome back, <span data-user-name><?php echo $_SESSION['name']; ?></span>!👋</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome hello back, <span data-user-name><?php echo $_SESSION['name']; ?></span>!👋</h1>
                     <p class="text-gray-600" >Here's what's happening with your store today.</p>
                 </div>
 
