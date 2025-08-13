@@ -244,27 +244,6 @@ if (!isset($_SESSION['cid'])) {
     </div>
 </div>
 
-                    
-
-
-                    <!-- User Name Section -->
-                    <div class="relative" id="userMenu">
-                        <!-- Click & Hover Target -->
-                        <div id="userBtn" class="flex items-center space-x-3 cursor-pointer">
-                            <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                                <span class="text-white font-semibold text-sm">SO</span>
-                            </div>
-                            <button class="text-sm font-medium text-gray-700 hover:underline cursor-pointer">
-                                <?php 
-                                    echo ucwords(strtolower($_SESSION['name'])); 
-                                ?>
-                            </button>
-
- 
-                    <button class="p-2 text-gray-400 hover:text-gray-500 relative">
-                        <i class="fas fa-bell text-lg"></i>
-                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                    </button>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
                             <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
