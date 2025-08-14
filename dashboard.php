@@ -298,7 +298,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-blue-200 text-xs mt-1">+12% from last month</p>
                             </div>
                             <div class="bg-opacity-20 rounded-xl p-3">
-                                <i class="fas fa-dollar-sign text-xl"></i>
+                                <i class="fa-solid fa-indian-rupee-sign text-xl"></i>
                             </div>
                         </div>
                     </div>
