@@ -536,6 +536,16 @@
                             <span class="text-sm text-gray-500">Stock: ${product.product_stock}</span>
                             <span class="text-xs text-gray-500">${product.product_brand}</span>
                         </div>
+
+                        <div class="flex items-center mb-3">
+                        ${[1, 2, 3, 4, 5].map(num => 
+                            num <= Math.floor(product.product_ratings)
+                            ? '<i class="fa-solid fa-star text-yellow-500"></i>'
+                            : '<i class="fa-regular fa-star text-yellow-500"></i>'
+                        ).join('')}
+                        <span class="ml-2 text-xs text-gray-700">${product.product_ratings}.0 rating</span>
+                        </div>
+
                         <div class="flex items-center justify-between mb-3">
                             <span class="text-sm text-black-800 text-xxxt-bold">Category: ${product.category}</span>
                             <span class="text-sm text-gray-500">Added on: ${new Date(product.date).toLocaleDateString()}</span>
