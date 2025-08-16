@@ -1,54 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Minitzgo Store - Products</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/togglerSwitch.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/style.css" />
+    <link rel="stylesheet" href="assets/css/togglerSwitch.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    animation: {
-                        'fade-in': 'fadeIn 0.5s ease-in-out',
-                        'slide-up': 'slideUp 0.3s ease-out',
-                        'bounce-in': 'bounceIn 0.6s ease-out'
-                    }
-                }
-            }
-        }
+      tailwind.config = {
+        theme: {
+          extend: {
+            animation: {
+              "fade-in": "fadeIn 0.5s ease-in-out",
+              "slide-up": "slideUp 0.3s ease-out",
+              "bounce-in": "bounceIn 0.6s ease-out",
+            },
+          },
+        },
+      };
     </script>
+
     <style>
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes bounceIn {
-            0% { transform: scale(0.3); opacity: 0; }
-            50% { transform: scale(1.05); }
-            70% { transform: scale(0.9); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .mobile-safe-area {
-            padding-bottom: env(safe-area-inset-bottom, 80px);
-        }
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.9);
-        }
-        #hide-coordinates {
-            display: none;
-        }
+              @keyframes fadeIn {
+                  from { opacity: 0; }
+                  to { opacity: 1; }
+              }
+              @keyframes slideUp {
+                  from { transform: translateY(20px); opacity: 0; }
+                  to { transform: translateY(0); opacity: 1; }
+              }
+              @keyframes bounceIn {
+                  0% { transform: scale(0.3); opacity: 0; }
+                  50% { transform: scale(1.05); }
+                  70% { transform: scale(0.9); }
+                  100% { transform: scale(1); opacity: 1; }
+              }
+              .mobile-safe-area {
+                  padding-bottom: env(safe-area-inset-bottom, 80px);
+              }
+              .glass-effect {
+                  backdrop-filter: blur(10px);
+                  background: rgba(255, 255, 255, 0.9);
+              }
+
+              /* Thin, rounded, soft gray scrollbar */
+              .thin-scrollbar::-webkit-scrollbar {
+              width: 6px;
+              }
+              .thin-scrollbar::-webkit-scrollbar-track {
+              background: transparent;
+              margin: 4px;
+              }
+              .thin-scrollbar::-webkit-scrollbar-thumb {
+              background: #cbd5e0;
+              border-radius: 10px;
+              }
+              .thin-scrollbar::-webkit-scrollbar-thumb:hover {
+              background: #a0aec0;
+              }
+              .thin-scrollbar {
+              scrollbar-width: thin;
+              scrollbar-color: #cbd5e0 transparent;
+              }
+              .thin-scrollbar:hover {
+              scrollbar-color: #a0aec0 transparent;
+              }
+              /* Upload tiles */
+              .upload-area { position: relative; }
+              .upload-tile {
+              position: relative;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              min-height: 150px;
+              padding: 18px 18px 46px;
+              border: 2px dashed rgba(0,0,0,.08);
+              border-radius: 14px;
+              text-align: center;
+              background: #f9fafb;
+              transition: border-color .2s, box-shadow .2s, background .2s;
+              overflow: hidden;
+            }
+            .upload-tile .tile-preview{
+                position:absolute;
+                inset:12px;                         
+                width:calc(100% - 24px);
+                height:calc(100% - 24px);
+                object-fit:cover;                   
+                border-radius:12px;
+                box-shadow:0 1px 6px rgba(0,0,0,.12);
+                background:#fff;
+                z-index:3;
+                cursor:zoom-in;
+            }
+              .upload-area:hover .upload-tile,
+              .upload-area:focus-within .upload-tile {
+              border-color: rgba(168,85,247,.45);
+              box-shadow: 0 0 0 4px rgba(168,85,247,.12);
+              background: #fff;
+              }
+              .upload-input-cover {
+                  position: absolute;
+                  inset: 0 0 40px 0;  
+                  opacity: 0;
+                  cursor: pointer;
+                  z-index: 1;
+              }
+              .dz-filename {
+                  font-size: .8rem;
+                  color: #111827;
+                  white-space: nowrap;
+                  max-width: none ;
+                  overflow: hidden;
+                  text-overflow: ellipsis ;
+                  flex:1;
+                  min-width:0;
+              }
+
+                .upload-tile.has-preview .dz-hint,
+                .upload-tile.has-preview i { opacity: 0; }
+
+    
+                #image-lightbox{
+                    position: fixed; inset: 0; z-index: 9999;
+                    background: rgba(0,0,0,.85);
+                    + display: flex; align-items: center; justify-content: center;
+                    padding: 16px;
+                }
+                #image-lightbox img{
+                    max-width: 90vw; max-height: 90vh;
+                    border-radius: 12px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,.35);
+                }
+                .dz-hint {
+                font-size: .75rem;
+                color: #6b7280;
+                line-height: 1.2;
+                }
+                .dz-filename.has-file {
+                max-width: calc(100% - 70px) !important;
+                overflow: hidden !important;
+                text-overflow: ellipsis !important;
+                }
+
+                .remove-file {
+                font-size: .75rem;
+                color: #6b7280;
+                text-decoration: underline;
+                cursor: pointer;
+                display: none;
+                z-index: 3;
+                    }
+              .remove-file:hover { color: #374151; }
+              .dz-row {
+                  position: static;                       
+                  display: flex;
+                  align-items: center;
+                  gap: 8px;
+                  margin-top: 8px;
+                  padding: 0 2px;
+                  max-width: 100%;
+                }
+              .dz-row .dz-filename{
+                  flex:1;
+                  min-width: 0;
+              }
+              .dz-row .dz-filename.has-file{
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+              }
+              .dz-row .dz-filename.placeholder{
+                  color:#6b7280;
+              }
+              input::placeholder,
+      textarea::placeholder {
+        font-size: 0.8rem; 
+        color: #9ca3af;   
+      }
+      [hidden]{ display:none !important; }
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 to-pink-100 min-h-screen">
-    <!-- Mobile Header -->
     <header class="md:hidden bg-white shadow-lg border-b sticky top-0 z-50 glass-effect">
         <div class="flex items-center justify-between px-4 py-3">
             <div class="flex items-center space-x-3">
@@ -70,7 +208,6 @@
         </div>
     </header>
 
-    <!-- Desktop Sidebar -->
     <div class="hidden md:flex md:fixed md:inset-y-0 md:left-0 md:w-64 md:z-50">
         <div class="flex flex-col flex-grow pt-5 overflow-y-auto bg-white shadow-xl">
             <div class="flex items-center flex-shrink-0 px-6 pb-4">
@@ -120,9 +257,7 @@
         </div>
     </div>
 
-    <!-- Main Content -->
     <div class="md:pl-64 flex flex-col flex-1">
-        <!-- Desktop Header -->
         <header class="hidden md:block bg-white shadow-sm border-b">
             <div class="flex items-center justify-between px-6 py-4">
                 <div class="flex-1 max-w-lg">
@@ -148,16 +283,13 @@
             </div>
         </header>
 
-        <!-- Main Products Content -->
         <main class="flex-1 overflow-y-auto mobile-safe-area">
             <div class="p-4 md:p-6">
-                <!-- Page Header -->
                 <div class="mb-6 animate-fade-in">
                     <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Product Management 📦</h1>
                     <p class="text-gray-600">Manage your store inventory and products</p>
                 </div>
 
-                <!-- Mobile Search & Filters -->
                 <div class="md:hidden mb-4 space-y-3">
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -181,7 +313,6 @@
                     </div>
                 </div>
 
-                <!-- Desktop Filters -->
                 <div class="hidden md:flex md:items-center md:justify-between md:mb-6">
                     <div class="flex space-x-4">
                         <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500">
@@ -203,7 +334,6 @@
                     </button>
                 </div>
 
-                <!-- Product Stats Cards (Mobile) -->
                 <div class="md:hidden grid grid-cols-2 gap-4 mb-6">
                     <div class="bg-gradient-to-r from-purple-500 to-purple-600 rounded-2xl p-4 text-white shadow-lg">
                         <div class="text-center">
@@ -219,7 +349,6 @@
                     </div>
                 </div>
 
-                <!-- Mobile Add Product Button -->
                 <div class="md:hidden mb-6">
                     <button id="mobile-add-product-btn" class="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white py-3 rounded-xl font-medium shadow-lg">
                         <i class="fas fa-plus mr-2"></i>
@@ -227,9 +356,7 @@
                     </button>
                 </div>
 
-                <!-- Products Grid -->
                 <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-                    <!-- Products will be dynamically loaded here -->
                     <div class="col-span-full text-center py-10">
                         <div class="animate-pulse flex flex-col items-center">
                             <div class="rounded-full bg-gray-200 h-12 w-12 mb-4"></div>
@@ -243,7 +370,6 @@
         </main>
     </div>
 
-    <!-- Mobile Bottom Navigation -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 glass-effect">
         <div class="grid grid-cols-5 py-2">
             <a href="dashboard.php" class="flex flex-col items-center py-2 px-1 text-gray-600">
@@ -270,170 +396,207 @@
         </div>
     </nav>
 
-    <!-- Add Product Modal -->
     <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
-        <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-white rounded-2xl shadow-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-                <div class="p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-gray-900">Add New Product</h2>
-                        <button id="close-modal" class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
-                            <i class="fas fa-times"></i>
-                        </button>
+        <div class="flex items-center justify-center min-h-screen p-6">
+            <div class="bg-white rounded-2xl shadow-lg max-w-lg w-full max-h-[90vh] overflow-y-auto overflow-hidden">
+                <div class="p-6 overflow-y-auto max-h-[90vh] rounded-2xl thin-scrollbar">
+                    <div class="p-6">
+                        <div class="flex items-center justify-between mb-4" style="margin-top: -12px;">
+                            <h2 class="text-xl font-bold text-gray-900">Add New Product</h2>
+                            <button id="close-modal" class="p-2 mt-[-4px] text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <form id="add-product-form" class="space-y-4">
+                            <div id="upload-status" class="hidden bg-blue-100 text-blue-700 p-3 rounded-lg mb-4">
+                                <p id="status-message">Uploading product...</p>
+                            </div>
+
+                            <div class="bg-gray-50 p-3 rounded-lg mb-2" hidden>
+                                <p class="text-sm text-gray-500 mb-2">Store Information (Auto-filled)</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Client ID</label>
+                                        <input type="text" id="cid" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Client Name</label>
+                                        <input type="text" id="client_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                    </div>
+                                    <div class="col-span-2" hidden>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Coordinates</label>
+                                        <input type="text" id="cordinates" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-6">
+                                <div class="col-span-2">
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Product Title</label>
+                                    <input type="text" id="product_title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product title" required>
+                                </div>
+                                <div class="col-span-2">
+                                    <label class="text-sm font-semibold text-gray-600 mb-3"> Name</label>
+                                    <input type="text" id="product_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product name" required>
+                                </div>
+                            </div>
+                            <div class="col-span-4 mb-6">
+                                <label class="text-sm font-semibold text-gray-600 mb-3">Description</label>
+                                <textarea id="product_discription" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product description..." required></textarea>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Price</label>
+                                    <input type="number" id="product_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0.00" required>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Stock</label>
+                                    <input type="number" id="product_stock" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0" required>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Category</label>
+                                    <select id="category" class="w-full h-10 px-3 pr-10 text-sm leading-5 border border-gray-300 rounded-lg bg-white text-gray-700 hover:border-purple-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 appearance-none">
+                                        <option value="">Select Category</option>
+                                        <option value="electronics">Electronics</option>
+                                        <option value="clothing">Clothing</option>
+                                        <option value="home">Home & Kitchen</option>
+                                        <option value="beauty">Beauty</option>
+                                        <option value="toys">Toys</option>
+                                        <option value="sports">Sports</option>
+                                        <option value="grocery">Grocery</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Brand</label>
+                                    <input type="text" id="product_brand" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter brand name" required>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Size</label>
+                                    <input type="text" id="product_size" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. S, M, L, XL">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Material</label>
+                                    <input type="text" id="material" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Cotton, Plastic" required>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Ratings</label>
+                                    <input type="number" id="product_ratings" min="0" max="5" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0.0 - 5.0">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Offers</label>
+                                    <input type="text" id="offers" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. 10% OFF">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Color 1</label>
+                                    <input type="text" id="product_color1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Red">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Color 2</label>
+                                    <input type="text" id="product_color2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Blue">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Color 3</label>
+                                    <input type="text" id="product_color3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Green">
+                                </div>
+                                <div>
+                                    <label class="text-sm font-semibold text-gray-600 mb-3">Color 4</label>
+                                    <input type="text" id="product_color4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Yellow">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-sm font-semibold text-gray-600 mb-3">Product Images</label>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="upload-area">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Image 1</label>
+                                        <div class="upload-tile">
+                                            <i class="fas fa-image text-2xl text-gray-400 mb-2 block"></i>
+                                            <span class="dz-hint block leading-tight">
+                                                Drag & Drop<br><span class="text-gray-400">or</span><br>Click to upload
+                                            </span>
+                                            <img id="preview_product_image1" class="tile-preview" hidden aria-hidden="true" alt="Preview">
+                                        </div>
+                                        <div class="dz-row">
+                                            <span id="filename_product_image1" class="dz-filename">No file selected</span>
+                                            <button type="button" id="remove_product_image1" class="remove-file">Remove</button>
+                                        </div>
+                                        <input type="file" id="product_image1" accept="image/*" class="upload-input-cover" aria-describedby="filename_product_image1" required>
+                                    </div>
+                                    <div class="upload-area">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Image 2</label>
+                                        <div class="upload-tile">
+                                            <i class="fas fa-image text-2xl text-gray-400 mb-2 block"></i>
+                                            <span class="dz-hint block leading-tight">
+                                                Drag & Drop<br><span class="text-gray-400">or</span><br>Click to upload
+                                            </span>
+                                            <img id="preview_product_image2" class="tile-preview" hidden aria-hidden="true" alt="Preview">
+                                        </div>
+                                        <div class="dz-row">
+                                            <span id="filename_product_image2" class="dz-filename">No file selected</span>
+                                            <button type="button" id="remove_product_image2" class="remove-file">Remove</button>
+                                        </div>
+                                        <input type="file" id="product_image2" accept="image/*" class="upload-input-cover" aria-describedby="filename_product_image2">
+                                    </div>
+                                    <div class="upload-area">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Image 3</label>
+                                        <div class="upload-tile">
+                                            <i class="fas fa-image text-2xl text-gray-400 mb-2 block"></i>
+                                            <span class="dz-hint block leading-tight">
+                                                Drag & Drop<br><span class="text-gray-400">or</span><br>Click to upload
+                                            </span>
+                                            <img id="preview_product_image3" class="tile-preview" hidden aria-hidden="true" alt="Preview">
+                                        </div>
+                                        <div class="dz-row">
+                                            <span id="filename_product_image3" class="dz-filename">No file selected</span>
+                                            <button type="button" id="remove_product_image3" class="remove-file">Remove</button>
+                                        </div>
+                                        <input type="file" id="product_image3" accept="image/*" class="upload-input-cover" aria-describedby="filename_product_image3">
+                                    </div>
+                                    <div class="upload-area">
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Image 4</label>
+                                        <div class="upload-tile">
+                                            <i class="fas fa-image text-2xl text-gray-400 mb-2 block"></i>
+                                            <span class="dz-hint block leading-tight">
+                                                Drag & Drop<br><span class="text-gray-400">or</span><br>Click to upload
+                                            </span>
+                                            <img id="preview_product_image4" class="tile-preview" hidden aria-hidden="true" alt="Preview">
+                                        </div>
+                                        <div class="dz-row">
+                                            <span id="filename_product_image4" class="dz-filename">No file selected</span>
+                                            <button type="button" id="remove_product_image4" class="remove-file">Remove</button>
+                                        </div>
+                                        <input type="file" id="product_image4" accept="image/*" class="upload-input-cover" aria-describedby="filename_product_image4">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex space-x-3 pt-4">
+                                <button type="button" id="cancel-btn" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors">
+                                    Cancel
+                                </button>
+                                <button type="submit" id="submit-product" class="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transition-all duration-200">
+                                    Add Product
+                                </button>
+                            </div>
+                        </form>
                     </div>
-                    
-                    <form id="add-product-form" class="space-y-4">
-                        <div id="upload-status" class="hidden bg-blue-100 text-blue-700 p-3 rounded-lg mb-4">
-                            <p id="status-message">Uploading product...</p>
-                        </div>
-
-                        <!-- Store & Client Info (Auto-filled) -->
-                        <div class="bg-gray-50 p-3 rounded-lg mb-2">
-                            <p class="text-sm text-gray-500 mb-2">Store Information (Auto-filled)</p>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Client ID</label>
-                                    <input type="text" id="cid" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Client Name</label>
-                                    <input type="text" id="client_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
-                                </div>
-                                <div class="col-span-2" id="hide-coordinates">
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Coordinates</label>
-                                    <input type="text" id="cordinates" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Product Details -->
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Product Title</label>
-                                <input type="text" id="product_title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product title">
-                            </div>
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
-                                <input type="text" id="product_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter product name">
-                            </div>
-                            <div class="col-span-2">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Description</label>
-                                <textarea id="product_discription" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" rows="3" placeholder="Enter product description"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Price</label>
-                                <input type="number" id="product_price" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0.00">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Stock</label>
-                                <input type="number" id="product_stock" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0">
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-                                <select id="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                    <option value="">Select Category</option>
-                                    <option value="electronics">Electronics</option>
-                                    <option value="clothing">Clothing</option>
-                                    <option value="home">Home & Kitchen</option>
-                                    <option value="beauty">Beauty</option>
-                                    <option value="toys">Toys</option>
-                                    <option value="sports">Sports</option>
-                                    <option value="grocery">Grocery</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Brand</label>
-                                <input type="text" id="product_brand" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="Enter brand name">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Size</label>
-                                <input type="text" id="product_size" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. S, M, L, XL">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Material</label>
-                                <input type="text" id="material" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Cotton, Plastic">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Ratings</label>
-                                <input type="number" id="product_ratings" min="0" max="5" step="0.1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="0.0 - 5.0">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Offers</label>
-                                <input type="text" id="offers" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. 10% OFF">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 1</label>
-                                <input type="text" id="product_color1" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Red">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 2</label>
-                                <input type="text" id="product_color2" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Blue">
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 3</label>
-                                <input type="text" id="product_color3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Green">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Color 4</label>
-                                <input type="text" id="product_color4" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500" placeholder="e.g. Yellow">
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Product Images</label>
-                            <div class="grid grid-cols-2 gap-3 mb-2">
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 1 (Main)</label>
-                                    <input type="file" id="product_image1" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 2</label>
-                                    <input type="file" id="product_image2" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 3</label>
-                                    <input type="file" id="product_image3" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Image 4</label>
-                                    <input type="file" id="product_image4" accept="image/*" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="flex space-x-3 pt-4">
-                            <button type="button" id="cancel-btn" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-lg font-medium hover:bg-gray-300 transition-colors">
-                                Cancel
-                            </button>
-                            <button type="submit" id="submit-product" class="flex-1 bg-gradient-to-r from-purple-500 to-pink-600 text-white py-2 px-4 rounded-lg font-medium hover:shadow-lg transition-all duration-200">
-                                Add Product
-                            </button>
-                        </div>
-                    </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <script>
+    <div id="image-lightbox" hidden class="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4">
+        <img id="lightbox-img" class="max-w-[95vw] max-h-[90vh] rounded-xl shadow-2xl" alt="">
+    </div>
+</body>
+<script>
         console.log('Products page JavaScript loaded');
         // Global variable to store products
         let allProducts = [];
@@ -743,12 +906,7 @@
             }
         });
 
-        // Close modal when clicking outside
-        modal?.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
+        
 
         // Add touch feedback for mobile
         document.addEventListener('touchstart', function(e) {
@@ -1099,7 +1257,110 @@
   }
 })();
 </script>
-  
 
+<script>
+/* File input handling for product images
+   - Updates filename display on selection
+   - Provides a remove button to clear selection
+   - Shows small in-tile preview and opens a lightbox on click
+*/
+(function () {
+  const ids = ['product_image1','product_image2','product_image3','product_image4'];
+  const objectURLs = {};
+
+  // --- Robust lightbox resolver (handles duplicates safely) ---
+function resolveLightbox() {
+  const boxes = document.querySelectorAll('#image-lightbox');
+  const lb = boxes.length ? boxes[boxes.length - 1] : null;
+  const img = lb ? lb.querySelector('#lightbox-img') : null;
+  return { lb, img };
+}
+
+function openLightbox(url){
+  const { lb, img } = resolveLightbox();
+  if (!lb || !img || !url) return;
+  img.src = url;
+  lb.removeAttribute('hidden');   // stop the [hidden]{display:none !important}
+  lb.style.display = 'flex';      // safety in case CSS gets cached
+}
+
+function closeLightbox(){
+  const { lb, img } = resolveLightbox();
+  if (!lb || !img) return;
+  img.removeAttribute('src');
+  lb.setAttribute('hidden', '');  // hide via attribute
+  lb.style.display = 'none';      // and inline (belt + suspenders)
+}
+
+// Close when clicking the dark overlay (but not the image)
+document.addEventListener('click', (e) => {
+  const { lb } = resolveLightbox();
+  if (!lb) return;
+  if (e.target === lb) closeLightbox();
+});
+
+// Close on ESC
+document.addEventListener('keydown', (e) => {
+  const { lb } = resolveLightbox();
+  if (e.key === 'Escape' && lb && !lb.hasAttribute('hidden')) {
+    closeLightbox();
+  }
+});
+
+
+  ids.forEach(id => {
+    const input   = document.getElementById(id);
+    const nameEl  = document.getElementById('filename_' + id);
+    const remove  = document.getElementById('remove_' + id);
+    const preview = document.getElementById('preview_' + id);
+    const tile    = input ? input.closest('.upload-area')?.querySelector('.upload-tile') : null;
+
+    if (!input || !nameEl || !remove || !preview || !tile) return;
+
+    function reset(){
+      nameEl.textContent = 'No file selected';
+      nameEl.removeAttribute('title');
+      remove.style.display = 'none';
+
+      if (objectURLs[id]) { URL.revokeObjectURL(objectURLs[id]); objectURLs[id] = null; }
+      preview.removeAttribute('src');
+      preview.hidden = true;
+      tile.classList.remove('has-preview');
+      preview.onclick = null;
+    }
+    reset();
+
+    input.addEventListener('change', () => {
+      const file = input.files && input.files[0];
+      if (!file) { reset(); return; }
+
+      nameEl.textContent = file.name;
+      nameEl.title = file.name;
+      remove.style.display = 'inline';
+
+      // preview in tile
+      preview.hidden = true;
+      if (objectURLs[id]) URL.revokeObjectURL(objectURLs[id]);
+      const url = URL.createObjectURL(file);
+      objectURLs[id] = url;
+
+      preview.onload = () => {
+        preview.hidden = false;
+        tile.classList.add('has-preview');
+      };
+      preview.src = url;
+
+      // click to open full size image
+      preview.onclick = () => openLightbox(preview.src);
+    });
+
+    remove.addEventListener('click', (e) => {
+      e.preventDefault(); e.stopPropagation();
+      input.value = '';
+      reset();
+    });
+  });
+})();
+</script>
 </body>
 </html>
