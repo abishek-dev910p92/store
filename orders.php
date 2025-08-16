@@ -353,7 +353,7 @@ include "backend/dashboard.php";
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
                 </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-sm">SO</span>
+                    <span class="text-white font-semibold text-sm" data-user-name>SO</span>
                 </div>
             </div>
         </div>
@@ -429,9 +429,9 @@ include "backend/dashboard.php";
                     </button>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm">SO</span>
+                            <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                         </div>
-                        <span class="text-sm font-medium text-gray-700"> <?php echo $_SESSION['name']; ?></span>
+                        <span class="text-sm font-medium text-gray-700" data-user-name> <?php echo $_SESSION['name']; ?></span>
                     </div>
                 </div>
             </div>
@@ -2270,7 +2270,38 @@ document.addEventListener('click', function (event) {
   
  console.log(`${order.date || 'Unknown date'}`);
 </script>
+<script>
+(() => {
+  try {
+    const raw = localStorage.getItem('dbuser');
+    if (!raw) return; // nothing to hydrate; keep PHP + SO fallback
 
+    const u = JSON.parse(raw);
+    const first = (u.first_name || '').trim();
+    const last  = (u.last_name  || '').trim();
+
+    // Prefer explicit first/last; fall back to a generic name if present
+    const full  = [first, last].filter(Boolean).join(' ').trim() || (u.name || '').trim();
+
+    // Build initials; fall back to first letters of words in full name
+    const initials =
+      ((first[0] || '') + (last[0] || '')).toUpperCase() ||
+      (full ? full.split(/\s+/).map(s => s[0] || '').join('').slice(0,2).toUpperCase() : '');
+
+    // Update all initials bubbles
+    document.querySelectorAll('[data-user-initials]').forEach(el => {
+      if (initials) el.textContent = initials;
+    });
+
+    // Update all full-name spots
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      if (full) el.textContent = full;
+    });
+  } catch (e) {
+    console.error('Header hydrate failed', e);
+  }
+})();
+</script>
 
 
 
