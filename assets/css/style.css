@@ -276,6 +276,9 @@
   .inset-y-0 {
     inset-block: calc(var(--spacing) * 0);
   }
+  .spacing-top {
+    padding-top: calc(var(--spacing) * 5);
+  }
   .-top-1 {
     top: calc(var(--spacing) * -1);
   }

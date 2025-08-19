@@ -1417,7 +1417,7 @@ include "backend/dashboard.php";
                                             <img src="${imgSrc}" alt="Product" class="w-full h-full object-contain">
                                         </div>
                                         <div class="flex-1 min-w-0">
-                                            <p class="font-semibold text-gray-900 text-xs truncate-text">Order #${orderId}</p>
+                                            <p class="spacing-top font-semibold text-gray-900 text-xs truncate-text">Order #${orderId}</p>
                                             <p class="text-xs text-gray-500 truncate-text mt-4">${order.customer_name || order.product_title || 'Customer'}</p>
                                             <div class="flex items-center justify-between">
                                                 <p class="font-bold text-gray-900 text-xs">₹${order.amount || order.product_price || '0'}</p>
@@ -1483,7 +1483,7 @@ include "backend/dashboard.php";
                                             <img src="${imgSrc}" alt="Product" class="w-full h-full object-contain">
                                         </div>
                                         <div class="flex-1 min-w-0">
-                                            <p class="font-semibold text-gray-900 text-sm truncate-text">Order #${orderId}</p>
+                                            <p class="spacing-top font-semibold text-gray-900 text-sm truncate-text">Order #${orderId}</p>
                                             <p class="text-xs text-gray-500 truncate-text mt-1">${order.customer_name || order.product_title || 'Customer'}</p>
                                             <div class="flex items-center justify-between">
                                                 <p class="font-bold text-gray-900 text-sm">₹${order.amount || order.product_price || '0'}</p>
