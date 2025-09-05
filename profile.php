@@ -401,15 +401,12 @@
                 <h1 class="text-lg font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Profile</h1>
             </div>
             <div class="flex items-center space-x-3">
-                <div class="flex items-center">
-                    <?php include "includes/header_toggle.php"; ?>
-                </div>
                 <button class="p-2 text-gray-600 hover:bg-gray-100 rounded-full relative">
                     <i class="fas fa-bell text-lg"></i>
                     <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
                 </button>
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-sm">SO</span>
+                    <span class="text-white font-semibold text-sm ">SO</span>
                 </div>
             </div>
         </div>
@@ -534,7 +531,7 @@
                     </button>
                     <div class="flex items-center space-x-3">
                         <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm">SO</span>
+                            <span class="text-white font-semibold text-sm js-initials">SO</span>
                         </div>
                         <span class="text-sm font-medium text-gray-700"> <?php echo $_SESSION['name']; ?></span>
                     </div>

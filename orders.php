@@ -756,7 +756,7 @@ include "backend/dashboard.php";
                 
                 // Filter logic
                 const status = this.dataset.status;
-                console.log('Filtering by status:', status);
+                // console.log('Filtering by status:', status);
                 
                 // Filter total orders
                 if (originalOrders.length === 0 && allOrders.length > 0) {
@@ -780,7 +780,7 @@ include "backend/dashboard.php";
                 const liveOrderCards = document.querySelectorAll('.live-order-card');
                 
                 if (liveOrderCards.length > 0) {
-                    console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${status}`);
+                    // console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${status}`);
                     
                     liveOrderCards.forEach(card => {
                         if (status === 'all' || !status) {
@@ -855,7 +855,7 @@ include "backend/dashboard.php";
                         date: order.date || 'N/A'
                     }))
                 ];
-                
+             
                 if (combinedData.length === 0) {
                     alert('No data to export');
                     return;
@@ -921,7 +921,7 @@ include "backend/dashboard.php";
         let originalLiveOrders = [];
         
         function handleSearch(searchTerm) {
-            console.log('Searching for:', searchTerm);
+            // console.log('Searching for:', searchTerm);
             
             if (!searchTerm.trim()) {
                 // If search is empty, restore original data
@@ -954,7 +954,7 @@ include "backend/dashboard.php";
                     field.toLowerCase().includes(searchTerm.toLowerCase())
                 );
             });
-            
+      
             allOrders = filteredOrders;
             currentPage = 1;
             mobileCurrentPage = 1;
@@ -965,7 +965,7 @@ include "backend/dashboard.php";
             const liveOrderCards = document.querySelectorAll('.live-order-card');
             
             if (liveOrderCards.length > 0) {
-                console.log(`Searching ${liveOrderCards.length} live order cards for: ${searchTerm}`);
+                // console.log(`Searching ${liveOrderCards.length} live order cards for: ${searchTerm}`);
                 
                 liveOrderCards.forEach(card => {
                     const cardText = card.textContent.toLowerCase();
@@ -994,7 +994,7 @@ include "backend/dashboard.php";
         // Date filtering functionality
         document.querySelector('input[type="date"]')?.addEventListener('change', function(e) {
             const selectedDate = e.target.value;
-            console.log('Filtering by date:', selectedDate);
+            // console.log('Filtering by date:', selectedDate);
             
             if (!selectedDate) {
                 // If no date selected, restore original data
@@ -1044,7 +1044,7 @@ include "backend/dashboard.php";
         // Desktop status filter functionality
         document.querySelector('select')?.addEventListener('change', function(e) {
             const selectedStatus = e.target.value;
-            console.log('Filtering by status:', selectedStatus);
+            // console.log('Filtering by status:', selectedStatus);
             
             // Filter total orders
             if (originalOrders.length === 0 && allOrders.length > 0) {
@@ -1068,7 +1068,7 @@ include "backend/dashboard.php";
             const liveOrderCards = document.querySelectorAll('.live-order-card');
             
             if (liveOrderCards.length > 0) {
-                console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${selectedStatus}`);
+                // console.log(`Filtering ${liveOrderCards.length} live order cards by status: ${selectedStatus}`);
                 
                 liveOrderCards.forEach(card => {
                     if (!selectedStatus || selectedStatus === '') {
@@ -1101,6 +1101,7 @@ include "backend/dashboard.php";
             let dbUser = localStorage.getItem('dbuser');
             let cid = dbUser ? JSON.parse(dbUser)?.cid : null;
             
+            
             // Handle Mark Complete button clicks for mobile
             if (mobileLiveOrdersContainer) {
                 mobileLiveOrdersContainer.addEventListener('click', handleMarkComplete);
@@ -1119,7 +1120,7 @@ include "backend/dashboard.php";
                     const liveOrderCard = e.target.closest('.live-order-card');
                     
                     if (liveOrderCard) {
-                        console.log('Mark Complete clicked for card:', liveOrderCard);
+                        // console.log('Mark Complete clicked for card:', liveOrderCard);
                         
                         // Get the button and disable it to prevent multiple clicks
                         const button = e.target.closest('button');
@@ -1131,7 +1132,7 @@ include "backend/dashboard.php";
                         let orderIDText = '';
                         if (orderIDElement) {
                             orderIDText = orderIDElement.textContent.trim();
-                            console.log('Found orderIDText:', orderIDText);
+                            // console.log('Found orderIDText:', orderIDText);
                         }
                         
                         // Extract just the number part from "Order #123"
@@ -1139,7 +1140,7 @@ include "backend/dashboard.php";
                         const orderIDMatch = orderIDText.match(/#([\d]+)/);
                         if (orderIDMatch && orderIDMatch[1]) {
                             orderID = orderIDMatch[1];
-                            console.log('Extracted orderID from text:', orderID);
+                            // console.log('Extracted orderID from text:', orderID);
                         }
                         
                         // Try to get the order ID from the reject button's data-oid attribute as fallback
@@ -1147,7 +1148,7 @@ include "backend/dashboard.php";
                         let dataOid = null;
                         if (rejectButton) {
                             dataOid = rejectButton.getAttribute('data-oid');
-                            console.log('Found data-oid attribute:', dataOid);
+                            // console.log('Found data-oid attribute:', dataOid);
                         }
                         
                         // Try to get the order ID from the complete button's data-oid attribute as another fallback
@@ -1155,32 +1156,32 @@ include "backend/dashboard.php";
                         let completeDataOid = null;
                         if (completeButton) {
                             completeDataOid = completeButton.getAttribute('data-oid');
-                            console.log('Found complete button data-oid attribute:', completeDataOid);
+                            // console.log('Found complete button data-oid attribute:', completeDataOid);
                         }
                         
                         // Try to get the order ID from the card's data-oid attribute as another fallback
                         const cardDataOid = liveOrderCard.getAttribute('data-oid');
                         if (cardDataOid) {
-                            console.log('Found card data-oid attribute:', cardDataOid);
+                            // console.log('Found card data-oid attribute:', cardDataOid);
                         }
                         
                         const finalOrderID = orderID || dataOid || completeDataOid || cardDataOid || Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-                        console.log('Final orderID to use:', finalOrderID);
+                        // console.log('Final orderID to use:', finalOrderID);
                         
                         // Extract customer name
                         const customerElement = liveOrderCard.querySelector('p.text-xs.text-gray-500.truncate-text');
                         const customerName = customerElement ? customerElement.textContent.trim() : 'Customer';
-                        console.log('Extracted customerName:', customerName);
+                        // console.log('Extracted customerName:', customerName);
                         
                         // Extract amount
                         const amountElement = liveOrderCard.querySelector('p.font-bold.text-gray-900.text-sm');
                         const amount = amountElement ? amountElement.textContent.trim() : '₹0';
-                        console.log('Extracted amount:', amount);
+                        // console.log('Extracted amount:', amount);
                         
                         // Extract product image
                         const imgElement = liveOrderCard.querySelector('img');
                         const productImage = imgElement ? imgElement.src : 'https://via.placeholder.com/150/FF5733/FFFFFF?text=Product';
-                        console.log('Extracted productImage:', productImage);
+                        // console.log('Extracted productImage:', productImage);
                         
                         // Make API call to mark order as complete
                         fetch('https://minitzgo.com/api/complete_live_order.php', {
@@ -1197,7 +1198,7 @@ include "backend/dashboard.php";
                         })
                         .then(response => response.json())
                         .then(data => {
-                            console.log('Complete order API response:', data);
+                            // console.log('Complete order API response:', data);
                             
                             // Add to mobile orders list
                             if (mobileOrdersContainer) {
@@ -1352,7 +1353,7 @@ include "backend/dashboard.php";
                     return response.json();
                 })
                 .then(data => {
-                    console.log('Live orders data:', data);
+                    // console.log('Live orders data:', data);
                     
                     // Clear loading indicators
                     if (mobileLiveOrdersContainer) {
@@ -1372,8 +1373,8 @@ include "backend/dashboard.php";
                     if (Array.isArray(ordersData) && ordersData.length > 0) {
                         // Display live orders in mobile view
                         if (mobileLiveOrdersContainer) {
-                            console.log('Creating mobile live order cards for', ordersData.length, 'orders');
-                            console.log('Creating mobile live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating mobile live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating mobile live order cards for', ordersData.length, 'orders');
                             ordersData.forEach((order, index) => {
                                 const newMobileCard = document.createElement('div');
                                 newMobileCard.className = 'live-order-card bg-white rounded-2xl shadow-lg p-5 animate-bounce-in relative hover:shadow-xl transition-all duration-200';
@@ -1405,10 +1406,17 @@ include "backend/dashboard.php";
                                 } else {
                                     orderId = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                                 }
-                                console.log('Mobile order ID extracted:', orderId, 'from order:', order);
+                                // console.log('Mobile order ID extracted:', orderId, 'from order:', order);
                                 
                                 // Set data-oid attribute on the card itself
                                 newMobileCard.setAttribute('data-oid', orderId);
+                                
+                                // Check if order is older than 2 minutes
+                                const orderTime = new Date(order.order_time || order.date || new Date());
+                                const currentTime = new Date();
+                                const timeDifference = (currentTime - orderTime) / (1000 * 60); // Convert to minutes
+                                const isRejectable = timeDifference <= 5; // Can reject if less than or equal to 5 minutes old
+
                                 
                                 newMobileCard.innerHTML = `
                                     <span class="absolute top-2 right-2 mt-2 ${statusClass} text-xs ml-4 font-medium rounded-full">${statusText}</span>
@@ -1426,7 +1434,11 @@ include "backend/dashboard.php";
                                         </div>
                                     </div>
                                     <div class="flex space-x-3 px-2 pb-2">
-                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-xs font-medium reject-order" data-oid="${orderId}">
+                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-xs font-medium reject-order" 
+                                            data-oid="${orderId}" 
+                                            data-order-time="${order.order_time || order.date || ''}"
+                                            ${!isRejectable ? 'disabled' : ''}
+                                            style="${!isRejectable ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                                             <i class="fas fa-times mr-1"></i>Reject
                                         </button>
                                     </div>
@@ -1438,8 +1450,8 @@ include "backend/dashboard.php";
                         
                         // Display live orders in desktop view
                         if (desktopLiveOrdersContainer) {
-                            console.log('Creating desktop live order cards for', ordersData.length, 'orders');
-                            console.log('Creating desktop live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating desktop live order cards for', ordersData.length, 'orders');
+                            // console.log('Creating desktop live order cards for', ordersData.length, 'orders');
                             ordersData.forEach((order, index) => {
                                 const newDesktopCard = document.createElement('div');
                                 newDesktopCard.className = 'live-order-card bg-white rounded-2xl shadow-lg p-5 animate-bounce-in relative flex flex-col h-full min-h-[200px] hover:shadow-xl transition-all duration-200';
@@ -1471,10 +1483,16 @@ include "backend/dashboard.php";
                                 } else {
                                     orderId = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
                                 }
-                                console.log('Desktop order ID extracted:', orderId, 'from order:', order);
+                                // console.log('Desktop order ID extracted:', orderId, 'from order:', order);
                                 
                                 // Set data-oid attribute on the card itself
                                 newDesktopCard.setAttribute('data-oid', orderId);
+                                
+                                // Check if order is older than 2 minutes
+                                const orderTime = new Date(order.order_time || order.date || new Date());
+                                const currentTime = new Date();
+                                const timeDifference = (currentTime - orderTime) / (1000 * 60); // Convert to minutes
+                                const isRejectable = timeDifference <= 5; // Can reject if less than or equal to 5 minutes old
                                 
                                 newDesktopCard.innerHTML = `
                                     <span class="absolute top-4 right-4 px-2 py-1 ${statusClass} text-xs font-medium rounded-full">${statusText}</span>
@@ -1492,7 +1510,11 @@ include "backend/dashboard.php";
                                         </div>
                                     </div>
                                     <div class="flex space-x-3 mt-auto px-2 pb-2">
-                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium reject-order" data-oid="${orderId}">
+                                        <button class="flex-1 py-1 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:shadow-lg transition-all duration-200 text-sm font-medium reject-order" 
+                                            data-oid="${orderId}" 
+                                            data-order-time="${order.order_time || order.date || ''}"
+                                            ${!isRejectable ? 'disabled' : ''}
+                                            style="${!isRejectable ? 'opacity: 0.5; cursor: not-allowed;' : ''}">
                                             <i class="fas fa-times mr-1"></i>Reject
                                         </button>
                                     </div>
@@ -1553,10 +1575,30 @@ include "backend/dashboard.php";
             document.addEventListener('click', function(e) {
                 if (e.target.closest('.reject-order')) {
                     const button = e.target.closest('.reject-order');
+                    
+                    // Check if button is disabled
+                    if (button.disabled) {
+                        alert('This order cannot be rejected as it is older than 2 minutes.');
+                        return;
+                    }
+                    
                     const oid = button.getAttribute('data-oid');
+                    const orderTime = new Date(button.getAttribute('data-order-time'));
                     
                     if (!oid) {
                         alert('Order ID not found');
+                        return;
+                    }
+                    
+                    // Double-check if order is still rejectable (within 2 minutes)
+                    const currentTime = new Date();
+                    const timeDifference = (currentTime - orderTime) / (1000 * 60); // Convert to minutes
+                    
+                    if (timeDifference > 2) {
+                        alert('This order cannot be rejected as it is older than 2 minutes.');
+                        button.disabled = true;
+                        button.style.opacity = '0.5';
+                        button.style.cursor = 'not-allowed';
                         return;
                     }
                     
@@ -1651,7 +1693,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let filteredOrders = []; // stores filtered orders
     let currentStatusFilter = 'all'; // shared between desktop & mobile
 
-    console.log("cid", cid);
+  
 
     if (!cid) {
         console.error("CID not found in localStorage");
@@ -1846,6 +1888,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 ? order.product_image
                 : 'assets/img/no-image.png';
 
+            // Check if order is older than 2 minutes
+            const orderDate = new Date(order.date);
+            const currentDate = new Date();
+            const timeDifference = (currentDate - orderDate) / (1000 * 60); // Convert to minutes
+            const isRejectable = timeDifference <= 5; // Can reject if less than or equal to 5 minutes old
+            
             row.innerHTML = `
                 <td class="px-4 py-3 font-medium text-gray-900">ODR${order.oid || '#ORD-' + Math.floor(Math.random()*1000)}</td>
                 <td class="px-4 py-3">${order.date}</td>
@@ -1974,7 +2022,7 @@ document.addEventListener("DOMContentLoaded", () => {
         async function reportToClickUp({ message, filename, lineno, colno, stack }) {
             const errorKey = generateErrorKey(message, filename, lineno, colno);
             if (reportedErrors.includes(errorKey)) {
-                console.log("Duplicate error. Skipping task creation.");
+                // console.log("Duplicate error. Skipping task creation.");
                 return;
             }
 
@@ -2012,7 +2060,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 const result = await res.json();
                 if (res.ok) {
-                    console.log("ClickUp task created:", result.id);
+                    // console.log("ClickUp task created:", result.id);
                 } else {
                     console.error("Failed to create ClickUp task:", result);
                 }
@@ -2074,6 +2122,73 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         };
     })();
+
+
+
+
+//cancel button in table orders update
+
+document.addEventListener('click', function (event) {
+  // Get customer ID from localStorage
+  let dbUser = localStorage.getItem('dbuser');
+  let cid = dbUser ? JSON.parse(dbUser)?.cid : null;
+
+  if (event.target.classList.contains('cancelOrderBtn')) {
+    // If button is disabled, don't proceed
+    if (event.target.disabled) {
+      alert('This order cannot be rejected as it is older than 2 minutes.');
+      return;
+    }
+    
+    const oid = event.target.getAttribute('data-oid');
+    const orderDate = new Date(event.target.getAttribute('data-date'));
+    const currentDate = new Date();
+    const timeDifference = (currentDate - orderDate) / (1000 * 60); // Convert to minutes
+    
+    // Double-check if order is still rejectable (within 2 minutes)
+    if (timeDifference > 5) {
+      alert('This order cannot be rejected as it is older than 2 minutes.');
+      event.target.disabled = true;
+      event.target.style.opacity = '0.5';
+      event.target.style.cursor = 'not-allowed';
+      return;
+    }
+
+    if (confirm(`Are you sure you want to Accept This Order ID ${oid}?`)) {
+      fetch('https://minitzgo.com/api/cancel_live_order.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': 'd0145238fabc26381f3e493ef5103144c6c496280d015bf23cef9ae3b09e87aa'
+        },
+        body: JSON.stringify({
+          cid: cid,
+          oid: oid,
+          product_status: 'finding delivery boy'
+        }),
+      })
+      .then(res => res.json())
+      .then(response => {
+        // console.log('Cancel API Response:', response);
+
+        if (response.status === true) {
+          alert(`Order ${oid} Accepted  successfully.`);
+          // Optionally remove or update the row in the UI
+          
+          event.target.closest('tr').remove();
+        } else {
+          alert(`Failed to cancel Order ${oid}: ${response.message}`);
+        }
+      })
+      .catch(err => {
+        console.error('Cancel error:', err);
+        alert('Error occurred while cancelling the order.');
+      });
+    }
+  }
+});
+  
+ console.log(`${order.date || 'Unknown date'}`);
 </script>
 
 

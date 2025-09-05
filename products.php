@@ -42,6 +42,9 @@
             backdrop-filter: blur(10px);
             background: rgba(255, 255, 255, 0.9);
         }
+        #hide-coordinates {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-purple-50 to-pink-100 min-h-screen">
@@ -296,7 +299,7 @@
                                     <label class="block text-xs font-medium text-gray-700 mb-1">Client Name</label>
                                     <input type="text" id="client_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
                                 </div>
-                                <div class="col-span-2">
+                                <div class="col-span-2" id="hide-coordinates">
                                     <label class="block text-xs font-medium text-gray-700 mb-1">Coordinates</label>
                                     <input type="text" id="cordinates" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100" readonly>
                                 </div>
@@ -543,10 +546,7 @@
 
                         </div>
                         <div class="flex space-x-2">
-                            <button class="flex-1 bg-purple-100 text-purple-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-purple-200 transition-colors" data-pid="${product.pid}">
-                                <i class="fas fa-edit mr-1"></i>
-                                Edit
-                            </button>
+                            
                             <button class="flex-1 bg-red-100 text-red-700 py-2 px-3 rounded-lg text-sm font-medium hover:bg-red-200 transition-colors" data-pid="${product.pid}">
                                 <i class="fas fa-trash mr-1"></i>
                                 Delete
@@ -1067,6 +1067,8 @@
         
 
     </script>
+
+  
 
 </body>
 </html>

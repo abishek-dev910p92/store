@@ -36,7 +36,19 @@ if (!isset($_SESSION['cid'])) {
         });
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+ <script src="assets/js/notification.js"></script>
 
+    <style>
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(-5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+</style>
+
+    
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <!-- Mobile Header -->
@@ -106,7 +118,7 @@ if (!isset($_SESSION['cid'])) {
 
 
                 <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-semibold text-sm">SO</span>
+                    <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
                 </div>
             </div>
         </div>
@@ -183,62 +195,86 @@ if (!isset($_SESSION['cid'])) {
                         include "includes/header_toggle.php";
                     ?>
 
+                    
+               <!-- Notification Bell Section -->
+<div class="relative inline-block" id="notificationWrapper">
+    <!-- Bell Icon -->
+    <button id="notificationBell" class="p-2 text-gray-500 hover:text-gray-700 relative focus:outline-none">
+        <i class="fas fa-bell text-lg"></i>
+        <span id="notificationCount"
+              class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-semibold rounded-full flex items-center justify-center shadow-md">
+            3
+        </span>
+    </button>
 
-                    <div class="relative inline-block" id="notificationWrapper">
-                        <!-- Bell Icon -->
-                        <button id="notificationBell" class="p-2 text-gray-400 hover:text-gray-600 relative">
-                            <i class="fas fa-bell text-lg"></i>
-                            <span class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">3</span>
-                        </button>
+    <!-- Dropdown -->
+    <div id="notificationDropdown"
+         class="hidden absolute right-0 mt-2 w-80 bg-white border border-gray-100 rounded-xl shadow-lg z-50 overflow-hidden animate-fadeIn">
 
-                        <!-- Dropdown -->
-                        <div id="notificationDropdown" class="hidden absolute right-0 mt-2 w-80 bg-gray-50 border border-gray-200 rounded-xl shadow-lg z-50">
-                            <ul class="p-1 text-sm text-gray-800">
-                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">New Order Received</li>
-                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Payment Confirmed</li>
-                                <li class="py-2 px-2 hover:bg-gray-200 rounded-lg cursor-pointer transition-colors whitespace-nowrap">Low Stock Alert</li>
-                            </ul>
-                        </div>
-
+        <!-- Notification List -->
+        <ul id="notificationbody" class="divide-y divide-gray-100 max-h-64 overflow-y-auto">
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-blue-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">New Order Received</p>
+                        <p class="text-xs text-gray-500">Just now</p>
                     </div>
+                </div>
+            </li>
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-green-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">Payment Confirmed</p>
+                        <p class="text-xs text-gray-500">5 mins ago</p>
+                    </div>
+                </div>
+            </li>
+            <li class="p-3 hover:bg-gray-50 transition cursor-pointer">
+                <div class="flex items-start">
+                    <span class="flex-shrink-0 w-2 h-2 bg-yellow-500 rounded-full mt-2"></span>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-800">Low Stock Alert</p>
+                        <p class="text-xs text-gray-500">10 mins ago</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-semibold text-sm" data-user-initials>SO</span>
+                        </div>
+                        <span class="text-sm font-medium text-gray-700" data-user-name><?php echo $_SESSION['name']; ?></span>
+ 
+ 
+
                     <script>
-                        const bell = document.getElementById('notificationBell');
-                        const dropdown = document.getElementById('notificationDropdown');
-                        const wrapper = document.getElementById('notificationWrapper');
-                        let isLockedOpen = false;
+                        const userMenu = document.getElementById("userMenu");
+                        const userBtn = document.getElementById("userBtn");
+                        const userDropdown = document.getElementById("userDropdown");
 
-                        // Hover to show
-                        wrapper.addEventListener('mouseenter', () => {
-                            if (!isLockedOpen) dropdown.classList.remove('hidden');
+                        // Show on hover
+                        userMenu.addEventListener("mouseenter", function () {
+                            userDropdown.classList.remove("hidden");
                         });
 
-                        wrapper.addEventListener('mouseleave', () => {
-                            if (!isLockedOpen) dropdown.classList.add('hidden');
+                        // Hide when mouse leaves
+                        userMenu.addEventListener("mouseleave", function () {
+                            userDropdown.classList.add("hidden");
                         });
 
-                        // Click to toggle lock
-                        bell.addEventListener('click', (e) => {
-                            e.stopPropagation();
-                            isLockedOpen = !isLockedOpen;
-                            dropdown.classList.toggle('hidden', !isLockedOpen);
-                        });
-
-                        // Close if clicked outside
-                        document.addEventListener('click', (e) => {
-                            if (!wrapper.contains(e.target)) {
-                            isLockedOpen = false;
-                            dropdown.classList.add('hidden');
+                        // Optional: close dropdown if clicked outside
+                        document.addEventListener("click", function (e) {
+                            if (!userMenu.contains(e.target)) {
+                                userDropdown.classList.add("hidden");
                             }
                         });
                     </script>
 
-
-                    <div class="flex items-center space-x-3">
-                        <div class="w-8 h-8 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                            <span class="text-white font-semibold text-sm">SO</span>
-                        </div>
-                        <span class="text-sm font-medium text-gray-700"><?php echo $_SESSION['name']; ?></span>
-                    </div>
                 </div>
             </div>
         </header>
@@ -248,7 +284,7 @@ if (!isset($_SESSION['cid'])) {
             <!-- Welcome Section -->
             <div class="p-4 md:p-6">
                 <div class="mb-6 animate-fade-in">
-                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome back, <?php echo $_SESSION['name']; ?>!👋</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Welcome hello back, <span data-user-name><?php echo $_SESSION['name']; ?></span>!👋</h1>
                     <p class="text-gray-600" >Here's what's happening with your store today.</p>
                 </div>
 
@@ -261,7 +297,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo totalSale($conn, $cid); ?></p>
                                 <p class="text-blue-200 text-xs mt-1">+12% from last month</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-dollar-sign text-xl"></i>
                             </div>
                         </div>
@@ -274,7 +310,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchProducts($conn, $cid); ?></p>
                                 <p class="text-green-200 text-xs mt-1"><?php echo randomnumbers($conn, $cid); ?></p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-box text-xl"></i>
                             </div>
                         </div>
@@ -287,7 +323,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-2xl font-bold"><?php echo fetchTotalOrders($conn, $cid); ?></p>
                                 <p class="text-purple-200 text-xs mt-1">+more orders this week</p>
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-shopping-cart text-xl"></i>
                             </div>
                         </div>
@@ -301,7 +337,7 @@ if (!isset($_SESSION['cid'])) {
                                 <p class="text-orange-200 text-xs mt-1"><?php echo checkThisWeekOrders($conn, $cid); ?></p>
                              
                             </div>
-                            <div class="bg-white bg-opacity-20 rounded-xl p-3">
+                            <div class="bg-opacity-20 rounded-xl p-3">
                                 <i class="fas fa-calendar-day text-xl"></i>
                             </div>
                         </div>
@@ -607,5 +643,41 @@ if (!isset($_SESSION['cid'])) {
         
     </script>
 
+    <script>
+(() => {
+  try {
+    const raw = localStorage.getItem('dbuser');
+    if (!raw) return; // nothing to hydrate; keep PHP + SO fallback
+
+    const u = JSON.parse(raw);
+    const first = (u.first_name || '').trim();
+    const last  = (u.last_name  || '').trim();
+
+    // Prefer explicit first/last; fall back to a generic name if present
+    const full  = [first, last].filter(Boolean).join(' ').trim() || (u.name || '').trim();
+
+    // Build initials; fall back to first letters of words in full name
+    const initials =
+      ((first[0] || '') + (last[0] || '')).toUpperCase() ||
+      (full ? full.split(/\s+/).map(s => s[0] || '').join('').slice(0,2).toUpperCase() : '');
+
+    // Update all initials bubbles
+    document.querySelectorAll('[data-user-initials]').forEach(el => {
+      if (initials) el.textContent = initials;
+    });
+
+    // Update all full-name spots
+    document.querySelectorAll('[data-user-name]').forEach(el => {
+      if (full) el.textContent = full;
+    });
+  } catch (e) {
+    console.error('Header hydrate failed', e);
+  }
+})();
+</script>
+
+
+
+ 
 </body>
 </html>

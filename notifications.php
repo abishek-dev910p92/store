@@ -838,6 +838,6 @@
         })();
 
     </script>
-
+<script src="/assets/js/notification.js"></script>
 </body>
 </html>
