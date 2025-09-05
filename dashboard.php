@@ -179,12 +179,12 @@ if (!isset($_SESSION['cid'])) {
         <!-- Desktop Header -->
         <header class="hidden md:block bg-white shadow-sm border-b">
             <div class="flex items-center justify-between px-6 py-4">
-                <div class="flex-1 max-w-lg">
+                <div class="max-w-lg">
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fas fa-search text-gray-400"></i>
                         </div>
-                        <input type="text" class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Search...">
+                        <input type="text" class="block w-80 pl-10 pr-3 py-2 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" placeholder="Search...">
                     </div>
                 </div>
                 <div class="flex items-center space-x-4">
