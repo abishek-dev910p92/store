@@ -454,17 +454,17 @@ include "backend/dashboard.php";
                         </div>
                         <input type="text" id="mobile-search" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Search orders...">
                     </div>
-                    <div class="flex space-x-2 overflow-x-auto pb-2">
-                        <button class="filter-btn active flex-shrink-0 px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-medium" data-status="all">
+                    <div id="mobileStatusFilter" class="flex space-x-2 overflow-x-auto pb-2">
+                        <button class="filter-btn active flex-shrink-0 px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-medium" value="all">
                             All Orders
                         </button>
-                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" data-status="pending">
+                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" value="pending">
                             Pending
                         </button>
-                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" data-status="delivered">
+                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" value="delivered">
                             Delivered
                         </button>
-                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" data-status="cancelled">
+                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" value="rejected">
                             Cancelled
                         </button>
                     </div>
@@ -473,11 +473,11 @@ include "backend/dashboard.php";
                 <!-- Desktop Filters -->
                 <div class="hidden md:flex md:items-center md:justify-between md:mb-6">
                     <div class="flex space-x-4">
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">All Status</option>
+                        <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">All Status</option>
                             <option value="pending">Pending</option>
                             <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
+                            <option value="rejected">Cancelled</option>
                         </select>
                         <input type="date" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
@@ -1639,47 +1639,33 @@ include "backend/dashboard.php";
     </script>
 
 <script>
-
 document.addEventListener("DOMContentLoaded", () => {
     let dbUser = localStorage.getItem('dbuser');
     let cid = JSON.parse(dbUser)?.cid;
+
     let currentPage = 1;
     let mobileCurrentPage = 1;
     let ordersPerPage = 7; // Default to 7 orders per page for desktop (can be 5-9)
     let mobileOrdersPerPage = 5; // Default to 5 orders per page for mobile
     let allOrders = [];
+    let filteredOrders = []; // stores filtered orders
+    let currentStatusFilter = 'all'; // shared between desktop & mobile
 
     console.log("cid", cid);
 
     if (!cid) {
-        console.error("CID not found in localStorage.");
-        const totalRow = document.getElementById('totalOrdersCount');
-        if (totalRow) {
-            totalRow.innerHTML = `<td colspan="8">User not logged in</td>`;
-        }
-        const mobileOrdersContainer = document.getElementById('mobile-orders');
-        if (mobileOrdersContainer) {
-            mobileOrdersContainer.innerHTML = `
-                <div class="w-full py-8 text-center">
-                    <span class="text-gray-600">User not logged in. Cannot fetch orders.</span>
-                </div>
-            `;
-        }
+        console.error("CID not found in localStorage");
+        document.getElementById('totalOrdersCount').innerHTML = `<td colspan="8">User not logged in</td>`;
+        document.getElementById('mobile-orders').innerHTML = `<div class="w-full py-8 text-center text-gray-600">User not logged in. Cannot fetch orders.</div>`;
         return;
     }
 
-    function Totalorders() {
-        // Show loading indicators
+    function TotalOrders() {
         const mobileOrdersContainer = document.getElementById('mobile-orders');
         if (mobileOrdersContainer) {
-            mobileOrdersContainer.innerHTML = `
-                <div id="mobile-orders-loading" class="flex items-center justify-center w-full py-8">
-                    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                    <span class="ml-2 text-gray-600">Loading orders...</span>
-                </div>
-            `;
+            mobileOrdersContainer.innerHTML = `<div class="flex justify-center py-8"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div> <span class="ml-2 text-gray-600">Loading orders...</span></div>`;
         }
-        
+
         fetch('https://minitzgo.com/api/fetch_total_orders.php', {
             method: 'POST',
             headers: {
@@ -1697,178 +1683,154 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then((data) => {
             console.log("Total Orders Response:", data);
-
-            const totalOrders = Array.isArray(data) ? data.length : 'N/A';
-            const totalRow = document.getElementById('totalOrdersCount');
-            const mobileTotalCount = document.getElementById('mobile-total-orders-count');
-            
-            // Store all orders for pagination
-            if (Array.isArray(data)) {
-                // Reverse the array to show newest orders first (assuming the API returns oldest first)
-                allOrders = [...data].reverse();
-                
-                // Update pagination info
-                const totalPages = Math.ceil(allOrders.length / ordersPerPage);
-                const mobileTotalPages = Math.ceil(allOrders.length / mobileOrdersPerPage);
-                
-                // Update mobile total count
-                if (mobileTotalCount) {
-                    mobileTotalCount.textContent = `${totalOrders} orders`;
-                }
-                
-                if (totalRow) {
-                    totalRow.innerHTML = `
-                        <td colspan="8" class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-t shadow-sm">
-                            <div class="flex justify-between items-center">
-                                <div class="flex items-center space-x-2">
-                                    <span class="text-sm text-gray-600">Show</span>
-                                    <select id="ordersPerPageSelect" class="text-sm border rounded px-2 py-1">
-                                        <option value="5" ${ordersPerPage === 5 ? 'selected' : ''}>5</option>
-                                        <option value="6" ${ordersPerPage === 6 ? 'selected' : ''}>6</option>
-                                        <option value="7" ${ordersPerPage === 7 ? 'selected' : ''}>7</option>
-                                        <option value="8" ${ordersPerPage === 8 ? 'selected' : ''}>8</option>
-                                        <option value="9" ${ordersPerPage === 9 ? 'selected' : ''}>9</option>
-                                    </select>
-                                    <span class="text-sm text-gray-600">per page</span>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <div class="flex items-center space-x-1">
-                                        <button id="prevPageBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-l hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <i class="fas fa-chevron-left"></i>
-                                        </button>
-                                        <span id="currentPageDisplay" class="px-3 py-1 bg-white border text-sm">${currentPage} of ${totalPages}</span>
-                                        <button id="nextPageBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-r hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </button>
-                                    </div>
-                                    <div class="flex justify-end items-center space-x-2">
-                                        <span class="text-base font-semibold">Total Orders:</span>
-                                        <span class="text-lg font-bold text-blue-600">${totalOrders}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                    `;
-                    
-                    // Add event listeners for desktop pagination controls
-                    document.getElementById('prevPageBtn').addEventListener('click', () => {
-                        if (currentPage > 1) {
-                            currentPage--;
-                            displayDesktopOrders();
-                        }
-                    });
-                    
-                    document.getElementById('nextPageBtn').addEventListener('click', () => {
-                        if (currentPage < totalPages) {
-                            currentPage++;
-                            displayDesktopOrders();
-                        }
-                    });
-                    
-                    document.getElementById('ordersPerPageSelect').addEventListener('change', (e) => {
-                        ordersPerPage = parseInt(e.target.value);
-                        currentPage = 1; // Reset to first page when changing items per page
-                        displayDesktopOrders();
-                    });
-                }
-                
-                // Add event listeners for mobile pagination controls
-                const mobilePrevBtn = document.getElementById('mobile-prev-page');
-                const mobileNextBtn = document.getElementById('mobile-next-page');
-                const mobilePerPageSelect = document.getElementById('mobile-orders-per-page');
-                
-                if (mobilePrevBtn) {
-                    mobilePrevBtn.addEventListener('click', () => {
-                        if (mobileCurrentPage > 1) {
-                            mobileCurrentPage--;
-                            displayMobileOrders();
-                        }
-                    });
-                }
-                
-                if (mobileNextBtn) {
-                    mobileNextBtn.addEventListener('click', () => {
-                        if (mobileCurrentPage < mobileTotalPages) {
-                            mobileCurrentPage++;
-                            displayMobileOrders();
-                        }
-                    });
-                }
-                
-                if (mobilePerPageSelect) {
-                    mobilePerPageSelect.addEventListener('change', (e) => {
-                        mobileOrdersPerPage = parseInt(e.target.value);
-                        mobileCurrentPage = 1; // Reset to first page when changing items per page
-                        displayMobileOrders();
-                    });
-                }
-                
-                // Display the first page of orders for both desktop and mobile
-                displayDesktopOrders();
-                displayMobileOrders();
-            }
+            allOrders = Array.isArray(data) ? [...data].reverse() : [];
+            applyFilter(currentStatusFilter); // ensures both desktop & mobile honor same filter
+            renderPaginationControls();
         })
-        .catch((error) => {
-            console.error('Error:', error);
-            const totalRow = document.getElementById('totalOrdersCount');
-            if (totalRow) {
-                totalRow.innerHTML = `<td colspan="8">Error loading orders</td>`;
-            }
-            
-            const mobileOrdersContainer = document.getElementById('mobile-orders');
-            if (mobileOrdersContainer) {
-                mobileOrdersContainer.innerHTML = `
-                    <div class="w-full py-8 text-center">
-                        <span class="text-red-600">Error loading orders. Please try again later.</span>
-                    </div>
-                `;
-            }
+        .catch(error => {
+            console.error(error);
+            document.getElementById('totalOrdersCount').innerHTML = `<td colspan="8">Error loading orders</td>`;
+            document.getElementById('mobile-orders').innerHTML = `<div class="w-full py-8 text-center text-red-600">Error loading orders. Please try again later.</div>`;
         });
     }
+
+    function renderPaginationControls() {
+        const totalRow = document.getElementById('totalOrdersCount');
+        const totalOrders = filteredOrders.length;
+
+        if (totalRow) {
+            const totalPages = Math.ceil(totalOrders / ordersPerPage);
+            totalRow.innerHTML = `
+                <td colspan="8" class="px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-t shadow-sm">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-sm text-gray-600">Show</span>
+                            <select id="ordersPerPageSelect" class="text-sm border rounded px-2 py-1">
+                                <option value="5" ${ordersPerPage===5?'selected':''}>5</option>
+                                <option value="6" ${ordersPerPage===6?'selected':''}>6</option>
+                                <option value="7" ${ordersPerPage===7?'selected':''}>7</option>
+                                <option value="8" ${ordersPerPage===8?'selected':''}>8</option>
+                                <option value="9" ${ordersPerPage===9?'selected':''}>9</option>
+                            </select>
+                            <span class="text-sm text-gray-600">per page</span>
+                        </div>
+                        <div class="flex items-center space-x-4">
+                            <div class="flex items-center space-x-1">
+                                <button id="prevPageBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-l hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span id="currentPageDisplay" class="px-3 py-1 bg-white border text-sm">${currentPage} of ${totalPages}</span>
+                                <button id="nextPageBtn" class="px-3 py-1 bg-gray-200 text-gray-700 rounded-r hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                            <div class="flex justify-end items-center space-x-2">
+                                <span class="text-base font-semibold">Total Orders:</span>
+                                <span id="totalOrdersCountSpan" class="text-lg font-bold text-blue-600">${totalOrders}</span>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            `;
+
+             // Add event listeners for desktop pagination controls
+            document.getElementById('prevPageBtn').addEventListener('click', () => {
+                if (currentPage>1) { 
+                    currentPage--; 
+                    displayDesktopOrders(); 
+                    updatePaginationDisplay();
+                }
+            });
+            document.getElementById('nextPageBtn').addEventListener('click', () => {
+                if (currentPage < Math.ceil(filteredOrders.length / ordersPerPage)) { 
+                    currentPage++; 
+                    displayDesktopOrders(); 
+                    updatePaginationDisplay()
+                }
+            });
+            document.getElementById('ordersPerPageSelect').addEventListener('change', e => {
+                ordersPerPage = parseInt(e.target.value);
+                currentPage = 1;
+                displayDesktopOrders();
+            });
+
+            document.getElementById('statusFilter').addEventListener('change', e => {
+            const status = e.target.value.toLowerCase();
+            applyFilter(status);
+            });
+
+        }
+    }
+
+    function updatePaginationDisplay() {
+        const totalPages = Math.ceil(filteredOrders.length / ordersPerPage) || 1;
+        const currentPageDisplay = document.getElementById('currentPageDisplay');
+        const prevBtn = document.getElementById('prevPageBtn');
+        const nextBtn = document.getElementById('nextPageBtn');
+
+        if (currentPageDisplay) currentPageDisplay.textContent = `${currentPage} of ${totalPages}`;
+        if (prevBtn) prevBtn.disabled = currentPage <= 1;
+        if (nextBtn) nextBtn.disabled = currentPage >= totalPages;
+    }
+
+    function updateTotalOrdersCount() {
+        const totalOrdersSpan = document.getElementById('totalOrdersCountSpan');
+        if (totalOrdersSpan) totalOrdersSpan.textContent = filteredOrders.length;
+    }
     
+    function applyFilter(status) {
+        currentStatusFilter = status; // update shared variable
+        filteredOrders = status === 'all'
+            ? [...allOrders]
+            : allOrders.filter(o => (o.product_status || '').toLowerCase() === status);
+
+        currentPage = 1;
+        mobileCurrentPage = 1;
+
+        updateTotalOrdersCount();
+        displayDesktopOrders();
+        displayMobileOrders();
+
+        // --- Sync Desktop Dropdown ---
+        const desktopSelect = document.getElementById('statusFilter');
+        if (desktopSelect) {
+            desktopSelect.value = currentStatusFilter;
+        }
+
+        // --- Sync Mobile Buttons ---
+        const mobileStatusFilter = document.getElementById('mobileStatusFilter');
+        if (mobileStatusFilter) {
+            const buttons = mobileStatusFilter.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                if (btn.value === currentStatusFilter) {
+                    btn.classList.add('bg-blue-500', 'text-white');
+                    btn.classList.remove('bg-gray-200', 'text-gray-700');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                }
+            });
+        }
+    }
+
     function displayDesktopOrders() {
         const tbody = document.getElementById('ordersTableBody');
         if (!tbody) return;
-        
         tbody.innerHTML = ''; // Clear existing rows
-        
-        if (!Array.isArray(allOrders) || allOrders.length === 0) {
+        if (!filteredOrders.length) {
             tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">No orders found</td></tr>`;
             return;
         }
-        
-        // Calculate pagination
-        const totalPages = Math.ceil(allOrders.length / ordersPerPage);
-        
-        // Update pagination display
-        const pageDisplay = document.getElementById('currentPageDisplay');
-        if (pageDisplay) {
-            pageDisplay.textContent = `${currentPage} of ${totalPages}`;
-        }
-        
-        // Enable/disable pagination buttons
-        const prevBtn = document.getElementById('prevPageBtn');
-        const nextBtn = document.getElementById('nextPageBtn');
-        
-        if (prevBtn) prevBtn.disabled = currentPage === 1;
-        if (nextBtn) nextBtn.disabled = currentPage === totalPages;
-        
-        // Get current page orders
-        const startIndex = (currentPage - 1) * ordersPerPage;
-        const endIndex = Math.min(startIndex + ordersPerPage, allOrders.length);
-        const currentOrders = allOrders.slice(startIndex, endIndex);
-        
-        // Display current page orders
-        currentOrders.forEach(order => {
-            const row = document.createElement('tr');
-            row.className = "hover:bg-gray-50";
 
-            const statusClass = order.product_status === 'rejected'
-                ? 'text-red-500'
-                : order.product_status === 'delivered'
-                    ? 'text-green-600'
-                    : 'text-yellow-500';
-                    
+        const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
+        const startIndex = (currentPage-1)*ordersPerPage;
+        const endIndex = Math.min(startIndex+ordersPerPage, filteredOrders.length);
+        const ordersToShow = filteredOrders.slice(startIndex, endIndex);
+
+        ordersToShow.forEach(order => {
+            const row = document.createElement('tr');
+            row.className = 'hover:bg-gray-50';
+            const statusClass = order.product_status==='rejected'?'text-red-500':order.product_status==='delivered'?'text-green-600':'text-yellow-500';
             const isValidImage = (url) => {
                 if (!url || typeof url !== 'string') return false;
                 try {
@@ -1885,99 +1847,69 @@ document.addEventListener("DOMContentLoaded", () => {
                 : 'assets/img/no-image.png';
 
             row.innerHTML = `
-                <td class="px-4 py-3 font-medium text-gray-900">ODR${order.oid  || '#ORD-' + Math.floor(Math.random() * 1000).toString().padStart(3, '0')}</td>
+                <td class="px-4 py-3 font-medium text-gray-900">ODR${order.oid || '#ORD-' + Math.floor(Math.random()*1000)}</td>
                 <td class="px-4 py-3">${order.date}</td>
                 <td class="px-4 py-3 capitalize">${order.product_title || '—'}</td>
                 <td class="px-4 py-3 font-semibold text-green-600">₹${order.product_price || '0'}</td>
-                <td class="px-4 py-3">
-                    <span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass}">
-                    ${order.product_status}
-                    </span>
-                </td>
+                <td class="px-4 py-3"><span class="px-2 py-1 rounded-full text-xs font-semibold ${statusClass}">${order.product_status}</span></td>
                 <td class="px-4 py-3">${order.payment_mode || 'N/A'}</td>
-                <td class="px-4 py-3">
-                    <div class="w-12 h-12 bg-gray-50 rounded-md overflow-hidden">
-                        <img src="${imgSrc}" alt="product" class="w-full h-full object-contain" />
-                    </div>
-                </td>
-                <td class="px-4 py-3">
-                    <button class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition-all duration-200">
-                    <i class="fas fa-exclamation-triangle"></i>
-                    Cancel
-                    </button>
-                </td>
+                <td class="px-4 py-3"><div class="w-12 h-12 bg-gray-50 rounded-md overflow-hidden"><img src="${imgSrc}" class="w-full h-full object-contain"></div></td>
+                <td class="px-4 py-3"><button class="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition-all-duration-200">
+                <i class="fas fa-exclamation-triangle"></i>Cancel</button></td>
             `;
-            
             // Add class for animation
             row.classList.add('animate-fade-in');
 
             tbody.appendChild(row);
         });
+        updateTotalOrdersCount();
     }
-    
+
     function displayMobileOrders() {
-        const mobileOrdersContainer = document.getElementById('mobile-orders');
-        if (!mobileOrdersContainer) return;
-        
-        mobileOrdersContainer.innerHTML = ''; // Clear existing cards
-        
-        if (!Array.isArray(allOrders) || allOrders.length === 0) {
-            mobileOrdersContainer.innerHTML = `
-                <div class="w-full py-8 text-center">
-                    <span class="text-gray-600">No orders found</span>
-                </div>
-            `;
+        const mobileContainer = document.getElementById('mobile-orders');
+        if (!mobileContainer) return;
+        mobileContainer.innerHTML = '';
+
+        // Add status filtering for mobile
+
+        const mobileStatusFilter = document.getElementById('mobileStatusFilter');
+        const filterButtons = mobileStatusFilter.querySelectorAll('.filter-btn');
+
+        let mobileCurrentPage = 1;
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                filterButtons.forEach(btn => {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                });
+
+                button.classList.add('bg-blue-500', 'text-white');
+                button.classList.remove('bg-gray-200', 'text-gray-700');
+
+                const status = button.value;
+                mobileCurrentPage = 1;
+                applyFilter(status);
+            });
+        });
+
+        if (!filteredOrders.length) {
+            mobileContainer.innerHTML = `<div class="w-full py-8 text-center text-gray-600">No orders found</div>`;
             return;
         }
-        
-        // Calculate pagination
-        const totalPages = Math.ceil(allOrders.length / mobileOrdersPerPage);
-        
-        // Update pagination display
-        const pageDisplay = document.getElementById('mobile-current-page-display');
-        if (pageDisplay) {
-            pageDisplay.textContent = `${mobileCurrentPage} of ${totalPages}`;
-        }
-        
-        // Enable/disable pagination buttons
-        const prevBtn = document.getElementById('mobile-prev-page');
-        const nextBtn = document.getElementById('mobile-next-page');
-        
-        if (prevBtn) prevBtn.disabled = mobileCurrentPage === 1;
-        if (nextBtn) nextBtn.disabled = mobileCurrentPage === totalPages;
-        
-        // Get current page orders
-        const startIndex = (mobileCurrentPage - 1) * mobileOrdersPerPage;
-        const endIndex = Math.min(startIndex + mobileOrdersPerPage, allOrders.length);
-        const currentOrders = allOrders.slice(startIndex, endIndex);
-        
-        // Display current page orders
-        currentOrders.forEach((order, index) => {
+
+        const totalPages = Math.ceil(filteredOrders.length / mobileOrdersPerPage);
+        const startIndex = (mobileCurrentPage-1)*mobileOrdersPerPage;
+        const endIndex = Math.min(startIndex+mobileOrdersPerPage, filteredOrders.length);
+        const ordersToShow = filteredOrders.slice(startIndex, endIndex);
+
+        ordersToShow.forEach((order, index) => {
             const card = document.createElement('div');
             card.className = 'bg-white rounded-2xl shadow-lg p-4 animate-slide-up';
-            card.style.animationDelay = `${index * 0.1}s`;
-            
-            // Determine status class and icon
-            let statusClass, statusIcon, statusBg;
-            
-            switch(order.product_status?.toLowerCase()) {
-                case 'delivered':
-                    statusClass = 'text-green-800';
-                    statusBg = 'bg-green-100';
-                    statusIcon = '<i class="fas fa-check text-green-600"></i>';
-                    break;
-                case 'rejected':
-                case 'cancelled':
-                    statusClass = 'text-red-800';
-                    statusBg = 'bg-red-100';
-                    statusIcon = '<i class="fas fa-times text-red-600"></i>';
-                    break;
-                default: // pending, processing, etc.
-                    statusClass = 'text-yellow-800';
-                    statusBg = 'bg-yellow-100';
-                    statusIcon = '<i class="fas fa-clock text-yellow-600"></i>';
-            }
-            
+            card.style.animationDelay = `${index*0.1}s`;
+            let statusClass = order.product_status==='rejected'?'text-red-800':order.product_status==='delivered'?'text-green-800':'text-yellow-800';
+            let statusBg = order.product_status==='rejected'?'bg-red-100':order.product_status==='delivered'?'bg-green-100':'bg-yellow-100';
+            let statusIcon = order.product_status==='rejected'?'<i class="fas fa-times text-red-600"></i>':order.product_status==='delivered'?'<i class="fas fa-check text-green-600"></i>':'<i class="fas fa-clock text-yellow-600"></i>';
             const isValidImage = (url) => {
                 if (!url || typeof url !== 'string') return false;
                 try {
@@ -1991,15 +1923,13 @@ document.addEventListener("DOMContentLoaded", () => {
             const imgSrc = isValidImage(order.product_image)
                 ? order.product_image
                 : 'assets/img/no-image.png';
-            
+
             card.innerHTML = `
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 ${statusBg} rounded-full flex items-center justify-center">
-                            ${statusIcon}
-                        </div>
+                        <div class="w-10 h-10 ${statusBg} rounded-full flex items-center justify-center">${statusIcon}</div>
                         <div>
-                            <p class="font-semibold text-gray-900">ODR${order.oid || '#ORD-???'}</p>
+                            <p class="font-semibold text-gray-900">ODR${order.oid || '???'}</p>
                             <p class="text-sm text-gray-500 capitalize">${order.product_title || 'Product'}</p>
                         </div>
                     </div>
@@ -2011,25 +1941,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         <p class="text-xs text-gray-500">${order.date || 'Unknown date'}</p>
                     </div>
                     <div class="flex items-center space-x-2">
-                        <div class="w-12 h-12 bg-gray-50 rounded-md overflow-hidden">
-                            <img src="${imgSrc}" alt="product" class="w-full h-full object-contain" />
-                        </div>
-                        <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-full">
-                            <i class="fas fa-chevron-right"></i>
-                        </button>
+                        <div class="w-12 h-12 bg-gray-50 rounded-md overflow-hidden"><img src="${imgSrc}" class="w-full h-full object-contain" /></div>
+                        <button class="p-2 text-blue-600 hover:bg-blue-50 rounded-full"><i class="fas fa-chevron-right"></i></button>
                     </div>
                 </div>
             `;
-            
-            mobileOrdersContainer.appendChild(card);
+            mobileContainer.appendChild(card);
         });
     }
 
-    Totalorders();
+    TotalOrders();
 });
 </script>
-
-
  
 <script>
     // Implementation of Clickup 
