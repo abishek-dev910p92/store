@@ -454,17 +454,17 @@ include "backend/dashboard.php";
                         </div>
                         <input type="text" id="mobile-search" class="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Search orders...">
                     </div>
-                    <div class="flex space-x-2 overflow-x-auto pb-2">
-                        <button class="filter-btn active flex-shrink-0 px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-medium" data-status="all">
+                    <div id="mobileStatusFilter" class="flex space-x-2 overflow-x-auto pb-2">
+                        <button class="filter-btn active flex-shrink-0 px-4 py-2 bg-blue-500 text-white rounded-full text-sm font-medium" value="all">
                             All Orders
                         </button>
-                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" data-status="pending">
+                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" value="pending">
                             Pending
                         </button>
-                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" data-status="delivered">
+                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" value="delivered">
                             Delivered
                         </button>
-                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" data-status="cancelled">
+                        <button class="filter-btn flex-shrink-0 px-4 py-2 bg-gray-200 text-gray-700 rounded-full text-sm font-medium" value="rejected">
                             Cancelled
                         </button>
                     </div>
@@ -473,11 +473,11 @@ include "backend/dashboard.php";
                 <!-- Desktop Filters -->
                 <div class="hidden md:flex md:items-center md:justify-between md:mb-6">
                     <div class="flex space-x-4">
-                        <select class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">All Status</option>
+                        <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="all">All Status</option>
                             <option value="pending">Pending</option>
                             <option value="delivered">Delivered</option>
-                            <option value="cancelled">Cancelled</option>
+                            <option value="rejected">Cancelled</option>
                         </select>
                         <input type="date" class="px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
@@ -1690,6 +1690,28 @@ document.addEventListener("DOMContentLoaded", () => {
     let ordersPerPage = 7; // Default to 7 orders per page for desktop (can be 5-9)
     let mobileOrdersPerPage = 5; // Default to 5 orders per page for mobile
     let allOrders = [];
+    let filteredOrders = []; // stores filtered orders
+    let currentStatusFilter = 'all'; // shared between desktop & mobile
+
+    const desktopSelect = document.getElementById('statusFilter');
+if (desktopSelect) {
+  desktopSelect.addEventListener('change', (e) => {
+    applyFilter(e.target.value);
+  });
+}
+
+const mobileStatusFilterEl = document.getElementById('mobileStatusFilter');
+if (mobileStatusFilterEl) {
+  const mobileButtons = mobileStatusFilterEl.querySelectorAll('.filter-btn');
+  mobileButtons.forEach(btn => {
+    // optional safe-guard so we don't bind twice if script is re-run
+    if (btn.dataset.bound) return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => {
+      applyFilter(btn.value);
+    });
+  });
+}
 
   
 
@@ -1740,7 +1762,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .then((data) => {
             // console.log("Total Orders Response:", data);
 
-            const totalOrders = Array.isArray(data) ? data.length : 'N/A';
+            const totalOrders = Array.isArray(data) ? filteredOrders.length : 'N/A';
             const totalRow = document.getElementById('totalOrdersCount');
             const mobileTotalCount = document.getElementById('mobile-total-orders-count');
             
@@ -1748,10 +1770,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (Array.isArray(data)) {
                 // Reverse the array to show newest orders first (assuming the API returns oldest first)
                 allOrders = [...data].reverse();
-                
+                filteredOrders = currentStatusFilter === 'all'
+                ? [...allOrders]
+                : allOrders.filter(o => (o.product_status || '').toLowerCase() === currentStatusFilter);
+    
+                const totalOrders = filteredOrders.length;
                 // Update pagination info
-                const totalPages = Math.ceil(allOrders.length / ordersPerPage);
-                const mobileTotalPages = Math.ceil(allOrders.length / mobileOrdersPerPage);
+                const totalPages = Math.max(1, Math.ceil(totalOrders / ordersPerPage));
+                const mobileTotalPages = Math.max(1, Math.ceil(totalOrders / mobileOrdersPerPage));
                 
                 // Update mobile total count
                 if (mobileTotalCount) {
@@ -1785,7 +1811,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     </div>
                                     <div class="flex justify-end items-center space-x-2">
                                         <span class="text-base font-semibold">Total Orders:</span>
-                                        <span class="text-lg font-bold text-blue-600">${totalOrders}</span>
+                                        <span id="total-orders-count" class="text-lg font-bold text-blue-600">${totalOrders}</span>
                                     </div>
                                 </div>
                             </div>
@@ -1801,7 +1827,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     });
                     
                     document.getElementById('nextPageBtn').addEventListener('click', () => {
-                        if (currentPage < totalPages) {
+                        if (currentPage < Math.max(1, Math.ceil(filteredOrders.length / ordersPerPage))) {
                             currentPage++;
                             displayDesktopOrders();
                         }
@@ -1830,7 +1856,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 if (mobileNextBtn) {
                     mobileNextBtn.addEventListener('click', () => {
-                        if (mobileCurrentPage < mobileTotalPages) {
+                        if (mobileCurrentPage < Math.max(1, Math.ceil(filteredOrders.length / mobileOrdersPerPage))) {
                             mobileCurrentPage++;
                             displayMobileOrders();
                         }
@@ -1868,19 +1894,65 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
     
+    function updateTotalOrdersCount() {
+        const totalOrdersCount = document.getElementById('total-orders-count');
+        if (totalOrdersCount) totalOrdersCount.textContent = filteredOrders.length;
+    }
+
+    function updateTotalOrdersCountOfMobile() {
+        const mobileTotalOrdersCount = document.getElementById('mobile-total-orders-count');
+        if (mobileTotalOrdersCount) mobileTotalOrdersCount.textContent = `${filteredOrders.length} Orders`;
+    }
+
+    function applyFilter(status) {
+        currentStatusFilter = status; // update shared variable
+        filteredOrders = status === 'all'
+            ? [...allOrders]
+            : allOrders.filter(o => (o.product_status || '').toLowerCase() === status);
+
+        currentPage = 1;
+        mobileCurrentPage = 1;
+
+        updateTotalOrdersCount();
+        updateTotalOrdersCountOfMobile()
+        displayDesktopOrders();
+        displayMobileOrders();
+
+        // --- Sync Desktop Dropdown ---
+        const desktopSelect = document.getElementById('statusFilter');
+        if (desktopSelect) {
+            desktopSelect.value = currentStatusFilter;
+        }
+
+        // --- Sync Mobile Buttons ---
+        const mobileStatusFilter = document.getElementById('mobileStatusFilter');
+        if (mobileStatusFilter) {
+            const buttons = mobileStatusFilter.querySelectorAll('.filter-btn');
+            buttons.forEach(btn => {
+                if (btn.value === currentStatusFilter) {
+                    btn.classList.add('bg-blue-500', 'text-white');
+                    btn.classList.remove('bg-gray-200', 'text-gray-700');
+                } else {
+                    btn.classList.remove('bg-blue-500', 'text-white');
+                    btn.classList.add('bg-gray-200', 'text-gray-700');
+                }
+            });
+        }
+    }
+
     function displayDesktopOrders() {
         const tbody = document.getElementById('ordersTableBody');
         if (!tbody) return;
         
         tbody.innerHTML = ''; // Clear existing rows
         
-        if (!Array.isArray(allOrders) || allOrders.length === 0) {
+        if (!filteredOrders.length) {
             tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4">No orders found</td></tr>`;
             return;
         }
         
         // Calculate pagination
-        const totalPages = Math.ceil(allOrders.length / ordersPerPage);
+        const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
         
         // Update pagination display
         const pageDisplay = document.getElementById('currentPageDisplay');
@@ -1897,8 +1969,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Get current page orders
         const startIndex = (currentPage - 1) * ordersPerPage;
-        const endIndex = Math.min(startIndex + ordersPerPage, allOrders.length);
-        const currentOrders = allOrders.slice(startIndex, endIndex);
+        const endIndex = Math.min(startIndex + ordersPerPage, filteredOrders.length);
+        const currentOrders = filteredOrders.slice(startIndex, endIndex);
         
         // Display current page orders
         currentOrders.forEach(order => {
@@ -1970,8 +2042,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!mobileOrdersContainer) return;
         
         mobileOrdersContainer.innerHTML = ''; // Clear existing cards
-        
-        if (!Array.isArray(allOrders) || allOrders.length === 0) {
+
+        if (!filteredOrders.length) {
             mobileOrdersContainer.innerHTML = `
                 <div class="w-full py-8 text-center">
                     <span class="text-gray-600">No orders found</span>
@@ -1981,7 +2053,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
         
         // Calculate pagination
-        const totalPages = Math.ceil(allOrders.length / mobileOrdersPerPage);
+        const totalPages = Math.ceil(filteredOrders.length / mobileOrdersPerPage);
         
         // Update pagination display
         const pageDisplay = document.getElementById('mobile-current-page-display');
@@ -1998,8 +2070,8 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Get current page orders
         const startIndex = (mobileCurrentPage - 1) * mobileOrdersPerPage;
-        const endIndex = Math.min(startIndex + mobileOrdersPerPage, allOrders.length);
-        const currentOrders = allOrders.slice(startIndex, endIndex);
+        const endIndex = Math.min(startIndex + mobileOrdersPerPage, filteredOrders.length);
+        const currentOrders = filteredOrders.slice(startIndex, endIndex);
         
         // Display current page orders
         currentOrders.forEach((order, index) => {
